@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LearningManagementSystem (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LearningManagementSystem (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
