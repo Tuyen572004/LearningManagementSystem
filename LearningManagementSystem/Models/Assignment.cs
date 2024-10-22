@@ -8,14 +8,13 @@ namespace LearningManagementSystem.Models
 {
     internal class Assignment
     {
-        public int Id { get; set; }
-        public string CourseCode { get; set; }
+        public int Id { get; set; }  // Auto-incrementing Id field
+        public int ClassId { get; set; }  // Foreign key to Classes table
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
 
         // Navigation property
-        //public Course Course { get; set; }
-        // public ICollection<Submission> Submissions { get; set; }
+        // public Class Class { get; set; }
     }
 }

@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Models
 {
     internal class Enrollment
     {
-        public string CourseCode { get; set; }
-        public string CycleCode { get; set; }
-        public string StudentCode { get; set; }
+        public int Id { get; set; }  // Auto-incrementing Id field
+        public int ClassId { get; set; }  // Foreign key to Classes table
+        public int StudentId { get; set; } // Foreign key to Students table
         public DateTime EnrollmentDate { get; set; }
         public bool Cancelled { get; set; }
         public string CancellationReason { get; set; }
 
         // Navigation properties
-        //public Course Course { get; set; }
-        //public Cycle Cycle { get; set; }
-        //public Student Student { get; set; }
+        // public Class Class { get; set; }
+        // public Student Student { get; set; }
     }
 }

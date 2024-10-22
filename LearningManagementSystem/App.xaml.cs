@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using LearningManagementSystem.DataAccess;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -30,6 +31,9 @@ namespace LearningManagementSystem
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+        /// 
+
+        public static IDao dao = new MockDao();
         public App()
         {
             this.InitializeComponent();
