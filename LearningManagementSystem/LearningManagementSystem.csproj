@@ -27,6 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
 		<Manifest Include="$(ApplicationManifest)" />
@@ -42,7 +46,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Views\" />
-	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 
 	<!--

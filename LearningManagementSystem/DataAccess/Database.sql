@@ -1,5 +1,6 @@
 ﻿-- link to dbdiagram : https://dbdiagram.io/d/LMS-6717750097a66db9a3d71486
 
+
 CREATE TABLE Students (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
@@ -33,31 +34,31 @@ CREATE TABLE Cycles (
     CycleEndDate DATE NOT NULL
 );
 
--- -- Inserting example data into the Cycles table
+-- Inserting example data into the Cycles table
 -- INSERT INTO Cycles (CycleCode, CycleDescription, CycleStartDate, CycleEndDate) VALUES
 -- ('C1', 'Semester 2023 - 1st', '2023-09-01', '2023-12-15'),
 -- ('C2', 'Semester 2024 - 2nd', '2024-01-10', '2024-05-15'),
 -- ('C3', 'Semester 2024 - 3rd', '2024-06-01', '2024-08-15');
 
 CREATE TABLE Enrollments (
+    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     CourseCode VARCHAR(10),
     CycleCode VARCHAR(10),
     StudentCode VARCHAR(10),
     EnrollmentDate DATE NOT NULL,
     Cancelled BOOLEAN NOT NULL,
     CancellationReason VARCHAR(100),
-    PRIMARY KEY (CourseCode, CycleCode, StudentCode),
     FOREIGN KEY (CourseCode) REFERENCES Courses(CourseCode),
     FOREIGN KEY (CycleCode) REFERENCES Cycles(CycleCode),
     FOREIGN KEY (StudentCode) REFERENCES Students(StudentCode)
 );
 
 CREATE TABLE Classes (
+    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     CourseCode VARCHAR(10),
     CycleCode VARCHAR(10),
     ClassStartDate DATE NOT NULL,
     ClassEndDate DATE NOT NULL,
-    PRIMARY KEY (CourseCode, CycleCode),
     FOREIGN KEY (CourseCode) REFERENCES Courses(CourseCode),
     FOREIGN KEY (CycleCode) REFERENCES Cycles(CycleCode)
 );
@@ -72,11 +73,11 @@ CREATE TABLE Teachers (
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
-CREATE TABLE TeachersPerClass(
+CREATE TABLE TeachersPerClass (
+    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     CourseCode VARCHAR(10),
     CycleCode VARCHAR(10),
     TeacherCode VARCHAR(10),
-    PRIMARY KEY (CourseCode, CycleCode, TeacherCode),
     FOREIGN KEY (CourseCode) REFERENCES Courses(CourseCode),
     FOREIGN KEY (CycleCode) REFERENCES Cycles(CycleCode),
     FOREIGN KEY (TeacherCode) REFERENCES Teachers(TeacherCode)
@@ -133,5 +134,3 @@ CREATE TABLE Users (
     Role ENUM('student', 'teacher', 'admin') NOT NULL,
     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-
-
