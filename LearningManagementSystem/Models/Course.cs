@@ -2,7 +2,7 @@ using System;
 
 namespace LearningManagementSystem.Models
 {
-    internal class Course
+    public class Course
     {
         public int Id { get; set; }  // Auto-incrementing Id field
         public string CourseCode { get; set; }
