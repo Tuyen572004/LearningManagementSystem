@@ -6,6 +6,8 @@ namespace LearningManagementSystem.Models
     {
         public int Id { get; set; }  // Auto-incrementing Id field
         public int CourseId { get; set; }  // Foreign key to Courses table
+
+        public string ClassCode { get; set; }
         public int CycleId { get; set; }   // Foreign key to Cycles table
         public DateTime ClassStartDate { get; set; }
         public DateTime ClassEndDate { get; set; }

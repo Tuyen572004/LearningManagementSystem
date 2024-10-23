@@ -1,4 +1,6 @@
 ﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -33,11 +35,30 @@ namespace LearningManagementSystem
         /// </summary>
         /// 
 
-        public static IDao dao = new MockDao();
+       // private ServiceProvider _serviceProvider;
+
         public App()
         {
             this.InitializeComponent();
+ //           ConfigureServices();
         }
+
+        //private void ConfigureServices()
+        //{
+        //    var serviceCollection = new ServiceCollection();
+
+        //    // Register IDao with MockDao
+        //    serviceCollection.AddSingleton<IDao, MockDao>();
+
+        //    // Register MainWindow
+        //    serviceCollection.AddSingleton<MainWindow>();
+
+        //    // Register EnrollmentClassesViewModel
+        //    serviceCollection.AddTransient<EnrollmentClassesViewModel>();
+
+        //    // Build the service provider
+        //    _serviceProvider = serviceCollection.BuildServiceProvider();
+        //}
 
         /// <summary>
         /// Invoked when the application is launched.

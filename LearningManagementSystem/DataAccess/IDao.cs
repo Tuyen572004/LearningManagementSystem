@@ -11,13 +11,10 @@ namespace LearningManagementSystem.DataAccess
 {
     public interface IDao
     {
-        public ObservableCollection<Class> GetEnrolledClassesByStudentId(string studentId);
-        public string GetClassNameByClassId(int classId);
-        public int GetTeacherIdByClassId(int classId);
-        public int GetCourseIdByClassId(int classId);
-        public int GetDepartmentIdByCourseId(int courseId);
-        public string GetDepartmentNameByDepartmentId(int departmentId);
-        public string GetTeacherNameByTeacherId(int teacherId);
-        
+        public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
+        public Course GetCourseById(int courseId);
+        public Department GetDepartmentById(int departmentId);
+        public ObservableCollection<Teacher> GetTeachersByClassId(int classId);
+        Teacher GetTeacherById(int teacherId);
     }
 }
