@@ -1,5 +1,4 @@
 using LearningManagementSystem.ViewModels;
-using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,29 +17,34 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace LearningManagementSystem
+namespace LearningManagementSystem.Views
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class EnrollmentClassesPage : Page
     {
-        //public MainWindow(EnrollmentClassesViewModel enrollmentClassesViewModel)
-        //{
-        //    this.InitializeComponent();
-        //    // You can now use the enrollmentClassesViewModel as needed
-        //    MainFrame.Navigate(typeof(Views.EnrollmentClassesPage), enrollmentClassesViewModel);
-        //}
-
-        public MainWindow()
+        private EnrollmentClassesViewModel ViewModel { get; set; }
+        public EnrollmentClassesPage()
         {
             this.InitializeComponent();
+            ViewModel = new EnrollmentClassesViewModel();
+            ViewModel.LoadEnrolledClasses();
         }
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs args)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            content.Navigate(typeof(EnrollmentClassesPage));
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EnterButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
-
