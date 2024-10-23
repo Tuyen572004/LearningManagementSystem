@@ -17,31 +17,31 @@ namespace LearningManagementSystem.ViewModels
         public EnrollmentClassesViewModel()
         {
             EnrolledClasses = new ObservableCollection<EnrolledClassViewModel>();
-            LoadEnrolledClasses();
+        //    LoadEnrolledClasses();
         }
 
-        private void LoadEnrolledClasses()
-        {
-            var studentId = 1; // Example student ID
-            var enrolledClasses = dao.GetEnrolledClassesByStudentId(studentId);
+        //private void LoadEnrolledClasses()
+        //{
+        //    var studentId = 1; // Example student ID
+        //    var enrolledClasses = dao.GetEnrolledClassesByStudentId(studentId);
 
-            foreach (var enrolledClass in enrolledClasses)
-            {
-                var className = dao.GetClassNameByClassId(enrolledClass.ClassId);
-                var teacherId = dao.GetTeacherIdByClassId(enrolledClass.ClassId);
-                var courseId = dao.GetCourseIdByClassId(enrolledClass.ClassId);
-                var departmentId = dao.GetDepartmentIdByCourseId(courseId);
-                var departmentName = dao.GetDepartmentNameByDepartmentId(departmentId);
-                var teacherName = dao.GetTeacherNameByTeacherId(teacherId);
+        //    foreach (var enrolledClass in enrolledClasses)
+        //    {
+        //        var className = dao.GetClassNameByClassId(enrolledClass.ClassId);
+        //        var teacherId = dao.GetTeacherIdByClassId(enrolledClass.ClassId);
+        //        var courseId = dao.GetCourseIdByClassId(enrolledClass.ClassId);
+        //        var departmentId = dao.GetDepartmentIdByCourseId(courseId);
+        //        var departmentName = dao.GetDepartmentNameByDepartmentId(departmentId);
+        //        var teacherName = dao.GetTeacherNameByTeacherId(teacherId);
 
-                EnrolledClasses.Add(new EnrolledClassViewModel
-                {
-                    ClassName = className,
-                    TeacherName = teacherName,
-                    DepartmentName = departmentName
-                });
-            }
-        }
+        //        EnrolledClasses.Add(new EnrolledClassViewModel
+        //        {
+        //            ClassName = className,
+        //            TeacherName = teacherName,
+        //            DepartmentName = departmentName
+        //        });
+        //    }
+        //}
     }
 
     public class EnrolledClassViewModel : BaseViewModel
