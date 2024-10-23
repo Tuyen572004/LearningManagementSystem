@@ -15,6 +15,14 @@
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="CoursesPage.xaml" />
+	  <None Remove="DashBoard.xaml" />
+	  <None Remove="HomePage.xaml" />
+	  <None Remove="LoginOfStudentPage.xaml" />
+	  <None Remove="LoginOfTeacherPage.xaml" />
+	  <None Remove="LoginWindow.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
@@ -33,6 +41,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
+		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
@@ -46,6 +55,36 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Views\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="CoursesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="LoginOfTeacherPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="LoginOfStudentPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="LoginWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="DashBoard.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<!--
