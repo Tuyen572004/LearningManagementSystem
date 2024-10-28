@@ -11,6 +11,17 @@ namespace LearningManagementSystem.DataAccess
 {
     public interface IDao
     {
+        Tuple<int, List<Course>> GetAllCourses(
+            int page = 1,
+            int pageSize = 10,
+            string keyword = "",
+            bool nameAscending = false
+            );
+
+        int InsertCourse(Course course);
+        void UpdateCourse(Course course);
+        void DeleteCourse(int courseId);
+
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);
         public Department GetDepartmentById(int departmentId);

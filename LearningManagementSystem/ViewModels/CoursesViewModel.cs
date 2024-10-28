@@ -1,6 +1,6 @@
 ﻿using LearningManagementSystem.Models;
 using LearningManagementSystem.DataAccess;
-
+using LearningManagementSystem.Helper;
 using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.ViewModels
@@ -29,11 +29,11 @@ namespace LearningManagementSystem.ViewModels
     {
         private IDao _dao;
 
-        public ObservableCollection<CourseTableViewModel> CoursesData { get; set; }
+        public FullObservableCollection<CourseTableViewModel> CoursesData { get; set; }
 
         public CoursesTableViewModel()
         {
-            CoursesData = new ObservableCollection<CourseTableViewModel>();
+            CoursesData = new FullObservableCollection<CourseTableViewModel>();
             _dao = new MockDao();
         }
 

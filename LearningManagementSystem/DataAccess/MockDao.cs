@@ -11,6 +11,90 @@ namespace LearningManagementSystem.DataAccess
 {
     internal class MockDao : IDao
     {
+        public void DeleteCourse(int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            var database = new List<Course>
+            {
+                new Course
+                {
+                    Id = 1,
+                    CourseCode = "CSE101",
+                    CourseDescription = "Introduction to Computer Science",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 2,
+                    CourseCode = "CSE102",
+                    CourseDescription = "Data Structures and Algorithms",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 3,
+                    CourseCode = "CSE103",
+                    CourseDescription = "Operating Systems",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 4,
+                    CourseCode = "CSE104",
+                    CourseDescription = "Computer Networks",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 5,
+                    CourseCode = "CSE105",
+                    CourseDescription = "Database Management Systems",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 6,
+                    CourseCode = "CSE106",
+                    CourseDescription = "Software Engineering",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 7,
+                    CourseCode = "CSE107",
+                    CourseDescription = "Web Development",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                Id = 8,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+                }
+            };
+
+            var origin = database.Where(a => a.CourseDescription.Contains(keyword));
+            if (nameAscending)
+            {
+                origin=origin.OrderBy(a => a.CourseCode);
+
+            }
+
+            var totalItems = origin.Count();
+
+            var result = origin
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new Tuple<int, List<Course>>(totalItems, result);
+        }
+
         public Course GetCourseById(int courseId)
         {
             Random random = new Random();
@@ -332,6 +416,16 @@ namespace LearningManagementSystem.DataAccess
                         UserId = 3
                     }
             };
+        }
+
+        public int InsertCourse(Course course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCourse(Course course)
+        {
+            throw new NotImplementedException();
         }
     }
 }
