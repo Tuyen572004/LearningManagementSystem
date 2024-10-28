@@ -26,11 +26,11 @@ namespace LearningManagementSystem
         public DashBoard()
         {
             this.InitializeComponent();
-            nvSample9.SelectionChanged += nvSample9_SelectionChanged;
+            menu.SelectionChanged += menu_SelectionChanged;
         }
 
 
-        private void nvSample9_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             FrameNavigationOptions navOptions = new()
             {

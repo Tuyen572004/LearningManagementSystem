@@ -1,3 +1,5 @@
+using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -23,17 +26,23 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class CoursesPage : Page
     {
+        private CoursesTableViewModel ViewModel { get; set; }
+
+        ObservableCollection<CourseTableViewModel> MyData = new ObservableCollection<CourseTableViewModel>();
         public CoursesPage()
         {
             this.InitializeComponent();
+            ViewModel = new CoursesTableViewModel();
+            ViewModel.LoadCourses();
+            
         }
 
         private void rollGenerator_Click(object sender, RoutedEventArgs e)
         {
-
+            MyData = ViewModel.CoursesData;
         }
 
-        private void addCources_Click(object sender, RoutedEventArgs e)
+        private void addCourses_Click(object sender, RoutedEventArgs e)
         {
 
         }

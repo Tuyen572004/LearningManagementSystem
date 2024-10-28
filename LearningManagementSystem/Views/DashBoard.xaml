@@ -8,10 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <NavigationView x:Name="nvSample9"
+    <NavigationView x:Name="menu"
                         IsBackButtonVisible="Collapsed"
                         PaneDisplayMode="Left"
-                        SelectionChanged="nvSample9_SelectionChanged"
+                        SelectionChanged="menu_SelectionChanged"
                         IsSettingsVisible="False">
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Home" Tag="home" Icon="Home" />
