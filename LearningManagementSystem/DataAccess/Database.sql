@@ -1,5 +1,21 @@
 ﻿-- link to dbdiagram : https://dbdiagram.io/d/LMS-6717750097a66db9a3d71486
 
+drop database if exists LMSdb;
+
+create database LMSDb;
+
+use LMSDb;
+
+CREATE TABLE Users (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Role ENUM('student', 'teacher', 'admin') NOT NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
 CREATE TABLE Students (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
@@ -11,6 +27,13 @@ CREATE TABLE Students (
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
+
+CREATE TABLE Departments (
+    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
+    DepartmentCode VARCHAR(10) NOT NULL, -- Changed from DepartmentId to DepartmentCode
+    DepartmentDesc VARCHAR(100) NOT NULL
+);
+
 CREATE TABLE Courses (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     CourseCode VARCHAR(10) NOT NULL,    -- Changed from CourseId to CourseCode
@@ -19,11 +42,6 @@ CREATE TABLE Courses (
     FOREIGN KEY (DepartmentId) REFERENCES Departments(Id)
 );
 
-CREATE TABLE Departments (
-    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
-    DepartmentCode VARCHAR(10) NOT NULL, -- Changed from DepartmentId to DepartmentCode
-    DepartmentDesc VARCHAR(100) NOT NULL
-);
 
 CREATE TABLE Cycles (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
@@ -31,15 +49,6 @@ CREATE TABLE Cycles (
     CycleDescription VARCHAR(100) NOT NULL,
     CycleStartDate DATE NOT NULL,
     CycleEndDate DATE NOT NULL
-);
-
-CREATE TABLE Enrollments (
-    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
-    ClassId INT NOT NULL,                -- Foreign key to Classes table
-    StudentId INT NOT NULL,              -- Foreign key to Students table
-    EnrollmentDate DATE NOT NULL,
-    FOREIGN KEY (ClassId) REFERENCES Classes(Id),
-    FOREIGN KEY (StudentId) REFERENCES Students(Id)
 );
 
 CREATE TABLE Classes (
@@ -52,6 +61,16 @@ CREATE TABLE Classes (
     FOREIGN KEY (CourseId) REFERENCES Courses(Id),
     FOREIGN KEY (CycleId) REFERENCES Cycles(Id)
 );
+
+CREATE TABLE Enrollments (
+    Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
+    ClassId INT NOT NULL,                -- Foreign key to Classes table
+    StudentId INT NOT NULL,              -- Foreign key to Students table
+    EnrollmentDate DATE NOT NULL,
+    FOREIGN KEY (ClassId) REFERENCES Classes(Id),
+    FOREIGN KEY (StudentId) REFERENCES Students(Id)
+);
+
 
 CREATE TABLE Teachers (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
@@ -67,7 +86,7 @@ CREATE TABLE TeachersPerClass (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     ClassId INT NOT NULL,              -- Foreign key to Courses table
     TeacherId INT NOT NULL,             -- Foreign key to Teachers table
-    FOREIGN KEY (CourseId) REFERENCES Courses(Id),
+    
     FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
 );
 
@@ -78,7 +97,7 @@ CREATE TABLE Assignments (
     Title VARCHAR(100) NOT NULL,
     Description TEXT,
     DueDate DATE NOT NULL,
-    FOREIGN KEY (ClassId) REFERENCES Classes(Id)
+    FOREIGN KEY (ClassId) REFERENCES Classes(Id),
     FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
 );
 
@@ -86,9 +105,9 @@ CREATE TABLE Notifications (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     ClassId INT NOT NULL,              -- Foreign key to Courses table
     NotificationText TEXT NOT NULL,
-    PostDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (CourseId) REFERENCES Courses(Id),
-    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
+    PostDate DATETIME DEFAULT CURRENT_TIMESTAMP
+     
+    
 );
 
 CREATE TABLE Documents (
@@ -97,7 +116,7 @@ CREATE TABLE Documents (
     DocumentTitle VARCHAR(100) NOT NULL,
     DocumentPath VARCHAR(255) NOT NULL,
     UploadDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (CourseId) REFERENCES Courses(Id)
+    FOREIGN KEY (ClassId) REFERENCES Classes(Id)
 );
 
 CREATE TABLE Submissions (
@@ -110,11 +129,3 @@ CREATE TABLE Submissions (
     FOREIGN KEY (StudentId) REFERENCES Students(Id)
 );
 
-CREATE TABLE Users (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(50) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
-    Email VARCHAR(100) NOT NULL UNIQUE,
-    Role ENUM('student', 'teacher', 'admin') NOT NULL,
-    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-);
