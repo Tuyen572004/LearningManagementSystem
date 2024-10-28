@@ -15,7 +15,7 @@ namespace LearningManagementSystem.DataAccess
         {
             Random random = new Random();
             courseId = random.Next(1, 20);
-            if (courseId %8== 1)
+            if (courseId % 8 == 1)
             {
                 return new Course
                 {
@@ -25,7 +25,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if(courseId%8 == 2)
+            if (courseId % 8 == 2)
             {
                 return new Course
                 {
@@ -35,7 +35,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 3)
+            if (courseId % 8 == 3)
             {
                 return new Course
                 {
@@ -45,7 +45,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 4)
+            if (courseId % 8 == 4)
             {
                 return new Course
                 {
@@ -55,7 +55,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 5)
+            if (courseId % 8 == 5)
             {
                 return new Course
                 {
@@ -65,7 +65,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 6)
+            if (courseId % 8 == 6)
             {
                 return new Course
                 {
@@ -75,7 +75,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 7)
+            if (courseId % 8 == 7)
             {
                 return new Course
                 {
@@ -85,14 +85,14 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE108",
-                    CourseDescription = "Computer Graphics",
-                    DepartmentId = 1
-                };
+
+            return new Course
+            {
+                Id = courseId,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+            };
 
         }
 
@@ -329,9 +329,9 @@ namespace LearningManagementSystem.DataAccess
                         TeacherName = "Alice Johnson",
                         Email = "janesmith@example.com",
                         PhoneNo = "9876543210",
-                        UserId = 3 
+                        UserId = 3
                     }
-                };
+            };
         }
     }
 }
