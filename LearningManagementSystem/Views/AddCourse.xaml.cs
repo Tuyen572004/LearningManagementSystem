@@ -27,5 +27,15 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
         }
+
+        private void cancel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void save_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

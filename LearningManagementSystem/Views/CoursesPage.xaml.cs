@@ -18,35 +18,15 @@ using Windows.Foundation.Collections;
 using LearningManagementSystem.Helper;
 using LearningManagementSystem.DataAccess;
 using System.Threading.Tasks;
+using LearningManagementSystem.Views;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace LearningManagementSystem
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class CoursesPage : Page
     {
         private TableCoursesViewModel ViewModel { get; set; }
-
-        /*
-        void UpdatePagingInfo()
-        {
-            var infoList = new List<object>();
-            for (int i = 1; i <= ViewModel.TotalPages; i++)
-            {
-                infoList.Add(new
-                {
-                    Page = i,
-                    Total = ViewModel.TotalPages
-                });
-            }
-
-
-        }
-        */
-
 
         public CoursesPage()
         {
@@ -60,7 +40,11 @@ namespace LearningManagementSystem
             for (int i = 0; i <= 100; i++)
             {
                 waitingRing.Value = i;
-                await Task.Delay(50); // Adjust delay as needed
+                await Task.Delay(15);
+                if (i == 100)
+                {
+                    waitingRing.Visibility = Visibility.Collapsed;
+                }
             }
             ViewModel.GetAllCourse();
         }
@@ -68,31 +52,12 @@ namespace LearningManagementSystem
 
         private void rollGenerator_Click(object sender, RoutedEventArgs e)
         {
-            //ViewModel.TableCourses.Add(new TableCoursesView
-            //{
-            //    ID = 123,
-            //    CourseCode = "ABC",
-            //    CourseDecription = "No Description",
-            //    // = "IT",
-            //    TotalStudents = 0,
-            //    TotalSubjects = 0
 
-            //});
-            ViewModel.GetAllCourse();
         }
 
         private void addCourses_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.TableCourses.Add(new TableCoursesView
-            {
-                ID = 123,
-                CourseCode = "ABC",
-                CourseDecription = "No Description",
-                // = "IT",
-                TotalStudents = 0,
-                TotalSubjects = 0
-
-            });
+            Frame.Navigate(typeof(AddCourse));
         }
     }
 }

@@ -10,6 +10,51 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+
+        <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">Add a course</TextBlock>
+
+        <Button x:Name="cancel" Grid.Row="2" Grid.Column="3" Click="cancel_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Cancel</Button>
+        <Button x:Name="save" Grid.Row="2" Grid.Column="4" Click="save_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Save</Button>
+
+        <StackPanel Spacing="20" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Padding="10,10,10,10" Background="Green" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
+            <TextBlock FontWeight="Bold" FontSize="20">Course Code</TextBlock>
+            <TextBox Name="inputCourseCode" Width="400"></TextBox>
+
+            <TextBlock FontWeight="Bold" FontSize="20">Course Description</TextBlock>
+            <TextBox Name="inputCourseDescription" Width="400"></TextBox>
+
+            <TextBlock FontWeight="Bold" FontSize="20">Department ID</TextBlock>
+            <TextBox Name="inputDepartmentID" Width="400"></TextBox>
+        </StackPanel>
+
+
+        <StackPanel Spacing="20" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="0,10,0,0" Padding="10,10,10,10" Background="Green" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
+            <TextBlock FontWeight="Bold" FontSize="20">Course Code</TextBlock>
+            
+
+            <TextBlock FontWeight="Bold" FontSize="20">Course Description</TextBlock>
+            
+
+            <TextBlock FontWeight="Bold" FontSize="20">Department ID</TextBlock>
+            
+        </StackPanel>
 
     </Grid>
 </Page>
