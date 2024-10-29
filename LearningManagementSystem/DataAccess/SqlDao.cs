@@ -12,17 +12,71 @@ namespace LearningManagementSystem.DataAccess
 {
     public class SqlDao : IDao
     {
-        public static Tuple<bool, MySqlConnection> OpenConnection()
-        {
-            var dbCon = DBConnection.Instance();
-            dbCon.Server = "localhost";
-            dbCon.DatabaseName = "LMSdb";
-            dbCon.Username = "root";
-            dbCon.Password = "nopassword";
+        //public static Tuple<bool, MySqlConnection> OpenConnection()
+        //{
+        //    var dbCon = DBConnection.Instance();
+        //    dbCon.Server = "localhost";
+        //    dbCon.DatabaseName = "LMSdb";
+        //    dbCon.Username = "root";
+        //    dbCon.Password = "nopassword";
 
-            return new Tuple<bool, MySqlConnection> (dbCon.IsConnect(), dbCon.Connection);
+        //    return new Tuple<bool, MySqlConnection>(dbCon.IsConnect(), dbCon.Connection);
+        //}
+        public MySqlConnection connection;
+        public string server { get; set; }
+        public string database { get; set; }
+        public string username { get; set; }
+        public string password{ get; set; }
+        public SqlDao()
+        {
+            Initialize();
         }
-        public SqlDao() { }
+
+        public void Initialize()
+        {
+            server = "localhost";
+            database = "LMSdb";
+            username = "root";
+            password = "nopassword";
+            string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
+            connection = new MySqlConnection(connectionString);
+        }
+
+        public bool OpenConnection()
+        {
+            try
+            {
+                connection.Open();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 0:
+                        Console.WriteLine("Cannot connect to server. Contact administrator");
+                        break;
+                    case 1045:
+                        Console.WriteLine("Invalid username/password, please try again");
+                        break;
+                }
+                return false;
+            }
+        }
+
+        public bool CloseConnection()
+        {
+            try
+            {
+                connection.Close();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
         public void DeleteCourse(int courseId)
         {
             throw new NotImplementedException();
@@ -32,10 +86,8 @@ namespace LearningManagementSystem.DataAccess
         {
             var result=new List<Course>();
 
-            var checkConnection = OpenConnection();
-            if (checkConnection.Item1 == true)
+            if (this.OpenConnection() == true)
             {
-                var connection = checkConnection.Item2;
                 var sql = """
                     select count(*) over() as TotalItems, Id, CourseCode, CourseDescription, DepartmentId
                     from Courses
@@ -70,18 +122,20 @@ namespace LearningManagementSystem.DataAccess
                     });
                 }
 
-                connection.Close();
+                this.CloseConnection();
                 return new Tuple<int, List<Course>>(totalItems, result);
             }
-            else return null;
+            else
+            {
+                this.CloseConnection();
+                return new Tuple<int, List<Course>>(-1, null);
+            }
         }
 
         public int InsertCourse(Course course)
         {
-            var checkConnection = OpenConnection();
-            if (checkConnection.Item1 == true)
+            if (this.OpenConnection() == true)
             {
-                var connection = checkConnection.Item2;
                 var sql = """
                     insert into Courses (CourseCode, CourseDescription, DepartmentId)
                     values (@CourseCode, @CourseDescription, @DepartmentId)
@@ -97,28 +151,26 @@ namespace LearningManagementSystem.DataAccess
 
                 int count= command.ExecuteNonQuery();
 
-                connection.Close();
+                this.CloseConnection();
 
                 return count;
 
             }
+            this.CloseConnection();
             return -1;
         }
 
-        public void RemoveCourseById(string id)
+        public void RemoveCourseByID(int id)
         {
-            var checkConnection = OpenConnection();
-            if (checkConnection.Item1 == true)
+            if (this.OpenConnection()==true)
             {
-                var connection = checkConnection.Item2;
-
-                var sql= "delete from Courses where Id=@Id";
+                var sql = "delete from Courses where Id=@Id";
                 var command = new MySqlCommand(sql, connection);
                 command.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
 
                 int count = command.ExecuteNonQuery();
 
-                connection.Close();
+                this.CloseConnection();
             }
         }
 
@@ -155,5 +207,56 @@ namespace LearningManagementSystem.DataAccess
         }
 
   
+    }
+    public class DBConnection
+    {
+        private DBConnection() { }
+
+        private static DBConnection _instance = null;
+        private MySqlConnection _connection = null;
+
+        public static DBConnection Instance()
+        {
+            if (_instance == null)
+            {
+                _instance = new DBConnection();
+            }
+            return _instance;
+        }
+
+        public string Server { get; set; }
+        public string DatabaseName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+
+        public MySqlConnection Connection
+        {
+            get
+            {
+                if (_connection == null)
+                {
+                    string connString = $"Server={Server}; database={DatabaseName}; UID={Username}; password={Password}";
+                    _connection = new MySqlConnection(connString);
+                }
+                return _connection;
+            }
+        }
+
+        public bool IsConnect()
+        {
+            if (Connection.State == System.Data.ConnectionState.Closed)
+            {
+                Connection.Open();
+            }
+            return Connection.State == System.Data.ConnectionState.Open;
+        }
+
+        public void Close()
+        {
+            if (Connection.State == System.Data.ConnectionState.Open)
+            {
+                Connection.Close();
+            }
+        }
     }
 }

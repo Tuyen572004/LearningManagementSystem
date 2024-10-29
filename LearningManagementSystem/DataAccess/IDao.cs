@@ -20,7 +20,7 @@ namespace LearningManagementSystem.DataAccess
 
         int InsertCourse(Course course);
         void UpdateCourse(Course course);
-        void DeleteCourse(int courseId);
+        void RemoveCourseByID(int courseId);
 
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);

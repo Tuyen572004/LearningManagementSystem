@@ -423,6 +423,11 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public void RemoveCourseByID(int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateCourse(Course course)
         {
             throw new NotImplementedException();
