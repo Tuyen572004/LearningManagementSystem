@@ -138,7 +138,8 @@ namespace LearningManagementSystem.DataAccess
             {
                 var sql = """
                     insert into Courses (CourseCode, CourseDescription, DepartmentId)
-                    values (@CourseCode, @CourseDescription, @DepartmentId)
+                    values (@CourseCode, @CourseDescription, @DepartmentId);
+                    SELECT LAST_INSERT_ID();
                     """;
 
                 var command = new MySqlCommand(sql, connection);
@@ -146,15 +147,12 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.Add("@CourseDescription", MySqlDbType.String).Value = course.CourseDescription;
                 command.Parameters.Add("@DepartmentId", MySqlDbType.Int32).Value = course.DepartmentId;
 
-                int id = (int)(decimal)command.ExecuteScalar();
+                int id = Convert.ToInt32(command.ExecuteScalar());
                 course.Id = id;
-
-                int count= command.ExecuteNonQuery();
 
                 this.CloseConnection();
 
-                return count;
-
+                return id > 0 ? 1 : -1;
             }
             this.CloseConnection();
             return -1;

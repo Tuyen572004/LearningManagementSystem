@@ -1,3 +1,5 @@
+using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,19 +25,57 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddCourse : Page
     {
+        private CourseViewModel ViewModel { get; set; }
         public AddCourse()
         {
             this.InitializeComponent();
+            ViewModel = new CourseViewModel();
         }
 
-        private void cancel_Click(object sender, RoutedEventArgs e)
+        private async void cancel_Click(object sender, RoutedEventArgs e)
         {
+            var ctDialog = new ContentDialog
+            {
+                XamlRoot= this.XamlRoot,
+                Title = "Course",
+                Content = "Are you sure you want to cancel?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No"
+            };
+
+
+            var result = await ctDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                ctDialog.Hide();
+            }
 
         }
 
-        private void save_Click(object sender, RoutedEventArgs e)
+        private async void save_Click(object sender, RoutedEventArgs e)
         {
+            var course = new Course
+            {
+                CourseCode = inputCourseCode.Text,
+                CourseDescription = inputCourseDescription.Text,
+                DepartmentId = int.Parse(inputDepartmentID.Text)
+            };
 
+            int count=ViewModel.InsertCourse(course);
+
+            await new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Course",
+                Content = count == 1 ? "Course added successfully" : "Failed to add course",
+                CloseButtonText = "Ok"
+            }.ShowAsync();
+
+            Frame.GoBack();
         }
     }
 }

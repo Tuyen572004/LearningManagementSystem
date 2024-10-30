@@ -6,9 +6,14 @@
     xmlns:local="using:LearningManagementSystem"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:LearningManagementSystem.ViewModels" xmlns:x1="using:System" d:DataContext="{d:DesignInstance Type=viewmodels:TableCoursesView}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    <Page.Resources>
+        
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +32,7 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-        <Rectangle Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+        <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
         <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">All Courses</TextBlock>
 
@@ -36,7 +41,26 @@
 
         <ProgressRing Name="waitingRing" Width="60" Height="60" IsIndeterminate="False" Background="LightGray" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-        <controls:DataGrid x:Name="myCoursesTable" AutoGenerateColumns="True" ItemsSource="{x:Bind ViewModel.TableCourses , Mode=OneWay}" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,20,0,20"/>
-        
+        <controls:DataGrid x:Name="myCoursesTable" IsReadOnly="True" HeadersVisibility="Column" AutoGenerateColumns="False" ItemsSource="{x:Bind ViewModel.TableCourses , Mode=OneWay}" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,20,0,20">
+            <controls:DataGrid.Resources>
+                <Style x:Key="DataGridColumnHeaderStyle" TargetType="controls:DataGridRowGroupHeader">
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Foreground" Value="DarkGreen"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </controls:DataGrid.Resources>
+
+            <controls:DataGrid.Columns>
+                <controls:DataGridTextColumn Header="Course ID" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding ID }" />
+                <controls:DataGridTextColumn Header="Course Code" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseCode}" />
+                <controls:DataGridTextColumn Header="Course Description" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseDecription}" />
+                <controls:DataGridTextColumn Header="Total Students" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalStudents}" />
+                <controls:DataGridTextColumn Header="Total Subjects" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalSubjects}" />
+            </controls:DataGrid.Columns>
+
+        </controls:DataGrid>
+
     </Grid>
 </Page>

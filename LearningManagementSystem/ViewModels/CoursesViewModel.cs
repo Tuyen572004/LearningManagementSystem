@@ -20,7 +20,7 @@ namespace LearningManagementSystem.ViewModels
        
         public FullObservableCollection<Course> Courses { get; set; }
 
-        public void Init()
+        public CourseViewModel()
         {
             _dao = new SqlDao();
             GetAllCourse();

@@ -26,12 +26,14 @@ namespace LearningManagementSystem
 {
     public sealed partial class CoursesPage : Page
     {
-        private TableCoursesViewModel ViewModel { get; set; }
+        
+        public TableCoursesViewModel ViewModel { get; set; }
 
         public CoursesPage()
         {
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
+            myCoursesTable.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
 
@@ -46,6 +48,7 @@ namespace LearningManagementSystem
                     waitingRing.Visibility = Visibility.Collapsed;
                 }
             }
+            myCoursesTable.Visibility = Visibility.Visible;
             ViewModel.GetAllCourse();
         }
 
