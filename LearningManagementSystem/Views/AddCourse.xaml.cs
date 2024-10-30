@@ -77,5 +77,16 @@ namespace LearningManagementSystem.Views
 
             Frame.GoBack();
         }
+
+        private void departmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            dynamic item = departmentComboBox.SelectedItem;
+
+            if (item != null)
+            {
+                inputDepartmentID.Text = item.Id.ToString();
+            }
+
+        }
     }
 }

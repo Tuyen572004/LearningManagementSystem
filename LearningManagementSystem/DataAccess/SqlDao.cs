@@ -12,16 +12,7 @@ namespace LearningManagementSystem.DataAccess
 {
     public class SqlDao : IDao
     {
-        //public static Tuple<bool, MySqlConnection> OpenConnection()
-        //{
-        //    var dbCon = DBConnection.Instance();
-        //    dbCon.Server = "localhost";
-        //    dbCon.DatabaseName = "LMSdb";
-        //    dbCon.Username = "root";
-        //    dbCon.Password = "nopassword";
-
-        //    return new Tuple<bool, MySqlConnection>(dbCon.IsConnect(), dbCon.Connection);
-        //}
+        
         public MySqlConnection connection;
         public string server { get; set; }
         public string database { get; set; }
@@ -204,7 +195,70 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-  
+        public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            var result = new List<Department>();
+
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select count(*) over() as TotalItems, Id, DepartmentCode, DepartmentDesc
+                    from departments
+                    where DepartmentCode like @Keyword
+                    order by Id asc
+                    limit @Take offset @Skip
+                    """;
+
+                var skip = (page - 1) * pageSize;
+                var take = pageSize;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@Skip", MySqlDbType.Int32).Value = skip;
+                command.Parameters.Add("@Take", MySqlDbType.Int32).Value = take;
+                command.Parameters.Add("@Keyword", MySqlDbType.String).Value = $"%{keyword}%";
+
+                var reader = command.ExecuteReader();
+
+                int totalItems = -1;
+                while (reader.Read())
+                {
+                    if (totalItems == -1)
+                    {
+                        totalItems = reader.GetInt32("TotalItems");
+                    }
+                    result.Add(new Department
+                    {
+                        Id = reader.GetInt32("Id"),
+                        DepartmentCode = reader.GetString("DepartmentCode"),
+                        DepartmentDesc = reader.GetString("DepartmentDesc"),
+                    });
+                }
+
+                this.CloseConnection();
+                return new Tuple<int, List<Department>>(totalItems, result);
+            }
+            else
+            {
+                this.CloseConnection();
+                return new Tuple<int, List<Department>>(-1, null);
+            }
+        }
+
+        public int InsertDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDepartmentByID(int departmentId)
+        {
+            throw new NotImplementedException();
+        }
+
     }
     public class DBConnection
     {

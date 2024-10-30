@@ -43,6 +43,18 @@
 
             <TextBlock  Name="DepartmentTB" FontWeight="ExtraBold" FontSize="25">Department ID</TextBlock>
             <TextBox Name="inputDepartmentID" Width="Auto"></TextBox>
+
+            <ComboBox Name="departmentComboBox" Width="Auto" Height="35" SelectionChanged="departmentComboBox_SelectionChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding DepartmentCode}"/> - <Run Text="{Binding DepartmentDescription}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                
+                
+            </ComboBox>
         </StackPanel>
 
         <Border BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="30,50,0,0" Padding="20,20,20,20">

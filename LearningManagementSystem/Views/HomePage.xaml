@@ -32,7 +32,9 @@
 
         <StackPanel Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center">
             <TextBlock FontWeight="Black" FontSize="40" Margin="0,0,20,0">Welcome Adminstrator</TextBlock>
-            <TextBlock HorizontalAlignment="Right" Margin="0,0,20,0">Today is:</TextBlock>
+            <TextBlock FontSize="15" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,0,20,0">
+                Today is: <Run Text="{x:Bind ViewModel.ToString()}"/>
+            </TextBlock>
         </StackPanel>
 
         <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">Homepage</TextBlock>

@@ -95,6 +95,11 @@ namespace LearningManagementSystem.DataAccess
             return new Tuple<int, List<Course>>(totalItems, result);
         }
 
+        public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            throw new NotImplementedException();
+        }
+
         public Course GetCourseById(int courseId)
         {
             Random random = new Random();
@@ -423,12 +428,27 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public int InsertDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemoveCourseByID(int courseId)
         {
             throw new NotImplementedException();
         }
 
+        public void RemoveDepartmentByID(int departmentId)
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateCourse(Course course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDepartment(Department department)
         {
             throw new NotImplementedException();
         }
