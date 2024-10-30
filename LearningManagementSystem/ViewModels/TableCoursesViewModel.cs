@@ -20,13 +20,25 @@ using LearningManagementSystem.DataAccess;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class TableCoursesView : BaseViewModel
+    public class TableCoursesView : BaseViewModel, ICloneable
     {
         public int ID { get; set; }
         public string CourseCode { get; set; }
         public string CourseDecription { get; set; }
         public int TotalStudents { get; set; }
         public int TotalSubjects { get; set; }
+
+        public object Clone()
+        {
+            return new TableCoursesView
+            {
+                ID = this.ID,
+                CourseCode = this.CourseCode,
+                CourseDecription = this.CourseDecription,
+                TotalStudents = this.TotalStudents,
+                TotalSubjects = this.TotalSubjects
+            };
+        }
     }
     public class TableCoursesViewModel : BaseViewModel
     {
@@ -34,10 +46,12 @@ namespace LearningManagementSystem.ViewModels
        
         public FullObservableCollection<TableCoursesView> TableCourses { get; set; }
 
+        public TableCoursesView SelectedCourse { get; set; }
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
             _dao = new SqlDao();
+            SelectedCourse = new TableCoursesView();
             
         }
         public void GetAllCourse()

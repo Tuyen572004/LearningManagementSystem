@@ -26,7 +26,6 @@ namespace LearningManagementSystem
 {
     public sealed partial class CoursesPage : Page
     {
-        
         public TableCoursesViewModel ViewModel { get; set; }
 
         public CoursesPage()
@@ -53,14 +52,70 @@ namespace LearningManagementSystem
         }
 
 
-        private void rollGenerator_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void addCourses_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(AddCourse));
+        }
+
+        private async void deleteCourses_Click(object sender, RoutedEventArgs e)
+        {
+            if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
+            {
+                var dialog=new ContentDialog()
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Delete Course",
+                    Content = "Are you sure you want to delete this course?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
+                };
+
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    ViewModel.RemoveCourse(new Course
+                    {
+                        Id = selectedCourse.ID,
+                        CourseCode = selectedCourse.CourseCode,
+                        CourseDescription = selectedCourse.CourseDecription,
+                        DepartmentId = 0
+                    });
+                    myCoursesTable.SelectedItem = null; // Clear the selection after deletion
+
+                    ViewModel.TableCourses.Remove(selectedCourse);
+
+
+                    // Feedback
+                    await new ContentDialog()
+                    {
+                        XamlRoot = this.XamlRoot,
+                        Content = "Course removed",
+                        Title = "Success",
+                        CloseButtonText = "Ok"
+                    }.ShowAsync();
+                }
+                else
+                {
+                    dialog.Hide();
+                }
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter!=null)
+            {
+                var _oldData = e.Parameter as TableCoursesView;
+                ViewModel.SelectedCourse = _oldData;
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
+        private void changeCourses_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
         }
     }
 }

@@ -36,12 +36,13 @@
 
         <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">All Courses</TextBlock>
 
-        <Button x:Name="rollGenerator" Grid.Row="2" Grid.Column="3" Click="rollGenerator_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Roll Generator</Button>
+        <Button x:Name="deleteCourses" Grid.Row="2" Grid.Column="3" Click="deleteCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Delete Selection Course</Button>
+        <Button x:Name="changeCourses" Grid.Row="2" Grid.Column="2" Click="changeCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Change Selection Course</Button>
         <Button x:Name="addCourses" Grid.Row="2" Grid.Column="4" Click="addCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Add Courses</Button>
 
         <ProgressRing Name="waitingRing" Width="60" Height="60" IsIndeterminate="False" Background="LightGray" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-        <controls:DataGrid x:Name="myCoursesTable" IsReadOnly="True" HeadersVisibility="Column" AutoGenerateColumns="False" ItemsSource="{x:Bind ViewModel.TableCourses , Mode=OneWay}" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,20,0,20">
+        <controls:DataGrid x:Name="myCoursesTable" SelectionMode="Single" IsReadOnly="True" HeadersVisibility="Column" AutoGenerateColumns="False" ItemsSource="{x:Bind ViewModel.TableCourses , Mode=OneWay}" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" Margin="0,20,0,20">
             <controls:DataGrid.Resources>
                 <Style x:Key="DataGridColumnHeaderStyle" TargetType="controls:DataGridRowGroupHeader">
                     <Setter Property="FontSize" Value="20"/>
@@ -52,6 +53,7 @@
                 </Style>
             </controls:DataGrid.Resources>
 
+          
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="Course ID" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding ID }" />
                 <controls:DataGridTextColumn Header="Course Code" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseCode}" />

@@ -33,7 +33,7 @@ namespace LearningManagementSystem.ViewModels
 
         public int FindDepartmentID(string input)
         {
-            var token=input.Split('-');
+            var token=input.Split(" - ");
 
             return _dao.FindDepartmentID(new Department { DepartmentCode = token[0] });
 

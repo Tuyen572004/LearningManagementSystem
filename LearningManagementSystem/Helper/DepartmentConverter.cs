@@ -11,7 +11,6 @@ namespace LearningManagementSystem.Helper
         {
             if (value is Department department)
             {
-                // Combine the DepartmentCode and DepartmentDesc with a dash
                 return $"{department.DepartmentCode} - {department.DepartmentDesc}";
             }
             return string.Empty;

@@ -24,6 +24,7 @@
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\EditCourses.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -57,6 +58,11 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\EditCourses.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\AddCourse.xaml">

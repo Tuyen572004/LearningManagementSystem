@@ -34,7 +34,6 @@ namespace LearningManagementSystem.Views
             ViewModel = new CourseViewModel();
             DeViewModel = new DepartmentsViewModel();
             departmentComboBox.ItemsSource = DeViewModel.Departments;
-            BindComboBoxSelectionToTextBlock(departmentComboBox, RvDepartment);
             //departmentComboBox.SelectedIndex = 0;
         }
 
@@ -68,7 +67,7 @@ namespace LearningManagementSystem.Views
             {
                 CourseCode = inputCourseCode.Text,
                 CourseDescription = inputCourseDescription.Text,
-                DepartmentId = DeViewModel.FindDepartmentID(departmentComboBox.SelectedItem.ToString())
+                DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
             };
 
             int count=ViewModel.InsertCourse(course);
@@ -83,25 +82,5 @@ namespace LearningManagementSystem.Views
 
             Frame.GoBack();
         }
-
-        private void departmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //
-        }
-
-        private void BindComboBoxSelectionToTextBlock(ComboBox comboBox, TextBlock targetTextBlock)
-        {
-            // Create a binding for the selected item of the ComboBox
-            Binding binding = new Binding
-            {
-                Source = comboBox,
-                Path = new PropertyPath("SelectedItem"),
-                Mode = BindingMode.OneWay // One-way binding for display purposes
-            };
-
-            // Set the binding to the Text property of the target TextBlock
-            targetTextBlock.SetBinding(TextBlock.TextProperty, binding);
-        }
-
     }
 }
