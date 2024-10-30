@@ -1,3 +1,4 @@
+using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -56,6 +57,9 @@ namespace LearningManagementSystem
                         //case "Settings":
                         //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
                         //    break;
+                    case "students":
+                        ContentFrame.NavigateToType(typeof(StudentDisplayerPage), null, navOptions);
+                        break;
                 }
             }
         }
