@@ -4,11 +4,17 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:helper="using:LearningManagementSystem.Helper"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <helper:DepartmentConverter x:Key="DepartmentViewModel"/>
+    </Page.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -42,13 +48,13 @@
             <TextBox Name="inputCourseDescription" Width="Auto"></TextBox>
 
             <TextBlock  Name="DepartmentTB" FontWeight="ExtraBold" FontSize="25">Department ID</TextBlock>
-            <TextBox Name="inputDepartmentID" Width="Auto"></TextBox>
+            <!--<TextBox Name="inputDepartmentID" Width="Auto"></TextBox>-->
 
             <ComboBox Name="departmentComboBox" Width="Auto" Height="35" SelectionChanged="departmentComboBox_SelectionChanged">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
-                            <Run Text="{Binding DepartmentCode}"/> - <Run Text="{Binding DepartmentDescription}"/>
+                            <Run Text="{Binding DepartmentCode}"/> - <Run Text="{Binding DepartmentDesc}"/>
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -60,7 +66,8 @@
         <Border BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="30,50,0,0" Padding="20,20,20,20">
             <StackPanel Spacing="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2">
                 <TextBlock Text="{x:Bind inputCourseCode.Text, Mode=OneWay}" Name="RvCourseCode" FontWeight="ExtraBold" FontSize="25" Foreground="Cyan"></TextBlock>
-                <TextBlock Text="{x:Bind inputDepartmentID.Text, Mode=OneWay}" Name="RvDepartment"  FontWeight="Normal" FontSize="20" HorizontalAlignment="Right" FontStyle="Italic"></TextBlock>
+                <TextBlock Name="RvDepartment" Width="Auto" Height="35" 
+                   Text="{Binding SelectedValue, ElementName=departmentComboBox, Converter={StaticResource DepartmentViewModel}}"/>
                 <TextBlock Text="{x:Bind inputCourseDescription.Text, Mode=OneWay}" Name="RvCourseDescrip" FontWeight="Normal" FontSize="20"></TextBlock>
             </StackPanel>
         </Border>

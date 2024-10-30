@@ -259,6 +259,25 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public int FindDepartmentID(Department department)
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select Id from Departments where DepartmentCode=@DepartmentCode";
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@DepartmentCode", MySqlDbType.String).Value = department.DepartmentCode;
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    department.Id = reader.GetInt32("Id");
+                }
+
+                this.CloseConnection();
+                return department.Id;
+            }
+            else return -1;
+        }
     }
     public class DBConnection
     {

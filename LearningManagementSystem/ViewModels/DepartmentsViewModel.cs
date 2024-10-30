@@ -29,6 +29,15 @@ namespace LearningManagementSystem.ViewModels
             GetAllDepartments();
         }
 
+        // Find department Id by YY with input is YY - XXXXX
+
+        public int FindDepartmentID(string input)
+        {
+            var token=input.Split('-');
+
+            return _dao.FindDepartmentID(new Department { DepartmentCode = token[0] });
+
+        }
         public void GetAllDepartments()
         {
             var (totalItems, departments) = _dao.GetAllDepartments(CurrentPage, PageSize, Keyword, NameAscending);

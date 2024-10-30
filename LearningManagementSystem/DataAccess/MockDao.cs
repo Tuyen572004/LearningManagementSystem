@@ -16,6 +16,11 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public int FindDepartmentID(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
             var database = new List<Course>

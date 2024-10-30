@@ -26,10 +26,16 @@ namespace LearningManagementSystem.Views
     public sealed partial class AddCourse : Page
     {
         private CourseViewModel ViewModel { get; set; }
+
+        private DepartmentsViewModel DeViewModel { get; set; }
         public AddCourse()
         {
             this.InitializeComponent();
             ViewModel = new CourseViewModel();
+            DeViewModel = new DepartmentsViewModel();
+            departmentComboBox.ItemsSource = DeViewModel.Departments;
+            BindComboBoxSelectionToTextBlock(departmentComboBox, RvDepartment);
+            //departmentComboBox.SelectedIndex = 0;
         }
 
         private async void cancel_Click(object sender, RoutedEventArgs e)
@@ -62,7 +68,7 @@ namespace LearningManagementSystem.Views
             {
                 CourseCode = inputCourseCode.Text,
                 CourseDescription = inputCourseDescription.Text,
-                DepartmentId = int.Parse(inputDepartmentID.Text)
+                DepartmentId = DeViewModel.FindDepartmentID(departmentComboBox.SelectedItem.ToString())
             };
 
             int count=ViewModel.InsertCourse(course);
@@ -80,13 +86,22 @@ namespace LearningManagementSystem.Views
 
         private void departmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            dynamic item = departmentComboBox.SelectedItem;
-
-            if (item != null)
-            {
-                inputDepartmentID.Text = item.Id.ToString();
-            }
-
+            //
         }
+
+        private void BindComboBoxSelectionToTextBlock(ComboBox comboBox, TextBlock targetTextBlock)
+        {
+            // Create a binding for the selected item of the ComboBox
+            Binding binding = new Binding
+            {
+                Source = comboBox,
+                Path = new PropertyPath("SelectedItem"),
+                Mode = BindingMode.OneWay // One-way binding for display purposes
+            };
+
+            // Set the binding to the Text property of the target TextBlock
+            targetTextBlock.SetBinding(TextBlock.TextProperty, binding);
+        }
+
     }
 }

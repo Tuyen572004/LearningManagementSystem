@@ -34,7 +34,7 @@ namespace LearningManagementSystem.DataAccess
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
 
-
+        int FindDepartmentID(Department department);
         // ------------------------------------------------ //
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);
