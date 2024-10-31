@@ -33,13 +33,28 @@ namespace LearningManagementSystem.Views
             this.InitializeComponent();
             ViewModel = new EditCourseViewModel();
             DeViewModel = new DepartmentsViewModel();
+            departmentComboBox.ItemsSource = DeViewModel.Departments;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var oldCourse = e.Parameter as TableCoursesView;
+            var oldTableCourse = e.Parameter as TableCoursesView;
 
-            ViewModel.SelectedCourse = oldCourse.Clone() as TableCoursesView;
+            var oldCourse = new Course
+            {
+                Id= oldTableCourse.ID,
+                CourseCode = oldTableCourse.CourseCode,
+                CourseDescription = oldTableCourse.CourseDecription,
+                DepartmentId = oldTableCourse.DepartmentID
+            };
+
+            ViewModel.SelectedCourse = oldCourse.Clone() as Course;
+
+            inputCourseCode.Text = ViewModel.SelectedCourse.CourseCode;
+            inputCourseDescription.Text = ViewModel.SelectedCourse.CourseDescription;
+            //DeViewModel.FindDepartmentID(ViewModel.SelectedCourse.DepartmentId.ToString());
+
+            departmentComboBox.SelectedIndex = DeViewModel.Departments.IndexOf(DeViewModel.Departments.FirstOrDefault(x => x.Id == ViewModel.SelectedCourse.DepartmentId));
 
             base.OnNavigatedTo(e);
         }
@@ -85,12 +100,14 @@ namespace LearningManagementSystem.Views
             {
                 var newCourse = new Course
                 {
+                    Id=ViewModel.SelectedCourse.Id,
                     CourseCode = inputCourseCode.Text,
                     CourseDescription = inputCourseDescription.Text,
                     DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
                 };
 
-                ViewModel.SelectedCourse = newCourse.Clone() as TableCoursesView;
+                ViewModel.SelectedCourse = newCourse.Clone() as Course;
+                ViewModel.UpdateCourse(ViewModel.SelectedCourse);
                 Frame.Navigate(typeof(CoursesPage), ViewModel.SelectedCourse);
             }
             else

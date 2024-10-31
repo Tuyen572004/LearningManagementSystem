@@ -28,12 +28,13 @@ namespace LearningManagementSystem
     {
         public TableCoursesViewModel ViewModel { get; set; }
 
-      
+        public CourseViewModel CrsViewModel { get; set; }
+
         public CoursesPage()
         {
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
-            
+            CrsViewModel = new CourseViewModel();
             myCoursesTable.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
@@ -110,8 +111,16 @@ namespace LearningManagementSystem
         {
             if (e.Parameter!=null)
             {
-                var _oldData = e.Parameter as TableCoursesView;
-                ViewModel.SelectedCourse = _oldData.Clone() as TableCoursesView;
+                var _oldData = e.Parameter as Course;
+                var oldCourse = new TableCoursesView
+                {
+                    ID = _oldData.Id,
+                    CourseCode = _oldData.CourseCode,
+                    CourseDecription = _oldData.CourseDescription,
+                    DepartmentID = _oldData.DepartmentId
+                };
+
+                ViewModel.SelectedCourse = oldCourse.Clone() as TableCoursesView;
             }
 
             base.OnNavigatedTo(e);

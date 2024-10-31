@@ -21,6 +21,8 @@ namespace LearningManagementSystem.DataAccess
         int InsertCourse(Course course);
         void UpdateCourse(Course course);
         void RemoveCourseByID(int courseId);
+
+        int CountCourse();
         // ------------------------------------------------ //
 
         Tuple<int, List<Department>> GetAllDepartments(
@@ -34,6 +36,7 @@ namespace LearningManagementSystem.DataAccess
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
 
+        int CountDepartments();
         int FindDepartmentID(Department department);
         // ------------------------------------------------ //
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);

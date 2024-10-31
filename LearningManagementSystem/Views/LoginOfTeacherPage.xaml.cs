@@ -27,5 +27,12 @@ namespace LearningManagementSystem
         {
             this.InitializeComponent();
         }
+
+        private void LoginBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var screen = new DashBoard();
+            screen.Activate();
+     
+        }
     }
 }

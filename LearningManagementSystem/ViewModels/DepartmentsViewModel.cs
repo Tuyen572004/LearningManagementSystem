@@ -30,7 +30,10 @@ namespace LearningManagementSystem.ViewModels
         }
 
         // Find department Id by YY with input is YY - XXXXX
-
+        public int CountDepartments()
+        {
+            return _dao.CountDepartments();
+        }
         public int FindDepartmentID(string input)
         {
             var token=input.Split(" - ");

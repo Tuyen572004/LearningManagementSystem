@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class EditCourseViewModel : TableCoursesViewModel
+    public class EditCourseViewModel : CourseViewModel
     {
        
         public EditCourseViewModel()

@@ -9,6 +9,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150"/>
@@ -25,23 +27,24 @@
             <ColumnDefinition Width="500"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Rectangle Fill="Red" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="0"/>
+        <Rectangle Fill="Green" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="0"/>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="0">
-            <Rectangle Fill="AntiqueWhite" Height="100" Width="100" Margin="0,0,0,10"/>
+            <Image Source="/Assets/group.png" Height="100" Width="100" Margin="0,0,0,10"/>
             <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5" FontWeight="ExtraBold">Type Student Account</TextBlock>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Rectangle Fill="Black" Width="75" Height="25"/>
+            <Image Source="/Assets/key.png" Width="75" Height="25"/>
             <TextBox Name="inputUsername" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your ID"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Rectangle Fill="Black" Width="75" Height="25"/>
+            <Image Source="/Assets/locked-computer.png" Width="75" Height="25"/>
             <TextBox Name="inputPassword" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your password"/>
         </StackPanel>
 
 
-        <Button Name="LoginBtn" Width="475" Height="40" CornerRadius="0" Background="Coral" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center">Login</Button>
+        <Button Name="LoginBtn" Width="475" Height="40" Click="LoginBtn_Click" CornerRadius="0" Background="Green" FontWeight="Bold" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center">Login</Button>
 
     </Grid>
+    
 </Page>

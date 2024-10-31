@@ -11,6 +11,16 @@ namespace LearningManagementSystem.DataAccess
 {
     internal class MockDao : IDao
     {
+        public int CountCourse()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CountDepartments()
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteCourse(int courseId)
         {
             throw new NotImplementedException();

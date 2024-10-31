@@ -17,13 +17,14 @@ namespace LearningManagementSystem.ViewModels
 
         private IDao _dao = null;
 
-        
+        public Course SelectedCourse { get; set; }
 
         public FullObservableCollection<Course> Courses { get; set; }
 
         public CourseViewModel()
         {
             _dao = new SqlDao();
+            SelectedCourse = new Course();
             GetAllCourse();
         }
 
@@ -50,6 +51,10 @@ namespace LearningManagementSystem.ViewModels
             return count;
         }
 
+        public int CountCourse()
+        {
+            return _dao.CountCourse();
+        }
         public void Load(int page)
         {
             CurrentPage = page;
@@ -60,6 +65,11 @@ namespace LearningManagementSystem.ViewModels
         {
             _dao.RemoveCourseByID(course.Id);
 
+        }
+
+        public void UpdateCourse(Course course)
+        {
+            _dao.UpdateCourse(course);
         }
 
         

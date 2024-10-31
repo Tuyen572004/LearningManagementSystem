@@ -163,9 +163,22 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
-            public void UpdateCourse(Course course)
+        public void UpdateCourse(Course course)
         {
-            throw new NotImplementedException();
+            if (this.OpenConnection() == true)
+            {
+                var sql = "update courses set CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId where Id=@Id";
+                var command = new MySqlCommand(sql, connection);
+
+                command.Parameters.Add("@CourseCode", MySqlDbType.String).Value = course.CourseCode;
+                command.Parameters.Add("@CourseDescription", MySqlDbType.String).Value = course.CourseDescription;
+                command.Parameters.Add("@DepartmentId", MySqlDbType.Int32).Value = course.DepartmentId;
+                command.Parameters.Add("@Id", MySqlDbType.Int32).Value = course.Id;
+
+                int count = command.ExecuteNonQuery();
+
+                this.CloseConnection();
+            }
         }
 
 
@@ -277,6 +290,46 @@ namespace LearningManagementSystem.DataAccess
                 return department.Id;
             }
             else return -1;
+        }
+
+        public int CountCourse()
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from courses";
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+                
+
+                this.CloseConnection();
+                return result;
+            }
+            else return 0;
+        }
+
+        public int CountDepartments()
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from departments";
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result;
+            }
+            else return 0;
         }
     }
     public class DBConnection
