@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using LearningManagementSystem.ViewModels;
+using LearningManagementSystem.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,17 +26,20 @@ namespace LearningManagementSystem.Views
     public sealed partial class EditCourses : Page
     {
         public EditCourseViewModel ViewModel { get; set; }
+
+        private DepartmentsViewModel DeViewModel { get; set; }
         public EditCourses()
         {
             this.InitializeComponent();
             ViewModel = new EditCourseViewModel();
+            DeViewModel = new DepartmentsViewModel();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel._oldData = e.Parameter as CourseViewModel;
+            var oldCourse = e.Parameter as TableCoursesView;
 
-            ViewModel._selectedData = ViewModel._oldData. as CourseViewModel;
+            ViewModel.SelectedCourse = oldCourse.Clone() as TableCoursesView;
 
             base.OnNavigatedTo(e);
         }
@@ -55,7 +59,7 @@ namespace LearningManagementSystem.Views
 
             if (result == ContentDialogResult.Primary)
             {
-                Frame.Navigate(typeof(CoursesPage), ViewModel._oldData);
+                Frame.Navigate(typeof(CoursesPage), ViewModel.SelectedCourse);
             }
             else
             {
@@ -79,6 +83,14 @@ namespace LearningManagementSystem.Views
 
             if (result == ContentDialogResult.Primary)
             {
+                var newCourse = new Course
+                {
+                    CourseCode = inputCourseCode.Text,
+                    CourseDescription = inputCourseDescription.Text,
+                    DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
+                };
+
+                ViewModel.SelectedCourse = newCourse.Clone() as TableCoursesView;
                 Frame.Navigate(typeof(CoursesPage), ViewModel.SelectedCourse);
             }
             else

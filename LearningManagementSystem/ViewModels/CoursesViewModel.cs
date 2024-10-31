@@ -17,7 +17,8 @@ namespace LearningManagementSystem.ViewModels
 
         private IDao _dao = null;
 
-       
+        
+
         public FullObservableCollection<Course> Courses { get; set; }
 
         public CourseViewModel()

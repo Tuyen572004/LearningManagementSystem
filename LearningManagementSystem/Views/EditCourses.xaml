@@ -64,10 +64,10 @@
 
         <Border BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="30,50,0,0" Padding="20,20,20,20">
             <StackPanel Spacing="5" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2">
-                <TextBlock Text="{x:Bind inputCourseCode.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Name="RvCourseCode" FontWeight="ExtraBold" FontSize="25" Foreground="Cyan"></TextBlock>
+                <TextBlock Text="{x:Bind inputCourseCode.Text, Mode=OneWay}" Name="RvCourseCode" FontWeight="ExtraBold" FontSize="25" Foreground="Cyan"></TextBlock>
                 <TextBlock Name="RvDepartment" Width="Auto" Height="35" 
-               Text="{Binding SelectedValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ElementName=departmentComboBox, Converter={StaticResource DepartmentViewModel}}"/>
-                <TextBlock Text="{x:Bind inputCourseDescription.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Name="RvCourseDescrip" FontWeight="Normal" FontSize="20"></TextBlock>
+               Text="{Binding SelectedValue, Mode=OneWay, ElementName=departmentComboBox, Converter={StaticResource DepartmentViewModel}}"/>
+                <TextBlock Text="{x:Bind inputCourseDescription.Text, Mode=OneWay}" Name="RvCourseDescrip" FontWeight="Normal" FontSize="20"></TextBlock>
             </StackPanel>
         </Border>
     </Grid>

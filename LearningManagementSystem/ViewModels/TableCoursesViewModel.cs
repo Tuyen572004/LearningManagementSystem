@@ -28,6 +28,7 @@ namespace LearningManagementSystem.ViewModels
         public int TotalStudents { get; set; }
         public int TotalSubjects { get; set; }
 
+        public int DepartmentID { get; set; }
         public object Clone()
         {
             return new TableCoursesView
@@ -35,6 +36,7 @@ namespace LearningManagementSystem.ViewModels
                 ID = this.ID,
                 CourseCode = this.CourseCode,
                 CourseDecription = this.CourseDecription,
+                DepartmentID=this.DepartmentID,
                 TotalStudents = this.TotalStudents,
                 TotalSubjects = this.TotalSubjects
             };
@@ -44,15 +46,16 @@ namespace LearningManagementSystem.ViewModels
     {
         private IDao _dao = null;
        
+        public TableCoursesView SelectedCourse { get; set; }
         public FullObservableCollection<TableCoursesView> TableCourses { get; set; }
 
-        public TableCoursesView SelectedCourse { get; set; }
+       
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
             _dao = new SqlDao();
             SelectedCourse = new TableCoursesView();
-            
+
         }
         public void GetAllCourse()
         {
@@ -67,6 +70,7 @@ namespace LearningManagementSystem.ViewModels
                         ID = courses[i].Id,
                         CourseCode = courses[i].CourseCode,
                         CourseDecription = courses[i].CourseDescription,
+                        DepartmentID= courses[i].DepartmentId,
                         TotalStudents = 0,
                         TotalSubjects = 0
                     });

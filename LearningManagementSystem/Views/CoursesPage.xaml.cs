@@ -28,13 +28,17 @@ namespace LearningManagementSystem
     {
         public TableCoursesViewModel ViewModel { get; set; }
 
+      
         public CoursesPage()
         {
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
+            
             myCoursesTable.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
+
+       
 
         private async void StartRingProcess()
         {
@@ -79,7 +83,7 @@ namespace LearningManagementSystem
                         Id = selectedCourse.ID,
                         CourseCode = selectedCourse.CourseCode,
                         CourseDescription = selectedCourse.CourseDecription,
-                        DepartmentId = 0
+                        DepartmentId = selectedCourse.DepartmentID
                     });
                     myCoursesTable.SelectedItem = null; // Clear the selection after deletion
 
@@ -107,7 +111,7 @@ namespace LearningManagementSystem
             if (e.Parameter!=null)
             {
                 var _oldData = e.Parameter as TableCoursesView;
-                ViewModel.SelectedCourse = _oldData;
+                ViewModel.SelectedCourse = _oldData.Clone() as TableCoursesView;
             }
 
             base.OnNavigatedTo(e);
@@ -115,7 +119,13 @@ namespace LearningManagementSystem
 
         private void changeCourses_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
+            if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
+            {
+                ViewModel.SelectedCourse = selectedCourse.Clone() as TableCoursesView;
+
+
+                Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
+            }
         }
     }
 }
