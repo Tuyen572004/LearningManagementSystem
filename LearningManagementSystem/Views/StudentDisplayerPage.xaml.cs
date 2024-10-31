@@ -26,12 +26,17 @@ namespace LearningManagementSystem.Views
     public sealed partial class StudentDisplayerPage : Page
     {
         private readonly StudentsViewModel _viewModel = new(new MockDao());
+        public StudentsViewModel ViewModel => _viewModel;
         public StudentDisplayerPage()
         {
             this.InitializeComponent();
-            QueryTest();
+            // QueryTest();
+
+            _viewModel.MakeQuery()
+                .Execute();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
         private void QueryTest()
         {
             _viewModel.MakeQuery()
@@ -63,6 +68,16 @@ namespace LearningManagementSystem.Views
                 .Execute();
 
             return;
+        }
+
+        private void Button_NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NavigateToPage(_viewModel.CurrentPage + 1);
+        }
+
+        private void Button_PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NavigateToPage(_viewModel.CurrentPage - 1);
         }
     }
 }

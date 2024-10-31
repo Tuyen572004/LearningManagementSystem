@@ -1,9 +1,11 @@
 ﻿#nullable enable
+using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -243,12 +245,13 @@ namespace LearningManagementSystem.ViewModels
         }
     }
 
-    public partial class StudentsViewModel(IDao dao) : BaseViewModel
+    public partial class StudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;
         public int CurrentPage { get; internal set; } = 1;
         private int _rowsPerPage = DEFAULT_ROWS_PER_PAGE;
+
         public int RowsPerPage
         {
             get => _rowsPerPage;
@@ -292,13 +295,17 @@ namespace LearningManagementSystem.ViewModels
                 );
             ItemCount = queryCount;
             ManagingStudents = resultList;
+
+            // You must "roar" by yourself :'))
+            RaisePropertyChanged(nameof(ManagingStudents));
         }
 
         public StudentsViewModel NavigateToPage(int pageNumber)
         {
             if (pageNumber < 1 || pageNumber > PageCount)
             {
-                throw new ArgumentException("Invalid page number");
+                return this;
+                // throw new ArgumentException("Invalid page number");
             }
             CurrentPage = pageNumber;
             GetStudents();
