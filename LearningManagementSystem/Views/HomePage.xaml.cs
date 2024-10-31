@@ -1,3 +1,4 @@
+using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,9 +24,13 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        public HomePageViewModel ViewModel { get; set; }
+
         public HomePage()
         {
             this.InitializeComponent();
+            ViewModel = new HomePageViewModel();
+            ViewModel.GetNow();
         }
     }
 }

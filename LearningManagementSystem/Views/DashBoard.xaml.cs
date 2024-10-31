@@ -26,39 +26,62 @@ namespace LearningManagementSystem
         public DashBoard()
         {
             this.InitializeComponent();
+            NavigateByTag("LearningManagementSystem.HomePage");
             menu.SelectionChanged += menu_SelectionChanged;
         }
 
-
         private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            FrameNavigationOptions navOptions = new()
+            if (args.SelectedItem is NavigationViewItem item &&
+                item.Tag is string tag)
             {
-                TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
-            };
-
-            if (args.SelectedItemContainer.Tag is string selectedItemTag)
-            {
-                switch (selectedItemTag)
-                {
-                    case "home":
-                        ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
-                        break;
-                    case "courses":
-                        ContentFrame.NavigateToType(typeof(CoursesPage), null, navOptions);
-                        break;
-                        //case "Students":
-                        //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
-                        //    break;
-                        //case "Teachers":
-                        //    ContentFrame.NavigateToType(typeof(Teachers), null, navOptions);
-                        //    break;
-                        //case "Settings":
-                        //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
-                        //    break;
-                }
+                NavigateByTag(tag);
             }
         }
+
+        private void NavigateByTag(string tag)
+        {
+            if (this.menu.MenuItems
+                .OfType<NavigationViewItem>()
+                .Where(x => x.Tag.Equals(tag) is true)
+                .FirstOrDefault() is NavigationViewItem item)
+            {
+                this.menu.SelectedItem = item;
+                this.ContentFrame.Navigate(Type.GetType($"{item.Tag}"));
+            }
+        }
+
+        //private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        //{
+        //    FrameNavigationOptions navOptions = new()
+        //    {
+        //        TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
+        //    };
+
+        //    if (args.SelectedItemContainer.Tag is string selectedItemTag)
+        //    {
+        //        switch (selectedItemTag)
+        //        {
+        //            case "home":
+        //                ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
+        //                break;
+        //            case "courses":
+        //                ContentFrame.NavigateToType(typeof(CoursesPage), null, navOptions);
+        //                break;
+        //            //case "Students":
+        //            //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
+        //            //    break;
+        //            //case "Teachers":
+        //            //    ContentFrame.NavigateToType(typeof(Teachers), null, navOptions);
+        //            //    break;
+        //            //case "Settings":
+        //            //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
+        //            //    break;
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //}
 
     }
 }
