@@ -1,4 +1,3 @@
-using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -22,26 +21,11 @@ namespace LearningManagementSystem.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class EnrollmentClassesPage : Page
+    public sealed partial class SpecificClass : Page
     {
-        private EnrollmentClassesViewModel ViewModel { get; set; }
-        public EnrollmentClassesPage()
+        public SpecificClass()
         {
             this.InitializeComponent();
-            ViewModel = new EnrollmentClassesViewModel();
-            ViewModel.LoadEnrolledClasses();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-        private void EnterButton_Click(object sender, RoutedEventArgs e)
-        {
-            // get class by class id and redirect to the class page
-
         }
     }
 }

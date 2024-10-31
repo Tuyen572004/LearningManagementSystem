@@ -20,7 +20,7 @@ namespace LearningManagementSystem.ViewModels
         public string ClassTitle => $"{Course.CourseCode}-{Course.CourseDescription} {Class.ClassCode}";
         public string DepartmentName => $"Dept. of {Department.DepartmentCode}-{Department.DepartmentDesc}";
     }
-
+   
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance

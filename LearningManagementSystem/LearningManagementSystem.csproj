@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
+		<None Remove="Views\SpecificClass.xaml" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -40,10 +41,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Fody" Version="6.8.2">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
@@ -60,7 +57,9 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Views\" />
+	  <Page Update="Views\SpecificClass.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="CoursesPage.xaml">

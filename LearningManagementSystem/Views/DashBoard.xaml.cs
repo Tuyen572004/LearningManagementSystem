@@ -1,3 +1,4 @@
+using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -45,7 +46,7 @@ namespace LearningManagementSystem
                         ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
                         break;
                     case "courses":
-                        ContentFrame.NavigateToType(typeof(CoursesPage), null, navOptions);
+                        ContentFrame.NavigateToType(typeof(EnrollmentClassesPage), null, navOptions);
                         break;
                         //case "Students":
                         //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
