@@ -11,11 +11,115 @@ namespace LearningManagementSystem.DataAccess
 {
     internal class MockDao : IDao
     {
+        public int CountCourse()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CountDepartments()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteCourse(int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int FindDepartmentID(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            var database = new List<Course>
+            {
+                new Course
+                {
+                    Id = 1,
+                    CourseCode = "CSE101",
+                    CourseDescription = "Introduction to Computer Science",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 2,
+                    CourseCode = "CSE102",
+                    CourseDescription = "Data Structures and Algorithms",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 3,
+                    CourseCode = "CSE103",
+                    CourseDescription = "Operating Systems",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 4,
+                    CourseCode = "CSE104",
+                    CourseDescription = "Computer Networks",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 5,
+                    CourseCode = "CSE105",
+                    CourseDescription = "Database Management Systems",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 6,
+                    CourseCode = "CSE106",
+                    CourseDescription = "Software Engineering",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                    Id = 7,
+                    CourseCode = "CSE107",
+                    CourseDescription = "Web Development",
+                    DepartmentId = 1
+                },
+                new Course
+                {
+                Id = 8,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+                }
+            };
+
+            var origin = database.Where(a => a.CourseDescription.Contains(keyword));
+            if (nameAscending)
+            {
+                origin=origin.OrderBy(a => a.CourseCode);
+
+            }
+
+            var totalItems = origin.Count();
+
+            var result = origin
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new Tuple<int, List<Course>>(totalItems, result);
+        }
+
+        public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            throw new NotImplementedException();
+        }
+
         public Course GetCourseById(int courseId)
         {
             Random random = new Random();
             courseId = random.Next(1, 20);
-            if (courseId %8== 1)
+            if (courseId % 8 == 1)
             {
                 return new Course
                 {
@@ -25,7 +129,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if(courseId%8 == 2)
+            if (courseId % 8 == 2)
             {
                 return new Course
                 {
@@ -35,7 +139,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 3)
+            if (courseId % 8 == 3)
             {
                 return new Course
                 {
@@ -45,7 +149,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 4)
+            if (courseId % 8 == 4)
             {
                 return new Course
                 {
@@ -55,7 +159,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 5)
+            if (courseId % 8 == 5)
             {
                 return new Course
                 {
@@ -65,7 +169,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 6)
+            if (courseId % 8 == 6)
             {
                 return new Course
                 {
@@ -75,7 +179,7 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            if (courseId%8 == 7)
+            if (courseId % 8 == 7)
             {
                 return new Course
                 {
@@ -85,14 +189,14 @@ namespace LearningManagementSystem.DataAccess
                     DepartmentId = 1
                 };
             }
-            
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE108",
-                    CourseDescription = "Computer Graphics",
-                    DepartmentId = 1
-                };
+
+            return new Course
+            {
+                Id = courseId,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+            };
 
         }
 
@@ -329,9 +433,39 @@ namespace LearningManagementSystem.DataAccess
                         TeacherName = "Alice Johnson",
                         Email = "janesmith@example.com",
                         PhoneNo = "9876543210",
-                        UserId = 3 
+                        UserId = 3
                     }
-                };
+            };
+        }
+
+        public int InsertCourse(Course course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int InsertDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveCourseByID(int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDepartmentByID(int departmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCourse(Course course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDepartment(Department department)
+        {
+            throw new NotImplementedException();
         }
     }
 }

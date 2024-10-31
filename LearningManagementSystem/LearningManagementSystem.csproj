@@ -17,17 +17,34 @@
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Remove="Assets\background.png" />
+	  <Content Remove="Assets\books.png" />
+	  <Content Remove="Assets\graduated.png" />
+	  <Content Remove="Assets\group.png" />
+	  <Content Remove="Assets\it-department.png" />
+	  <Content Remove="Assets\key.png" />
+	  <Content Remove="Assets\locked-computer.png" />
+	  <Content Remove="Assets\online-learning.png" />
+	  <Content Remove="Assets\teacher.png" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
 	  <None Remove="LoginOfStudentPage.xaml" />
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
+	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\EditCourses.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
+<<<<<<< HEAD
 		<None Remove="Views\SpecificClass.xaml" />
+=======
+		<None Remove="Views\StackPanelTime.xaml" />
+>>>>>>> 5cf3ea88225951adb0ab9586671d22bc67155e04
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -41,9 +58,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+<<<<<<< HEAD
+=======
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+>>>>>>> 5cf3ea88225951adb0ab9586671d22bc67155e04
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
+		<PackageReference Include="MySql.Data" Version="9.1.0" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
@@ -57,7 +79,48 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
+<<<<<<< HEAD
 	  <Page Update="Views\SpecificClass.xaml">
+=======
+	  <None Update="Assets\background.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\books.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\graduated.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\group.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\it-department.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\key.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\locked-computer.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\online-learning.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\teacher.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <Page Update="Views\StackPanelTime.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\EditCourses.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\AddCourse.xaml">
+>>>>>>> 5cf3ea88225951adb0ab9586671d22bc67155e04
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
