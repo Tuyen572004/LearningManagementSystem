@@ -42,7 +42,7 @@ namespace LearningManagementSystem.ViewModels
 
         public override string ToString()
         {
-            return datetime.ToString("dddd, d MMM yyyy, HH:mm::ss",
+            return datetime.ToString("dddd, d MMM yyyy",
                   CultureInfo.CreateSpecificCulture(cultureNames));
         }
 
