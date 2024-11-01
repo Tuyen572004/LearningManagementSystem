@@ -32,12 +32,12 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/Assets/key.png" Width="75" Height="25"/>
-            <TextBox Name="inputUsername" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your ID"/>
+            <TextBox Name="inputUsername" Width="400" Background="Chocolate" Foreground="Black" PlaceholderText="Your ID"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/Assets/locked-computer.png" Width="75" Height="25"/>
-            <TextBox Name="inputPassword" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your password"/>
+            <TextBox Name="inputPassword" Width="400" Background="Chocolate" Foreground="Black" PlaceholderText="Your password"/>
         </StackPanel>
 
 

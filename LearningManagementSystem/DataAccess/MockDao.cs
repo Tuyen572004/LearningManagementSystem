@@ -11,6 +11,16 @@ namespace LearningManagementSystem.DataAccess
 {
     internal class MockDao : IDao
     {
+        public bool AddUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CheckUserInfo(User user)
+        {
+            throw new NotImplementedException();
+        }
+
         public int CountCourse()
         {
             throw new NotImplementedException();
@@ -444,6 +454,11 @@ namespace LearningManagementSystem.DataAccess
         }
 
         public int InsertDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsExistsUsername(string username)
         {
             throw new NotImplementedException();
         }
