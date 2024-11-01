@@ -8,7 +8,7 @@ namespace LearningManagementSystem.Models
         public string StudentCode { get; set; }
         public string StudentName { get; set; }
         public string Email { get; set; }
-        public DateTime BirthDate { get; set; }
+        public DateTime BirthDate { get; set; } // Should change to Date
         public string PhoneNo { get; set; }
         public int UserId { get; set; }  // Foreign key to Users table
 

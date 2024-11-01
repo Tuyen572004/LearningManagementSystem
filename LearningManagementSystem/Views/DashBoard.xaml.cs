@@ -48,7 +48,11 @@ namespace LearningManagementSystem
                 .FirstOrDefault() is NavigationViewItem item)
             {
                 this.menu.SelectedItem = item;
-                this.ContentFrame.Navigate(Type.GetType($"{item.Tag}"));
+                var navigatingType = Type.GetType($"{item.Tag}");
+                if (navigatingType is not null)
+                {
+                    this.ContentFrame.Navigate(navigatingType);
+                }
             }
         }
 

@@ -116,9 +116,13 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\AddCourse.xaml">
-	  <Page Update="Views\StudentDisplayerPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="Views\StudentDisplayerPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="CoursesPage.xaml">
