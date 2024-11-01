@@ -9,7 +9,7 @@ use LMSDb;
 CREATE TABLE Users (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     Username VARCHAR(50) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL,
+    PasswordHash VARCHAR(5000) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
     Role ENUM('student', 'teacher', 'admin') NOT NULL,
     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP

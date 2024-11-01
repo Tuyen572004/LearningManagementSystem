@@ -44,5 +44,16 @@ namespace LearningManagementSystem.DataAccess
         public Department GetDepartmentById(int departmentId);
         public ObservableCollection<Teacher> GetTeachersByClassId(int classId);
         Teacher GetTeacherById(int teacherId);
+
+        // ------------------------------------------------ //
+        public bool CheckUserInfo(User user);
+
+        public bool IsExistsUsername(string username);
+        public bool AddUser(User user);
+
+        // ------------------------------------------------ //
+
+
+
     }
 }
