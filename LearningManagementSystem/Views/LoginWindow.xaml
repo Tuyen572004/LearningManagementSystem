@@ -8,62 +8,35 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="myGrid" >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="100"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="500"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <!--<Rectangle Fill="Red" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="1"/>-->
+    <Canvas>
 
-        <NavigationView x:Name="nv" PaneDisplayMode="Top"
+        <Image Source="/Assets/background.png"  Height="Auto" Width="Auto" Canvas.ZIndex="0"/>
+
+        <StackPanel Canvas.Top="10" Canvas.Left="20" Canvas.ZIndex="2">
+            <Grid Name="myGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="100"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <NavigationView x:Name="nv" PaneDisplayMode="Top"
                     SelectionFollowsFocus="Enabled" IsBackButtonVisible="Collapsed"
                     Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <NavigationView.MenuItems>
-                <NavigationViewItem  Content="Teacher" x:Name="LoginOfTeacher" />
-                <NavigationViewItem  Content="Student" x:Name="LoginOfStudent" />
-            </NavigationView.MenuItems>
-        </NavigationView>
+                    <NavigationView.MenuItems>
+                        <NavigationViewItem FontSize="20" FontWeight="ExtraBold"  Content="Teacher" x:Name="LoginOfTeacher" />
+                        <NavigationViewItem FontSize="20" FontWeight="ExtraBold" Content="Student" x:Name="LoginOfStudent" />
+                    </NavigationView.MenuItems>
+                </NavigationView>
 
-        <Frame x:Name="ContentFrame" Grid.Column="1" Grid.Row="3"/>
-        <!--<Rectangle Fill="Blue" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="2"/>
-    
-    <Rectangle Fill="Green" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="3"/>
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="3">
-        <Rectangle Fill="AntiqueWhite" Height="100" Width="100" Margin="0,0,0,10"/>
-        <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5" FontWeight="ExtraBold">Type Account</TextBlock>
-    </StackPanel>
-
-    <Rectangle Fill="Red" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="4"/>
-    <Rectangle Fill="Blue" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="5"/>
-    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Rectangle Fill="Black" Width="75" Height="25"/>
-        <TextBox Name="inputUsername" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your ID"/>
-    </StackPanel>
-    
-    
-    <Rectangle Fill="Red" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="6"/>
-    <Rectangle Fill="Green" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="7"/>
-    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Rectangle Fill="Black" Width="75" Height="25"/>
-        <TextBox Name="inputPassword" Width="400" Background="DarkBlue" Foreground="Black" PlaceholderText="Your password"/>
-    </StackPanel>
-
-
-    <Rectangle Fill="Red" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="8"/>
-    
-    <Rectangle Fill="Blue" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="9"/>
-    <Button Name="LoginBtn" Width="475" Height="40" CornerRadius="0" Background="Coral" Grid.Column="1" Grid.Row="9" HorizontalAlignment="Center" VerticalAlignment="Center">Login</Button>
-
-    <Rectangle Fill="Green" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="10"/>-->
-
-
-    </Grid>
+                <Frame x:Name="ContentFrame" Grid.Column="1" Grid.Row="3"/>
+            </Grid>
+        </StackPanel>
+    </Canvas>
 </Window>
