@@ -331,56 +331,81 @@ namespace LearningManagementSystem.DataAccess
             }
             else return 0;
         }
-    }
-    public class DBConnection
-    {
-        private DBConnection() { }
 
-        private static DBConnection _instance = null;
-        private MySqlConnection _connection = null;
-
-        public static DBConnection Instance()
+        public bool CheckUserInfo(User user)
         {
-            if (_instance == null)
+            if (this.OpenConnection() == true)
             {
-                _instance = new DBConnection();
+                var sql = "select count(*) as TotalItems from users where Username=@username and PasswordHash=@passwordhash";
+                var command = new MySqlCommand(sql, connection);
+
+                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
+                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
+
+                //String commandtext = command.CommandText;
+                //foreach (MySql.Data.MySqlClient.MySqlParameter p in command.Parameters)
+                //{
+                //    commandtext = commandtext.Replace("@username", user.Username);
+                //    commandtext = commandtext.Replace("@passwordhash", '%'+user.PasswordHash);
+                //}
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result == 1;
             }
-            return _instance;
+            else return false;
         }
 
-        public string Server { get; set; }
-        public string DatabaseName { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-
-        public MySqlConnection Connection
+        public bool IsExistsUsername(string username)
         {
-            get
+            if (this.OpenConnection() == true)
             {
-                if (_connection == null)
-                {
-                    string connString = $"Server={Server}; database={DatabaseName}; UID={Username}; password={Password}";
-                    _connection = new MySqlConnection(connString);
-                }
-                return _connection;
+                var sql = "select count(*) as TotalItems from users where Username=@username";
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@username", MySqlDbType.String).Value = username;
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result == 1;
             }
+            else return true;
         }
 
-        public bool IsConnect()
+        public bool AddUser(User user)
         {
-            if (Connection.State == System.Data.ConnectionState.Closed)
+            if (this.OpenConnection() == true)
             {
-                Connection.Open();
-            }
-            return Connection.State == System.Data.ConnectionState.Open;
-        }
+                var sql = """
+                    insert into users (Username,PasswordHash,Email,users.Role,CreatedAt)
+                    values (@username,@passwordhash,null,@role,null);
+                    """;
 
-        public void Close()
-        {
-            if (Connection.State == System.Data.ConnectionState.Open)
-            {
-                Connection.Close();
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
+                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
+                command.Parameters.Add("@role", MySqlDbType.Int32).Value = user.Role;
+
+                int id = Convert.ToInt32(command.ExecuteScalar());
+                user.Id = id;
+
+                this.CloseConnection();
+
+                return id > 0 ? true : false;
             }
+            this.CloseConnection();
+            return false;
         }
+    
     }
 }

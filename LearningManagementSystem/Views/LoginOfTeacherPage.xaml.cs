@@ -1,3 +1,5 @@
+using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -10,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
+using System.Text;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -23,16 +27,58 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class LoginOfTeacherPage : Page
     {
+        public LoginWindowViewModel ViewModel { get; set; }
         public LoginOfTeacherPage()
         {
             this.InitializeComponent();
+            ViewModel = new LoginWindowViewModel();
         }
 
-        private void LoginBtn_Click(object sender, RoutedEventArgs e)
+        private string EncryptPassword(string password)
         {
-            var screen = new DashBoard();
-            screen.Activate();
-     
+            var passwordRaw = password;
+            var passwordInBytes = Encoding.UTF8.GetBytes(passwordRaw);
+
+            var encryptedPasswordBase64 = Convert.ToBase64String(passwordInBytes);
+
+            return encryptedPasswordBase64;
         }
+        private async void LoginBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var username = inputUsername.Text;
+            var password = inputPassword.Text;
+
+            var passwordhash = EncryptPassword(password);
+            ViewModel.UserLogin = new User
+            {
+                Username = username,
+                PasswordHash = passwordhash.Length > 4096 ? passwordhash[..4096] : passwordhash,
+                Role = "teacher"
+            };
+
+            if (ViewModel.CheckUserInfo())
+            {
+                var screen = new DashBoard();
+                screen.Activate();
+            }
+            else
+            {
+                var ctDialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Oops !",
+                    Content = "Incorrect Username or Password",
+
+                    CloseButtonText = "Try Again"
+                };
+
+
+                var result = await ctDialog.ShowAsync();
+
+            }
+
+        }
+
+
     }
 }
