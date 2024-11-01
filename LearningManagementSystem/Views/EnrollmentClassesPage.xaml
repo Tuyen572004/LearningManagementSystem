@@ -27,7 +27,7 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
-                    <Button Content="Enter" x:Name="EnterButton" HorizontalAlignment="Center" Command="{x:Bind ViewModel.NavigateCommand}" CommandParameter="{x:Bind}"/>
+                    <!--<Button Content="Enter" x:Name="EnterButton" HorizontalAlignment="Center" Command="{x:Bind Enro.NavigateCommand}" CommandParameter="{x:Bind}"/>-->
                 </StackPanel>
             </Border>
         </DataTemplate>

@@ -28,7 +28,7 @@ namespace LearningManagementSystem.DataAccess
             server = "localhost";
             database = "LMSdb";
             username = "root";
-            password = "nopassword";
+            password = "matkhaugitutim";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
         }
