@@ -1,0 +1,25 @@
+<Page
+    x:Class="LearningManagementSystem.Views.ClassDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem"
+    xmlns:vm="using:LearningManagementSystem.ViewModels"
+    xmlns:m="using:LearningManagementSystem.Models"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ListView ItemsSource="{Binding Resources}" SelectedItem="{Binding SelectedResource, Mode=TwoWay}" 
+              Command="{Binding ResourceSelectedCommand}" CommandParameter="{Binding SelectedItem}"
+              x:Name="Control4"
+              Height="400"
+              MinWidth="550"
+              BorderThickness="1"
+              BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}">
+
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Title}" />
+            </DataTemplate>
+        </ListView.ItemTemplate>
+
+    </ListView>
+</Page>

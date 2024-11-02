@@ -36,6 +36,7 @@ namespace LearningManagementSystem.Views
         {
 
         }
+<<<<<<< Updated upstream
 
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
@@ -43,5 +44,7 @@ namespace LearningManagementSystem.Views
             // get class by class id and redirect to the class page
 
         }
+=======
+>>>>>>> Stashed changes
     }
 }

@@ -12,7 +12,29 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
 
     <Page.Resources>
+<<<<<<< Updated upstream
         
+=======
+        <DataTemplate x:Key="ClassTemplate" x:DataType="vm:EnrollmentViewModel">
+            <Border BorderBrush="Gray" BorderThickness="1" Margin="10" Width="600" >
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBlock Text="{x:Bind DepartmentName}" FontSize="20" FontWeight="Bold" Margin="10,5,0,5"/>
+                    <TextBlock Text="{x:Bind ClassTitle}" FontSize="15" Margin="10,5,0,5"/>
+                    <ItemsRepeater ItemsSource="{x:Bind Teachers}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical"/>
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="m:Teacher">
+                                <TextBlock Text="{x:Bind TeacherName}" FontSize="15" Margin="10,5,0,5"/>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                    <Button Content="Enter" x:Name="EnterButton" HorizontalAlignment="Center" Command="{x:Bind NavigateToSpecificClassCommand}" CommandParameter="{x:Bind}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+>>>>>>> Stashed changes
     </Page.Resources>
 
     <Grid Background="White">

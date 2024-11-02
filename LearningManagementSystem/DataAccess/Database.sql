@@ -129,3 +129,115 @@ CREATE TABLE Submissions (
     FOREIGN KEY (StudentId) REFERENCES Students(Id)
 );
 
+CREATE TABLE ResourceCategory (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    type VARCHAR(50) NOT NULL,
+    summary TEXT
+);
+
+CREATE TABLE Announcement (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ClassID INT NOT NULL,
+    ResourceCategoryID INT NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    Description TEXT,
+    DatePosted DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ClassID) REFERENCES Classes(Id),
+    FOREIGN KEY (ResourceCategoryID) REFERENCES ResourceCategory(id)
+);
+
+CREATE TABLE Material (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ClassID INT NOT NULL,
+    ResourceCategoryID INT NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    Description TEXT,
+    URL VARCHAR(255),
+    DatePosted DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ClassID) REFERENCES Classes(Id),
+    FOREIGN KEY (ResourceCategoryID) REFERENCES ResourceCategory(id)
+);
+
+CREATE TABLE Assignment (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ClassID INT NOT NULL,
+    ResourceCategoryID INT NOT NULL,
+    Title VARCHAR(255) NOT NULL,
+    URL VARCHAR(255),
+    DatePosted DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ClassID) REFERENCES Classes(Id),
+    FOREIGN KEY (ResourceCategoryID) REFERENCES ResourceCategory(id)
+);
+-- Insert sample data into Users table
+-- INSERT INTO Users (Username, PasswordHash, Email, Role) VALUES
+-- ('student', 'hashedpassword1', 'student1@example.com', 'student'),
+-- ('teacher', 'hashedpassword2', 'teacher1@example.com', 'teacher'),
+-- ('admin1', 'hashedpassword3', 'admin1@example.com', 'admin');
+
+-- Insert sample data into Students table
+-- INSERT INTO Students (StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId) VALUES
+-- ('S001', 'John Doe', 'john.doe@example.com', '2000-01-01', '1234567890', 1);
+
+-- Insert sample data into Departments table
+INSERT INTO Departments (DepartmentCode, DepartmentDesc) VALUES
+('D001', 'Computer Science'),
+('D002', 'Mathematics');
+
+-- Insert sample data into Courses table
+INSERT INTO Courses (CourseCode, CourseDescription, DepartmentId) VALUES
+('C001', 'Introduction to Programming', 1),
+('C002', 'Calculus I', 2);
+
+-- Insert sample data into Cycles table
+INSERT INTO Cycles (CycleCode, CycleDescription, CycleStartDate, CycleEndDate) VALUES
+('CY001', 'Fall 2023', '2023-09-01', '2023-12-15');
+
+-- Insert sample data into Classes table
+INSERT INTO Classes (ClassCode, CourseId, CycleId, ClassStartDate, ClassEndDate) VALUES
+('CL001', 1, 1, '2023-09-01', '2023-12-15');
+
+-- Insert sample data into Enrollments table
+INSERT INTO Enrollments (ClassId, StudentId, EnrollmentDate) VALUES
+(1, 1, '2023-09-01');
+
+-- Insert sample data into Teachers table
+INSERT INTO Teachers (TeacherCode, TeacherName, Email, PhoneNo, UserId) VALUES
+('T001', 'Jane Smith', 'jane.smith@example.com', '0987654321', 2);
+
+-- Insert sample data into TeachersPerClass table
+INSERT INTO TeachersPerClass (ClassId, TeacherId) VALUES
+(1, 1);
+
+-- Insert sample data into Assignments table
+INSERT INTO Assignments (ClassId, TeacherId, Title, Description, DueDate) VALUES
+(1, 1, 'Assignment 1', 'Description for Assignment 1', '2023-10-01');
+
+-- Insert sample data into Notifications table
+INSERT INTO Notifications (ClassId, NotificationText) VALUES
+(1, 'Welcome to the class!');
+
+-- Insert sample data into Documents table
+INSERT INTO Documents (ClassId, DocumentTitle, DocumentPath) VALUES
+(1, 'Syllabus', '/path/to/syllabus.pdf');
+
+-- Insert sample data into Submissions table
+INSERT INTO Submissions (AssignmentId, StudentId, Answer) VALUES
+(1, 1, 'Answer to Assignment 1');
+
+-- Insert sample data into ResourceCategory table
+INSERT INTO ResourceCategory (type, summary) VALUES
+('Announcement', 'General announcements'),
+('Material', 'Course materials'),
+('Assignment', 'Assignments');
+
+-- Insert sample data into Announcement table
+INSERT INTO Announcement (ClassID, ResourceCategoryID, Title, Description) VALUES
+(1, 1, 'First Announcement', 'This is the first announcement.');
+
+-- Insert sample data into Material table
+INSERT INTO Material (ClassID, ResourceCategoryID, Title, Description, URL) VALUES
+(1, 2, 'Lecture Notes', 'Notes for the first lecture', 'http://example.com/lecture1');
+
+-- Insert sample data into Assignment table
+INSERT INTO Assignment (ClassID, ResourceCategoryID, Title, Description, URL) VALUES
+(1, 3, 'Homework 1', 'First homework assignment', 'http://example.com/homework1');

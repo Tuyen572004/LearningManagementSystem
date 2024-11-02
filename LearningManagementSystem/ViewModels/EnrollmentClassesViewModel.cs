@@ -5,30 +5,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Helper;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Command;
+using LearningManagementSystem.Views;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class EnrollmentViewModel : BaseViewModel
     {
         public Class Class { get; set; }
-
         public Course Course { get; set; }
-        public ObservableCollection<Teacher> Teachers { get; set; }
+        public FullObservableCollection<Teacher> Teachers { get; set; }
         public Department Department { get; set; }
         
         public string ClassTitle => $"{Course.CourseCode}-{Course.CourseDescription} {Class.ClassCode}";
         public string DepartmentName => $"Dept. of {Department.DepartmentCode}-{Department.DepartmentDesc}";
+
+        public ICommand NavigateToSpecificClassCommand { get; }
+
+        public EnrollmentViewModel()
+        {
+            NavigateToSpecificClassCommand = new RelayCommand(NavigateToSpecificClass);
+        }
+
+        private void NavigateToSpecificClass()
+        {
+            NavigationService.NavigateTo("ClassDetailPage", this);
+        }
+
     }
    
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance
+<<<<<<< Updated upstream
         public ObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
+=======
+        public FullObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
+>>>>>>> Stashed changes
 
         public EnrollmentClassesViewModel() 
         {
-            enrolledClassesViewModel = new ObservableCollection<EnrollmentViewModel>();
+            enrolledClassesViewModel = new FullObservableCollection<EnrollmentViewModel>();
             _dao = new MockDao();
         }
 
@@ -49,7 +68,7 @@ namespace LearningManagementSystem.ViewModels
                 var department = _dao.GetDepartmentById(course.DepartmentId);
 
                 // get teachers
-                var teachers = _dao.GetTeachersByClassId(enrolledClass.Id);
+                var teachers = new FullObservableCollection<Teacher>(_dao.GetTeachersByClassId(enrolledClass.Id));
 
                 enrolledClassesViewModel.Add(new EnrollmentViewModel
                 {

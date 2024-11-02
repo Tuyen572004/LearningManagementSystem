@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helper;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -414,9 +415,9 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
-        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
+        public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            return new ObservableCollection<Teacher>
+            return new FullObservableCollection<Teacher>
                 {
                     new Teacher
                     {
