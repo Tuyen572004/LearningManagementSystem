@@ -401,6 +401,11 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
+        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Teacher GetTeacherById(int teacherId)
         {
             return new Teacher

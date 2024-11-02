@@ -1,4 +1,5 @@
 ﻿using LearningManagementSystem.Models;
+using Microsoft.UI.Xaml;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -25,10 +26,17 @@ namespace LearningManagementSystem.DataAccess
 
         public void Initialize()
         {
+            //server = "localhost";
+            //database = "LMSdb";
+            //username = "root";
+            //password = "nopassword";
+            //string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
+            //connection = new MySqlConnection(connectionString);
+
             server = "localhost";
-            database = "LMSdb";
+            database = "learning_management_system";
             username = "root";
-            password = "nopassword";
+            password = "LMSMySqlServer@123";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
         }
@@ -167,7 +175,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "update courses set CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId where Id=@Id";
+                var sql = "update Courses set CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId where Id=@Id";
                 var command = new MySqlCommand(sql, connection);
 
                 command.Parameters.Add("@CourseCode", MySqlDbType.String).Value = course.CourseCode;
@@ -216,7 +224,7 @@ namespace LearningManagementSystem.DataAccess
             {
                 var sql = """
                     select count(*) over() as TotalItems, Id, DepartmentCode, DepartmentDesc
-                    from departments
+                    from Departments
                     where DepartmentCode like @Keyword
                     order by Id asc
                     limit @Take offset @Skip
@@ -296,7 +304,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from courses";
+                var sql = "select count(*) as TotalItems from Courses";
                 var command = new MySqlCommand(sql, connection);
 
                 var reader = command.ExecuteReader();
@@ -316,7 +324,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from departments";
+                var sql = "select count(*) as TotalItems from Departments";
                 var command = new MySqlCommand(sql, connection);
 
                 var reader = command.ExecuteReader();
@@ -336,7 +344,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from users where Username=@username and PasswordHash=@passwordhash";
+                var sql = "select count(*) as TotalItems from Users where Username=@username and PasswordHash=@passwordhash";
                 var command = new MySqlCommand(sql, connection);
 
                 command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
@@ -365,7 +373,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from users where Username=@username";
+                var sql = "select count(*) as TotalItems from Users where Username=@username";
 
                 var command = new MySqlCommand(sql, connection);
                 command.Parameters.Add("@username", MySqlDbType.String).Value = username;
@@ -387,7 +395,7 @@ namespace LearningManagementSystem.DataAccess
             if (this.OpenConnection() == true)
             {
                 var sql = """
-                    insert into users (Username,PasswordHash,Email,users.Role,CreatedAt)
+                    insert into Users (Username,PasswordHash,Email,users.Role,CreatedAt)
                     values (@username,@passwordhash,null,@role,null);
                     """;
 
@@ -406,6 +414,23 @@ namespace LearningManagementSystem.DataAccess
             this.CloseConnection();
             return false;
         }
-    
+
+        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
+        {
+            try
+            {
+                bool connectionState = OpenConnection();
+                if (connectionState)
+                {
+                    Console.WriteLine("Connection is open");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            CloseConnection();
+            return [];
+        }
     }
 }

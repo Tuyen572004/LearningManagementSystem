@@ -24,7 +24,6 @@ namespace LearningManagementSystem.DataAccess
         void RemoveCourseByID(int courseId);
 
         int CountCourse();
-        // ------------------------------------------------ //
 
         Tuple<int, List<Department>> GetAllDepartments(
             int page = 1,
@@ -39,27 +38,18 @@ namespace LearningManagementSystem.DataAccess
 
         int CountDepartments();
         int FindDepartmentID(Department department);
-        // ------------------------------------------------ //
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);
         public Department GetDepartmentById(int departmentId);
         public ObservableCollection<Teacher> GetTeachersByClassId(int classId);
         Teacher GetTeacherById(int teacherId);
 
-        // ------------------------------------------------ //
         public bool CheckUserInfo(User user);
 
         public bool IsExistsUsername(string username);
         public bool AddUser(User user);
 
-        // ------------------------------------------------ //
-
-
-
-        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
-        {
-            return [];
-        }
+        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId);
         public ObservableCollection<StudentVer2> GetStudentsByIds(IEnumerable<int> studentIds)
         {
             return [];

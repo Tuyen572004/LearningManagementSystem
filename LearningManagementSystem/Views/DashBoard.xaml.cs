@@ -27,7 +27,11 @@ namespace LearningManagementSystem
         public DashBoard()
         {
             this.InitializeComponent();
+
             NavigateByTag("LearningManagementSystem.HomePage");
+
+            // Remember to navigate back
+            // NavigateByTag("LearningManagementSystem.HomePage");
             menu.SelectionChanged += menu_SelectionChanged;
         }
 

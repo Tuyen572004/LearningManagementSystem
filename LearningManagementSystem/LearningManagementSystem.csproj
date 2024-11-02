@@ -36,6 +36,7 @@
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\ClassPreviewPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
 	</ItemGroup>
 
@@ -105,6 +106,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\ClassPreviewPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\StackPanelTime.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

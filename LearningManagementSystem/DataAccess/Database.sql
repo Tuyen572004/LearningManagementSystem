@@ -27,6 +27,20 @@ CREATE TABLE Students (
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
+-- CREATE TABLE Students (
+--     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
+--     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
+--     StudentName VARCHAR(100) NOT NULL,
+--     EnrollmentYear INT NOT NULL,
+--     GraduationYear INT,
+--     Email VARCHAR(100) NOT NULL,
+--     BirthDate DATE NOT NULL,
+--     PhoneNo VARCHAR(30),
+--     UserId INT,  -- Foreign key to Users table
+--     -- Removing NOT NULL constraint so that admin can import students directly
+--     -- without the need to create a user account immediately 
+--     FOREIGN KEY (UserId) REFERENCES Users(Id)
+-- );
 
 CREATE TABLE Departments (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
@@ -70,6 +84,17 @@ CREATE TABLE Enrollments (
     FOREIGN KEY (ClassId) REFERENCES Classes(Id),
     FOREIGN KEY (StudentId) REFERENCES Students(Id)
 );
+
+-- CREATE TABLE Enrollments (
+--     Id INT AUTO_INCREMENT PRIMARY KEY,
+--     StudentId INT NOT NULL, -- Foreign key to Students table
+--     ClassId INT NOT NULL, -- Foreign key to Classes table
+--     EnrollmentState ENUM('Enrolled', 'Dropped', 'Failed', 'Completed') NOT NULL DEFAULT 'Enrolled',
+--     CreatedAt DATE NOT NULL,
+--     Description VARCHAR(100),
+--     FOREIGN KEY (StudentId) REFERENCES Students(Id),
+--     FOREIGN KEY (ClassId) REFERENCES Classes(Id)
+-- );
 
 
 CREATE TABLE Teachers (
