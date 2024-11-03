@@ -10,7 +10,7 @@ namespace LearningManagementSystem.Models
         public string Email { get; set; }
         public DateTime BirthDate { get; set; } // Should change to Date
         public string PhoneNo { get; set; }
-        public int UserId { get; set; }  // Foreign key to Users table
+        public int? UserId { get; set; }  // Foreign key to Users table
 
         // Navigation property
         // public User User { get; set; }

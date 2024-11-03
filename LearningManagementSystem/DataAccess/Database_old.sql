@@ -20,15 +20,27 @@ CREATE TABLE Students (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
     StudentName VARCHAR(100) NOT NULL,
-    EnrollmentYear INT NOT NULL,        -- This field is added as the graduation field is added.
-                                        -- Consider adding "LearningState" field, to control expelled students (that would not graduate of course)
-    GraduationYear INT DEFAULT NULL,    -- This field is added for the classification purpose, as students graduate overtime.
     Email VARCHAR(100) NOT NULL,
     BirthDate DATE NOT NULL,
     PhoneNo VARCHAR(30),
     UserId INT NOT NULL,  -- Foreign key to Users table
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
+
+-- CREATE TABLE Students (
+--     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
+--     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
+--     StudentName VARCHAR(100) NOT NULL,
+--     EnrollmentYear INT NOT NULL,
+--     GraduationYear INT,
+--     Email VARCHAR(100) NOT NULL,
+--     BirthDate DATE NOT NULL,
+--     PhoneNo VARCHAR(30),
+--     UserId INT,  -- Foreign key to Users table
+--     -- Removing NOT NULL constraint so that admin can import students directly
+--     -- without the need to create a user account immediately 
+--     FOREIGN KEY (UserId) REFERENCES Users(Id)
+-- );
 
 CREATE TABLE Departments (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field

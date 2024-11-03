@@ -190,12 +190,6 @@ INSERT INTO Teachers (Id, TeacherCode, TeacherName, Email, PhoneNo, UserId) VALU
 -- INSERT INTO Students
 INSERT INTO Students (Id, StudentCode, StudentName, EnrollmentYear, GraduationYear, Email, BirthDate, PhoneNo, UserId) VALUES
 (1, 'S001', 'Alice Johnson', 2021, null, 'alice.johnson@example.com', '2003-05-15', '555-1234', 1),
-(2, 'S002', 'Bob Smith', 2020, 2024, 'bob.smith@example.com', '2002-08-22', '555-5678', 2),
-(3, 'S003', 'Charlie Brown', 2022, null, 'charlie.brown@example.com', '2004-11-30', '555-8765', 3);
-
--- INSERT INTO Students
-INSERT INTO Students (Id, StudentCode, StudentName, EnrollmentYear, GraduationYear, Email, BirthDate, PhoneNo, UserId) VALUES
-(1, 'S001', 'Alice Johnson', 2021, null, 'alice.johnson@example.com', '2003-05-15', '555-1234', 1),
 (2, 'S002', 'Bob Smith', 2020, 2024, 'bob.smith@example.com', '2002-08-22', '555-5678', null),
 (3, 'S003', 'Charlie Brown', 2022, null, 'charlie.brown@example.com', '2004-11-30', '555-8765', null),
 (4, 'S004', 'David Wilson', 2021, null, 'david.wilson@example.com', '2003-07-20', '555-4321', null),
@@ -203,9 +197,6 @@ INSERT INTO Students (Id, StudentCode, StudentName, EnrollmentYear, GraduationYe
 (6, 'S006', 'Frank White', 2022, null, 'frank.white@example.com', '2004-12-01', '555-5678', null),
 (7, 'S007', 'Grace Black', 2021, null, 'grace.black@example.com', '2003-03-25', '555-1234', null),
 (8, 'S008', 'Hannah Blue', 2020, 2024, 'hannah.blue@example.com', '2002-11-30', '555-4321', null);
-
--- INSERT INTO Enrollments
-INSERT INTO Enrollments (Id, ClassId, StudentId, EnrollmentDate) VALUES
 
 -- INSERT INTO Enrollments
 INSERT INTO Enrollments (Id, ClassId, StudentId, EnrollmentDate) VALUES
