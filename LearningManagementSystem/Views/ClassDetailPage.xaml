@@ -4,15 +4,57 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearningManagementSystem"
     xmlns:vm="using:LearningManagementSystem.ViewModels"
+    xmlns:m="using:LearningManagementSystem.Models"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel HorizontalAlignment="Left" Margin="20">
-        <TextBlock Text="{Binding DepartmentName}" FontSize="30" FontWeight="Bold" Margin="0,10,0,10"/>
-        <TextBlock Text="{Binding ClassTitle}" FontSize="25" Margin="0,10,0,10"/>
-        <ItemsControl ItemsSource="{Binding Teachers}">
-            <ItemsControl.ItemTemplate>
-                
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+    <StackPanel Background="AntiqueWhite">
+        <TextBlock Text="{x:Bind EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" Margin="40,30,0,10" Foreground="LightSeaGreen"/>
+
+        <ListBox ItemsSource="{x:Bind ResourceViewModel.ListResource.SingularResources, Mode=OneWay}" Margin="20">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:SingularResourceViewModel">
+                    <Expander Header="{x:Bind ResourceCategory.Name, Mode=OneWay}" Expanding="Expander_Expanding" Tag="{x:Bind ResourceCategory}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsControl ItemsSource="{x:Bind Resources, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="m:BaseResource">
+                                    <TextBlock Text="{x:Bind Title, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="14" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Grid>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="SelectionStates">
+                                            <VisualState x:Name="Unselected"/>
+                                            <VisualState x:Name="Selected">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="ContentPresenter"
+                                                                    Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                                    To="Yellow" Duration="0:0:0.3"/>
+                                                    <DoubleAnimation Storyboard.TargetName="HighlightBorder"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     To="1" Duration="0:0:0.3"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <Border x:Name="HighlightBorder" Background="Yellow" Opacity="0"/>
+                                    <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
     </StackPanel>
 </Page>

@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helper;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,27 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public List<ResourceCategory> findAllResourceCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findAssignmentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
         public int FindDepartmentID(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findDocumentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findNotificationsByClassId(int classId)
         {
             throw new NotImplementedException();
         }
@@ -479,6 +500,24 @@ namespace LearningManagementSystem.DataAccess
         }
 
         public void UpdateDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+        FullObservableCollection<BaseResource> IDao.findAssignmentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+       
+
+        FullObservableCollection<BaseResource> IDao.findDocumentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        FullObservableCollection<BaseResource> IDao.findNotificationsByClassId(int classId)
         {
             throw new NotImplementedException();
         }

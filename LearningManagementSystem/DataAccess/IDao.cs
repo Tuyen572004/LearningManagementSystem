@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helper;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,12 @@ namespace LearningManagementSystem.DataAccess
 
         // ------------------------------------------------ //
 
+        public List<ResourceCategory> findAllResourceCategories();
+        public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
 
+        public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);
+
+        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId);
 
     }
 }

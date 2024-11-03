@@ -5,22 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using LearningManagementSystem.Command;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Views;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class EnrollmentViewModel : BaseViewModel
-    {
-        public Class Class { get; set; }
-
-        public Course Course { get; set; }
-        public ObservableCollection<Teacher> Teachers { get; set; }
-        public Department Department { get; set; }
-        
-        public string ClassTitle => $"{Course.CourseCode}-{Course.CourseDescription} {Class.ClassCode}";
-        public string DepartmentName => $"Dept. of {Department.DepartmentCode}-{Department.DepartmentDesc}";
-    }
    
     public class EnrollmentClassesViewModel : BaseViewModel
     {

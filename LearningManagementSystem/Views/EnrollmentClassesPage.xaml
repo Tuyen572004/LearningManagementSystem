@@ -9,11 +9,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="Page_Loaded">
+    Background="White" Loaded="Page_Loaded">
 
     <Page.Resources>
         <DataTemplate x:Key="ClassTemplate" x:DataType="vm:EnrollmentViewModel">
-            <Border BorderBrush="Gray" BorderThickness="1" Margin="10" Width="600" >
+            <Border BorderBrush="Gray" BorderThickness="1" Margin="10" Width="500" DataContext="{x:Bind}">
                 <StackPanel HorizontalAlignment="Left">
                     <TextBlock Text="{x:Bind DepartmentName}" FontSize="20" FontWeight="Bold" Margin="10,5,0,5"/>
                     <TextBlock Text="{x:Bind ClassTitle}" FontSize="15" Margin="10,5,0,5"/>
@@ -27,33 +27,19 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
-                    <!--<Button Content="Enter" x:Name="EnterButton" HorizontalAlignment="Center" Command="{x:Bind Enro.NavigateCommand}" CommandParameter="{x:Bind}"/>-->
+                    <Button Content="Enter" x:Name="EnterButton" HorizontalAlignment="Center" Click="EnterButton_Click" CommandParameter="{x:Bind}" Background="LawnGreen"></Button>
                 </StackPanel>
             </Border>
         </DataTemplate>
     </Page.Resources>
 
-    <!--<Grid Background="White">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>-->
-
-        <!--<Pivot Title="LMS" Grid.Row="0" Background="DarkBlue">
-            <PivotItem Header="Dashboard">
-            </PivotItem>
-            <PivotItem Header="Classes">
-            </PivotItem>
-            <PivotItem Header="Logout">
-            </PivotItem>
-        </Pivot>-->
-
     <ScrollViewer IsTabStop="True" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black">
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.enrolledClassesViewModel}" ItemTemplate="ClassTemplate">
+        <ItemsRepeater ItemsSource="{x:Bind ViewModel.enrolledClassesViewModel}" ItemTemplate="{StaticResource ClassTemplate}">
             <ItemsRepeater.Layout>
                 <UniformGridLayout MinColumnSpacing="10" MinRowSpacing="10" MaximumRowsOrColumns="2" />
             </ItemsRepeater.Layout>
         </ItemsRepeater>
     </ScrollViewer>
+    
     <!--</Grid>-->
 </Page>
