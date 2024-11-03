@@ -12,7 +12,7 @@
 
 
     <Page.Resources>
-        
+
     </Page.Resources>
 
     <Grid>
@@ -53,13 +53,13 @@
                 </Style>
             </controls:DataGrid.Resources>
 
-          
+
             <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="Course ID" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding ID }" />
-                <controls:DataGridTextColumn Header="Course Code" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseCode}" />
-                <controls:DataGridTextColumn Header="Course Description" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseDecription}" />
-                <controls:DataGridTextColumn Header="Total Students" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalStudents}" />
-                <controls:DataGridTextColumn Header="Total Classes" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalClasses}" />
+                <controls:DataGridTextColumn Header="Course ID"  Binding="{Binding ID }" />
+                <controls:DataGridTextColumn Header="Course Code"  Binding="{Binding CourseCode}" />
+                <controls:DataGridTextColumn Header="Course Description"  Binding="{Binding CourseDecription}" />
+                <controls:DataGridTextColumn Header="Total Students"  Binding="{Binding TotalStudents}" />
+                <controls:DataGridTextColumn Header="Total Classes"  Binding="{Binding TotalClasses}" />
             </controls:DataGrid.Columns>
 
         </controls:DataGrid>
