@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Models;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace LearningManagementSystem.Views
 {

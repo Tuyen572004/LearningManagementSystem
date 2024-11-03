@@ -1,6 +1,11 @@
-public class ResourceCategory
+using System;
+
+namespace LearningManagementSystem.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Summary { get; set; }
+    public class ResourceCategory
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Summary { get; set; }
+    }
 }

@@ -14,7 +14,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:SingularResourceViewModel">
                     <Expander Header="{x:Bind ResourceCategory.Name, Mode=OneWay}" Expanding="Expander_Expanding" Tag="{x:Bind ResourceCategory}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <ItemsControl ItemsSource="{x:Bind Resources, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsControl ItemsSource="{x:Bind Resources, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="m:BaseResource">
                                     <TextBlock Text="{x:Bind Title, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="14" />
