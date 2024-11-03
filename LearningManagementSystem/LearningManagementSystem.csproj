@@ -110,7 +110,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <Page Update="Views\AllStudentsPage.xaml"/>
+	  <Page Update="Views\AllStudentsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\NotificationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
