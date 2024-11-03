@@ -1,4 +1,10 @@
-﻿using System;
+
+
+// --------------------------------- TECH DEBT ---------------------------------
+
+// FIX AND COMPLETE LATER
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,38 +13,41 @@ using System.Windows.Input;
 
 namespace LearningManagementSystem.Command
 {
-   public class RelayCommand : ICommand
-   {
-       private readonly Action<object> _execute;
-       private readonly Func<bool> _canExecute;
-        private Action navigate;
+    class RelayCommand<T> : ICommand
+    {
+        private readonly Predicate<T> _canExecute;
+        private readonly Action<T> _execute;
 
-        public RelayCommand(Action<object> execute, Func<bool> canExecute = null)
-       {
-           _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-           _canExecute = canExecute;
-       }
-
-        public RelayCommand(Action navigate)
+        public RelayCommand(Predicate<T> canExecute, Action<T> execute)
         {
-            this.navigate = navigate;
+            if (execute == null)
+                throw new ArgumentNullException("execute");
+            _canExecute = canExecute;
+            _execute = execute;
         }
 
         public bool CanExecute(object parameter)
-       {
-           return _canExecute == null || _canExecute();
-       }
+        {
+            return _canExecute == null ? true : _canExecute((T)parameter);
+        }
 
-       public void Execute(object parameter)
-       {
-           _execute(parameter);
-       }
+        public void Execute(object parameter)
+        {
+            if (parameter is T)
+            {
+                _execute((T)parameter);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid command parameter type. Expected {typeof(T)}, but got {parameter?.GetType()}.");
+            }
+        }
 
-       public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-       public void RaiseCanExecuteChanged()
-       {
-           CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-       }
-   }
+        protected void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
 }

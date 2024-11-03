@@ -1,6 +1,7 @@
 ﻿using LearningManagementSystem.Helper;
 using LearningManagementSystem.Models;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,17 +9,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace LearningManagementSystem.DataAccess
 {
     public class SqlDao : IDao
     {
-        
+
         public MySqlConnection connection;
         public string server { get; set; }
         public string database { get; set; }
         public string username { get; set; }
-        public string password{ get; set; }
+        public string password { get; set; }
         public SqlDao()
         {
             Initialize();
@@ -29,7 +31,7 @@ namespace LearningManagementSystem.DataAccess
             server = "localhost";
             database = "LMSdb";
             username = "root";
-            password = "nopassword";
+            password = "matkhaugitutim";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
         }
@@ -76,7 +78,7 @@ namespace LearningManagementSystem.DataAccess
 
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
-            var result=new List<Course>();
+            var result = new List<Course>();
 
             if (this.OpenConnection() == true)
             {
@@ -152,7 +154,7 @@ namespace LearningManagementSystem.DataAccess
 
         public void RemoveCourseByID(int id)
         {
-            if (this.OpenConnection()==true)
+            if (this.OpenConnection() == true)
             {
                 var sql = "delete from Courses where Id=@Id";
                 var command = new MySqlCommand(sql, connection);
@@ -183,17 +185,7 @@ namespace LearningManagementSystem.DataAccess
         }
 
 
-        // --------------------------------------------- //
-
-        //public Teacher GetTeacherById(int teacherId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        // ---------------------------  DEPARTMENT------------------ //
 
         public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
@@ -279,26 +271,6 @@ namespace LearningManagementSystem.DataAccess
             else return -1;
         }
 
-        public int CountCourse()
-        {
-            if (this.OpenConnection() == true)
-            {
-                var sql = "select count(*) as TotalItems from courses";
-                var command = new MySqlCommand(sql, connection);
-
-                var reader = command.ExecuteReader();
-
-                reader.Read();
-
-                int result = reader.GetInt32("TotalItems");
-                
-
-                this.CloseConnection();
-                return result;
-            }
-            else return 0;
-        }
-
         public int CountDepartments()
         {
             if (this.OpenConnection() == true)
@@ -319,22 +291,14 @@ namespace LearningManagementSystem.DataAccess
             else return 0;
         }
 
-        public bool CheckUserInfo(User user)
+        // ----------------------------------COURSE ---------------------------
+        public int CountCourse()
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from users where Username=@username and PasswordHash=@passwordhash";
+                var sql = "select count(*) as TotalItems from courses";
                 var command = new MySqlCommand(sql, connection);
 
-                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
-                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
-
-                //String commandtext = command.CommandText;
-                //foreach (MySql.Data.MySqlClient.MySqlParameter p in command.Parameters)
-                //{
-                //    commandtext = commandtext.Replace("@username", user.Username);
-                //    commandtext = commandtext.Replace("@passwordhash", '%'+user.PasswordHash);
-                //}
                 var reader = command.ExecuteReader();
 
                 reader.Read();
@@ -343,57 +307,10 @@ namespace LearningManagementSystem.DataAccess
 
 
                 this.CloseConnection();
-                return result == 1;
+                return result;
             }
-            else return false;
+            else return 0;
         }
-
-        public bool IsExistsUsername(string username)
-        {
-            if (this.OpenConnection() == true)
-            {
-                var sql = "select count(*) as TotalItems from users where Username=@username";
-
-                var command = new MySqlCommand(sql, connection);
-                command.Parameters.Add("@username", MySqlDbType.String).Value = username;
-                var reader = command.ExecuteReader();
-
-                reader.Read();
-
-                int result = reader.GetInt32("TotalItems");
-
-
-                this.CloseConnection();
-                return result == 1;
-            }
-            else return true;
-        }
-
-        public bool AddUser(User user)
-        {
-            if (this.OpenConnection() == true)
-            {
-                var sql = """
-                    insert into users (Username,PasswordHash,Email,users.Role,CreatedAt)
-                    values (@username,@passwordhash,null,@role,null);
-                    """;
-
-                var command = new MySqlCommand(sql, connection);
-                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
-                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
-                command.Parameters.Add("@role", MySqlDbType.Int32).Value = user.Role;
-
-                int id = Convert.ToInt32(command.ExecuteScalar());
-                user.Id = id;
-
-                this.CloseConnection();
-
-                return id > 0 ? true : false;
-            }
-            this.CloseConnection();
-            return false;
-        }
-
 
         public Course GetCourseById(int courseId)
         {
@@ -478,7 +395,285 @@ namespace LearningManagementSystem.DataAccess
                 DepartmentId = 1
             };
 
+        } // MOCK
+
+        public Course findCourseByClassId(int classId)
+        {
+            var result = new Course();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select c.Id, c.CourseCode, c.CourseDescription, c.DepartmentId
+                    from Courses c
+                    join Classes cl on c.Id = cl.CourseId
+                    where cl.Id=@classId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@classId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Course
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseCode = reader.GetString("CourseCode"),
+                        CourseDescription = reader.GetString("CourseDescription"),
+                        DepartmentId = reader.GetInt32("DepartmentId")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
         }
+
+        // --------------------------------- CLASS -----------------------------
+
+        public Class findClassById(int classId)
+        {
+            var result = new Class();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
+                    from Classes
+                    where id=@classId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Class
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseId = reader.GetInt32("CourseId"),
+                        ClassCode = reader.GetString("ClassCode"),
+                        CycleId = reader.GetInt32("CycleId"),
+                        ClassStartDate = reader.GetDateTime("ClassStartDate"),
+                        ClassEndDate = reader.GetDateTime("ClassEndDate")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+        public bool CheckUserInfo(User user)
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from users where Username=@username and PasswordHash=@passwordhash";
+                var command = new MySqlCommand(sql, connection);
+
+                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
+                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
+
+                //String commandtext = command.CommandText;
+                //foreach (MySql.Data.MySqlClient.MySqlParameter p in command.Parameters)
+                //{
+                //    commandtext = commandtext.Replace("@username", user.Username);
+                //    commandtext = commandtext.Replace("@passwordhash", '%'+user.PasswordHash);
+                //}
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result == 1;
+            }
+            else return false;
+        }
+
+        public bool IsExistsUsername(string username)
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from users where Username=@username";
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@username", MySqlDbType.String).Value = username;
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result == 1;
+            }
+            else return true;
+        }
+
+        public bool AddUser(User user)
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    insert into users (Username,PasswordHash,Email,users.Role,CreatedAt)
+                    values (@username,@passwordhash,null,@role,null);
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
+                command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
+                command.Parameters.Add("@role", MySqlDbType.Int32).Value = user.Role;
+
+                int id = Convert.ToInt32(command.ExecuteScalar());
+                user.Id = id;
+
+                this.CloseConnection();
+
+                return id > 0 ? true : false;
+            }
+            this.CloseConnection();
+            return false;
+        }
+
+
+        // --------------------------- RESOURCE --------------------------- //
+        public List<ResourceCategory> findAllResourceCategories()
+        {
+            var result = new List<ResourceCategory>();
+
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, Name, Summary
+                    from ResourceCategories
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result.Add(new ResourceCategory
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Name = reader.GetString("Name"),
+                        Summary = reader.GetString("Summary")
+                    });
+                }
+
+                this.CloseConnection();
+
+            }
+            return result;
+        }
+
+        public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId)
+        {
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+                
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, NotificationText, PostDate, Title
+                    from Notifications
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Notification
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        NotificationText = reader.GetString("NotificationText"),
+                        PostDate = reader.GetDateTime("PostDate"),
+                        Title = reader.GetString("Title")
+                    });
+                }
+                this.CloseConnection();
+            }
+
+            return result;
+        }
+
+        public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId)
+        {
+            // same to notification
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, Title, Description, DueDate
+                    from Assignments
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Assignment
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description"),
+                        DueDate = reader.GetDateTime("DueDate")
+                    });
+                }
+                this.CloseConnection();
+            }
+                return result;
+            
+        }
+
+        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId)
+        {
+            // same 
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, DocumentName, DocumentPath, UploadDate, Title
+                    from Documents
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Document
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        DocumentName = reader.GetString("DocumentName"),
+                        DocumentPath = reader.GetString("DocumentPath"),
+                        UploadDate = reader.GetDateTime("UploadDate"),
+                        Title = reader.GetString("Title")
+                    });
+                }
+                this.CloseConnection();
+            }
+                return result;
+            
+        }
+
+
+        // ------------------- MOCK --------------------
+        
 
         public Department GetDepartmentById(int departmentId)
         {
@@ -684,9 +879,9 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
-        public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
+        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            return new FullObservableCollection<Teacher>
+            return new ObservableCollection<Teacher>
                 {
                     new Teacher
                     {
@@ -717,7 +912,6 @@ namespace LearningManagementSystem.DataAccess
                     }
             };
         }
+
     }
-
-
 }

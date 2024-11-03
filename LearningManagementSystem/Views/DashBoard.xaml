@@ -17,7 +17,7 @@
             <NavigationViewItem Content="Home" Tag="LearningManagementSystem.HomePage" Icon="Home" />
             <NavigationViewItem Content="Courses" Tag="LearningManagementSystem.CoursesPage" Icon="Library" />
             <NavigationViewItem Content="Students" Tag="students" Icon="ContactPresence"/>
-            <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.EnrollmentClassesPage" Icon="Folder" />
+            <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.Views.EnrollmentClassesPage" Icon="Folder" />
             <NavigationViewItem Content="Faculities" Tag="faculities" Icon="Tag" />
             <NavigationViewItem Content="Assign Subject" Tag="assignSubject" Icon="Tag" />
             <NavigationViewItem Content="Enter Mark" Tag="enterMark" Icon="NewWindow" />

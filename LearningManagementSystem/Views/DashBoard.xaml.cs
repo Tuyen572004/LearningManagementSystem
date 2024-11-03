@@ -22,12 +22,15 @@ namespace LearningManagementSystem
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DashBoard : Window
-    {
+    public sealed partial class DashBoard : Window { 
+
+         //public static INavigationService NavigationService { get; private set; }
         public DashBoard()
         {
             this.InitializeComponent();
+            //NavigationService = new FrameNavigationService(this.ContentFrame);
             NavigateByTag("LearningManagementSystem.HomePage");
+            
             menu.SelectionChanged += menu_SelectionChanged;
         }
 

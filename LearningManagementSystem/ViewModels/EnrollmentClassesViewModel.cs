@@ -4,46 +4,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using LearningManagementSystem.Command;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helper;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Command;
 using LearningManagementSystem.Views;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class EnrollmentViewModel : BaseViewModel
-    {
-        public Class Class { get; set; }
-        public Course Course { get; set; }
-        public FullObservableCollection<Teacher> Teachers { get; set; }
-        public Department Department { get; set; }
-        
-        public string ClassTitle => $"{Course.CourseCode}-{Course.CourseDescription} {Class.ClassCode}";
-        public string DepartmentName => $"Dept. of {Department.DepartmentCode}-{Department.DepartmentDesc}";
-
-        public ICommand NavigateToSpecificClassCommand { get; }
-
-        public EnrollmentViewModel()
-        {
-            NavigateToSpecificClassCommand = new RelayCommand(NavigateToSpecificClass);
-        }
-
-        private void NavigateToSpecificClass()
-        {
-            NavigationService.NavigateTo("ClassDetailPage", this);
-        }
-
-    }
    
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance
 <<<<<<< Updated upstream
         public ObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
-=======
-        public FullObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
->>>>>>> Stashed changes
+        //public ICommand NavigateCommand { get; set; }
 
         public EnrollmentClassesViewModel() 
         {

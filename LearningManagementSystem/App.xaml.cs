@@ -35,12 +35,12 @@ namespace LearningManagementSystem
             this.InitializeComponent();
         }
 
-
         /// <summary>
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+
             m_window = new LoginWindow();
             m_window.Activate();
         }
