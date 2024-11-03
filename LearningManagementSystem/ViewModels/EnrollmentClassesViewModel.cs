@@ -19,7 +19,6 @@ namespace LearningManagementSystem.ViewModels
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance
-<<<<<<< Updated upstream
         public ObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
         //public ICommand NavigateCommand { get; set; }
 
