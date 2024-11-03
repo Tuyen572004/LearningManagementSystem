@@ -193,8 +193,8 @@ INSERT INTO ResourceCategories (Id, Name,Summary) VALUES
 
 -- INSERT INTO Notifications
 INSERT INTO Notifications (Id, ClassId, ResourceCategoryId, NotificationText,Title) VALUES
-(1, 1, 1, 'Homework 1 is due next week.','Noti 1'),
-(2, 1, 2, 'Lecture notes for week 1 are available.','Noti 2'),
+(1, 1, 3, 'Homework 1 is due next week.','Noti 1'),
+(2, 1, 3, 'Lecture notes for week 1 are available.','Noti 2'),
 (3, 2, 3, 'Exam 1 will be held next month.', 'Noti 3');
 
 -- INSERT INTO Assignments
@@ -207,4 +207,4 @@ INSERT INTO Assignments (Id, ClassId, TeacherId, ResourceCategoryId, Title, Desc
 INSERT INTO Documents (Id, ClassId, ResourceCategoryId,Title, DocumentName, DocumentPath) VALUES
 (1, 1, 2,'Week 1 Lecture Notes','Intro To DSA', '/path/to/lecture1.pdf'),
 (2, 1, 2, 'Week 2 Lecture Notes','300 Bai Code Thieu Nhi', '/path/to/lecture2.pdf'),
-(3, 2, 3, 'Midterm Exam Study Guide','Cach de ban 1 ty goi me', '/path/to/studyguide.pdf');
+(3, 2, 2, 'Midterm Exam Study Guide','Cach de ban 1 ty goi me', '/path/to/studyguide.pdf');
