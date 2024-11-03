@@ -475,6 +475,7 @@ namespace LearningManagementSystem.DataAccess
                     }
 
                     int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
+                    int userIdColumn = QueryResultReader.GetOrdinal("UserId");
                     StudentVer2 newStudent = new()
                     {
                         Id = QueryResultReader.GetInt32("Id"),
@@ -483,7 +484,10 @@ namespace LearningManagementSystem.DataAccess
                         Email = QueryResultReader.GetString("Email"),
                         BirthDate = QueryResultReader.GetDateTime("BirthDate"),
                         PhoneNo = QueryResultReader.GetString("PhoneNo"),
-                        UserId = QueryResultReader.GetInt32("UserId"),
+                        UserId = (QueryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("UserId")
+                            ),
                         EnrollmentYear = QueryResultReader.GetInt32("EnrollmentYear"),
                         GraduationYear = (QueryResultReader.IsDBNull(graduationYearColumn)
                             ? null
