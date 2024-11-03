@@ -589,7 +589,7 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-        public (ObservableCollection<StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null)
+        public (ObservableCollection<StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null);
         
         FullObservableCollection<BaseResource> IDao.findAssignmentsByClassId(int classId)
         {

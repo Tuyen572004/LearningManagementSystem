@@ -1,15 +1,43 @@
-﻿## What's new ?
+﻿# Project 1 - Milestone 1 - Learning Management System
 
-- Add SqlDao.
-- Completed HomePage & CoursesPage.
-- Design Login Window.
+## Team members: 
+22120363 - Phan Hồng Thức
+22120364 - Nguyễn Hoài Thương
+22120416 - Huỳnh Thị Kim Tuyền
 
-## You need to do this ...
-- Open SqlDao in DataAccess folder and change some information in Initialize() ([Change Information](https://drive.google.com/file/d/1Zy44Vm5HwcvGe1-6mAp7RWycBus4FPRK/view?usp=drive_link)):
-You can create data like this:
-- In "courses" table ([Data Courses](https://drive.google.com/file/d/17TNCRfaJiBN3OdNF_33Na6BYwvsj4iPt/view?usp=drive_link))
-- In "departments" table ([Data Department](https://drive.google.com/file/d/1LzHXwU581o1A0IeIkKLCFrMf4NjSVX4s/view?usp=drive_link))
-#### Enjoyyy <3
+## How to run the project
+- Run file SQL Database.sql in folder DataAccess in MySQL to create database
+- Then config the connection in SqlDao in DataAccess - username, password, server
+- Build the project using Visual Studio 2022 
+- Run the project
 
-02/12/2024: Consider adding CloseConnection() in SqlDao Connection() right before raising an exception??
+## What have been completed
+1. Create initial database schema
+2. Make login screen check login information
+3. Create a dashboard screen and navigate to other pages
+4. Courses management - 3.5 hours
+5. Read list of students and 1 student detail screen - 3 hours
+6. Read list of Classes, Then selecting 1 class to enter the class detail screen - 3.5 hours
+    - When you enter the class, you will see the list of resources of the class: Assignments, Lectures, Documents
+    - When you select 1 resource you will enter the resource detail page and see information of the resource. 
+    - You can move back and forth between pages by using the back button
 
+## What have not been completed
+1. CRUD for students
+2. CRUD for classes
+3. CRUD for resources
+4. Search, Filter, Sort for all pages
+5. Authorization
+6. Comment, send notifications to students
+7. View student's grades
+8. Make Quiz, Exam
+9. Local storing when offline
+10. Technical debts: RelayCommand, Error handling, Exception handling, Navigation service, divide IDao to multiple interfaces for each entity.
+
+## Self-assessment grades:
+- Phan Hồng Thức: 10
+- Nguyễn Hoài Thương: 10
+- Huỳnh Thị Kim Tuyền: 10
+
+## Video demo link
+    
