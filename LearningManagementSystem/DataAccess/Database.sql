@@ -205,7 +205,7 @@ INSERT INTO Enrollments (Id, ClassId, StudentId, EnrollmentDate) VALUES
 (4, 2, 4, '2023-09-01'),
 (5, 2, 5, '2023-09-01'),
 (6, 2, 6, '2023-09-01'),
-(7, 3, 7, '2023-09-01'),
+(7, 3, 7, '2023-09-01');
 
 -- INSERT INTO ResourceCategories
 INSERT INTO ResourceCategories (Id, Name,Summary) VALUES
