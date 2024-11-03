@@ -1,44 +1,33 @@
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Controls;
-<<<<<<< HEAD
-=======
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
->>>>>>> origin/class
+
 
 namespace LearningManagementSystem.Views
 {
     public sealed partial class ClassDetailPage : Page
     {
-
-<<<<<<< HEAD
-=======
         public EnrollmentViewModel EnrollmentViewModel { get; set; }
 
         public ResourceViewModel ResourceViewModel { get; set; }
->>>>>>> origin/class
 
         public ClassDetailPage()
         {
             this.InitializeComponent();
-<<<<<<< HEAD
-=======
             this.DataContext = this;
->>>>>>> origin/class
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-<<<<<<< HEAD
             base.OnNavigatedTo(e);
             var classViewModel = e.Parameter as EnrollmentViewModel;
             DataContext = classViewModel;
-=======
             
             if(e.Parameter is EnrollmentViewModel enrollmentViewModel)
             {
@@ -92,7 +81,6 @@ namespace LearningManagementSystem.Views
         private void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EnrollmentClassesPage));
->>>>>>> origin/class
         }
     }
 }

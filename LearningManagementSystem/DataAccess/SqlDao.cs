@@ -322,25 +322,25 @@ namespace LearningManagementSystem.DataAccess
         }
 
         // ----------------------------------COURSE ---------------------------
-        public int CountCourse()
-        {
-            if (this.OpenConnection() == true)
-            {
-                var sql = "select count(*) as TotalItems from courses";
-                var command = new MySqlCommand(sql, connection);
+        //public int CountCourse()
+        //{
+        //    if (this.OpenConnection() == true)
+        //    {
+        //        var sql = "select count(*) as TotalItems from courses";
+        //        var command = new MySqlCommand(sql, connection);
 
-                var reader = command.ExecuteReader();
+        //        var reader = command.ExecuteReader();
 
-                reader.Read();
+        //        reader.Read();
 
-                int result = reader.GetInt32("TotalItems");
+        //        int result = reader.GetInt32("TotalItems");
 
 
-                this.CloseConnection();
-                return result;
-            }
-            else return 0;
-        }
+        //        this.CloseConnection();
+        //        return result;
+        //    }
+        //    else return 0;
+        //}
 
         public Course GetCourseById(int courseId)
         {
@@ -1081,9 +1081,9 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
-        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
+        public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            return new ObservableCollection<Teacher>
+            return new FullObservableCollection<Teacher>
                 {
                     new Teacher
                     {

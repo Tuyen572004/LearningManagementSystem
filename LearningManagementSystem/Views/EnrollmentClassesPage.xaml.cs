@@ -36,8 +36,7 @@ namespace LearningManagementSystem.Views
                 Frame.Navigate(typeof(ClassDetailPage), selectedClass);
             }
         }
-=======
->>>>>>> Stashed changes
+
     }
 
 }
