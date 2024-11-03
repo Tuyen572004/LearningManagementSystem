@@ -61,5 +61,9 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId);
 
+
+        public Class findClassById(int classId);
+        public Course findCourseByClassId(int classId);
+
     }
 }

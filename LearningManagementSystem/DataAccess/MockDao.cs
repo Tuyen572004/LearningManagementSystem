@@ -47,6 +47,16 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public Class findClassById(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Course findCourseByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
         public int FindDepartmentID(Department department)
         {
             throw new NotImplementedException();

@@ -1,4 +1,5 @@
 using LearningManagementSystem.Command;
+using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml;
@@ -30,6 +31,14 @@ namespace LearningManagementSystem.ViewModels
            // EnterCommand = new RelayCommand<EnrollmentViewModel>(CanExecute, EnterClassCommand);
         }
 
+        public void loadClassByClassId(int classId)
+        {
+            var dao = new SqlDao();
+            Class = dao.findClassById(classId);
+            Course = dao.GetCourseById(Class.CourseId);
+            Department = dao.GetDepartmentById(Course.DepartmentId);
+            Teachers = new ObservableCollection<Teacher>(dao.GetTeachersByClassId(classId));
+        }
 
         //public bool CanExecute(object parameter)
         //{

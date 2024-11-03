@@ -185,7 +185,7 @@ namespace LearningManagementSystem.DataAccess
         }
 
 
-        // --------------------------------------------- //
+        // ---------------------------  DEPARTMENT------------------ //
 
         public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
@@ -271,6 +271,27 @@ namespace LearningManagementSystem.DataAccess
             else return -1;
         }
 
+        public int CountDepartments()
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from departments";
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result;
+            }
+            else return 0;
+        }
+
+        // ----------------------------------COURSE ---------------------------
         public int CountCourse()
         {
             if (this.OpenConnection() == true)
@@ -291,24 +312,156 @@ namespace LearningManagementSystem.DataAccess
             else return 0;
         }
 
-        public int CountDepartments()
+        public Course GetCourseById(int courseId)
         {
+            Random random = new Random();
+            courseId = random.Next(1, 20);
+            if (courseId % 8 == 1)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE101",
+                    CourseDescription = "Introduction to Computer Science",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 2)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE102",
+                    CourseDescription = "Data Structures and Algorithms",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 3)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE103",
+                    CourseDescription = "Operating Systems",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 4)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE104",
+                    CourseDescription = "Computer Networks",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 5)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE105",
+                    CourseDescription = "Database Management Systems",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 6)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE106",
+                    CourseDescription = "Software Engineering",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 7)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE107",
+                    CourseDescription = "Web Development",
+                    DepartmentId = 1
+                };
+            }
+
+            return new Course
+            {
+                Id = courseId,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+            };
+
+        } // MOCK
+
+        public Course findCourseByClassId(int classId)
+        {
+            var result = new Course();
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from departments";
-                var command = new MySqlCommand(sql, connection);
+                var sql = """
+                    select c.Id, c.CourseCode, c.CourseDescription, c.DepartmentId
+                    from Courses c
+                    join Classes cl on c.Id = cl.CourseId
+                    where cl.Id=@classId
+                    """;
 
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@classId", MySqlDbType.Int32).Value = classId;
                 var reader = command.ExecuteReader();
 
-                reader.Read();
-
-                int result = reader.GetInt32("TotalItems");
-
+                while (reader.Read())
+                {
+                    result = new Course
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseCode = reader.GetString("CourseCode"),
+                        CourseDescription = reader.GetString("CourseDescription"),
+                        DepartmentId = reader.GetInt32("DepartmentId")
+                    };
+                }
 
                 this.CloseConnection();
-                return result;
             }
-            else return 0;
+            return result;
+        }
+
+        // --------------------------------- CLASS -----------------------------
+
+        public Class findClassById(int classId)
+        {
+            var result = new Class();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
+                    from Classes
+                    where id=@classId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Class
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseId = reader.GetInt32("CourseId"),
+                        ClassCode = reader.GetString("ClassCode"),
+                        CycleId = reader.GetInt32("CycleId"),
+                        ClassStartDate = reader.GetDateTime("ClassStartDate"),
+                        ClassEndDate = reader.GetDateTime("ClassEndDate")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
         }
 
         public bool CheckUserInfo(User user)
@@ -520,90 +673,7 @@ namespace LearningManagementSystem.DataAccess
 
 
         // ------------------- MOCK --------------------
-        public Course GetCourseById(int courseId)
-        {
-            Random random = new Random();
-            courseId = random.Next(1, 20);
-            if (courseId % 8 == 1)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE101",
-                    CourseDescription = "Introduction to Computer Science",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 2)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE102",
-                    CourseDescription = "Data Structures and Algorithms",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 3)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE103",
-                    CourseDescription = "Operating Systems",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 4)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE104",
-                    CourseDescription = "Computer Networks",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 5)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE105",
-                    CourseDescription = "Database Management Systems",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 6)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE106",
-                    CourseDescription = "Software Engineering",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 7)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE107",
-                    CourseDescription = "Web Development",
-                    DepartmentId = 1
-                };
-            }
-
-            return new Course
-            {
-                Id = courseId,
-                CourseCode = "CSE108",
-                CourseDescription = "Computer Graphics",
-                DepartmentId = 1
-            };
-
-        }
+        
 
         public Department GetDepartmentById(int departmentId)
         {
