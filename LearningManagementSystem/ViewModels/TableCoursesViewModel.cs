@@ -26,7 +26,7 @@ namespace LearningManagementSystem.ViewModels
         public string CourseCode { get; set; }
         public string CourseDecription { get; set; }
         public int TotalStudents { get; set; }
-        public int TotalSubjects { get; set; }
+        public int TotalClasses { get; set; }
 
         public int DepartmentID { get; set; }
         public object Clone()
@@ -38,7 +38,7 @@ namespace LearningManagementSystem.ViewModels
                 CourseDecription = this.CourseDecription,
                 DepartmentID=this.DepartmentID,
                 TotalStudents = this.TotalStudents,
-                TotalSubjects = this.TotalSubjects
+                TotalClasses = this.TotalClasses
             };
         }
     }
@@ -72,7 +72,7 @@ namespace LearningManagementSystem.ViewModels
                         CourseDecription = courses[i].CourseDescription,
                         DepartmentID= courses[i].DepartmentId,
                         TotalStudents = 0,
-                        TotalSubjects = 0
+                        TotalClasses = 0
                     });
                 }
             }

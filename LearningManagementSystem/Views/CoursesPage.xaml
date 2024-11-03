@@ -59,7 +59,7 @@
                 <controls:DataGridTextColumn Header="Course Code" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseCode}" />
                 <controls:DataGridTextColumn Header="Course Description" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding CourseDecription}" />
                 <controls:DataGridTextColumn Header="Total Students" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalStudents}" />
-                <controls:DataGridTextColumn Header="Total Subjects" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalSubjects}" />
+                <controls:DataGridTextColumn Header="Total Classes" HeaderStyle="{StaticResource DataGridColumnHeaderStyle}" Binding="{Binding TotalClasses}" />
             </controls:DataGrid.Columns>
 
         </controls:DataGrid>
