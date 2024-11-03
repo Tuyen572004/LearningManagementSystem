@@ -77,6 +77,5 @@ namespace LearningManagementSystem
                 this.ContentFrame.Navigate(Type.GetType($"{item.Tag}"));
             }
         }
-
     }
 }

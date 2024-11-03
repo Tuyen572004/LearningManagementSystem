@@ -44,10 +44,13 @@ namespace LearningManagementSystem
 
             return encryptedPasswordBase64;
         }
+
+       
+
         private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
             var username = inputUsername.Text;
-            var password = inputPassword.Text;
+            var password = inputPassword.Password;
 
             var passwordhash = EncryptPassword(password);
             ViewModel.UserLogin = new User
@@ -78,6 +81,16 @@ namespace LearningManagementSystem
                
             }
             
+        }
+
+        private void revealModeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            inputPassword.PasswordRevealMode = PasswordRevealMode.Visible;
+        }
+
+        private void revealModeCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            inputPassword.PasswordRevealMode = PasswordRevealMode.Hidden;
         }
     }
 }
