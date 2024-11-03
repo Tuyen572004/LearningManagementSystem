@@ -1,5 +1,7 @@
-﻿using LearningManagementSystem.Helper;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
+using Microsoft.UI.Xaml;
+using LearningManagementSystem.Helper;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Common;
 using System;
@@ -28,9 +30,17 @@ namespace LearningManagementSystem.DataAccess
 
         public void Initialize()
         {
+            //server = "localhost";
+            //database = "LMSdb";
+            //username = "root";
+            //password = "nopassword";
+            //string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
+            //connection = new MySqlConnection(connectionString);
+
             server = "localhost";
-            database = "LMSdb";
+            database = "learning_management_system";
             username = "root";
+            // password = "LMSMySqlServer@123";
             password = "matkhaugitutim";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
@@ -170,7 +180,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "update courses set CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId where Id=@Id";
+                var sql = "update Courses set CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId where Id=@Id";
                 var command = new MySqlCommand(sql, connection);
 
                 command.Parameters.Add("@CourseCode", MySqlDbType.String).Value = course.CourseCode;
@@ -195,7 +205,7 @@ namespace LearningManagementSystem.DataAccess
             {
                 var sql = """
                     select count(*) over() as TotalItems, Id, DepartmentCode, DepartmentDesc
-                    from departments
+                    from Departments
                     where DepartmentCode like @Keyword
                     order by Id asc
                     limit @Take offset @Skip
@@ -271,11 +281,31 @@ namespace LearningManagementSystem.DataAccess
             else return -1;
         }
 
+        public int CountCourse()
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from Courses";
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+                
+
+                this.CloseConnection();
+                return result;
+            }
+            else return 0;
+        }
+
         public int CountDepartments()
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from departments";
+                var sql = "select count(*) as TotalItems from Departments";
                 var command = new MySqlCommand(sql, connection);
 
                 var reader = command.ExecuteReader();
@@ -468,7 +498,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from users where Username=@username and PasswordHash=@passwordhash";
+                var sql = "select count(*) as TotalItems from Users where Username=@username and PasswordHash=@passwordhash";
                 var command = new MySqlCommand(sql, connection);
 
                 command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
@@ -497,7 +527,7 @@ namespace LearningManagementSystem.DataAccess
         {
             if (this.OpenConnection() == true)
             {
-                var sql = "select count(*) as TotalItems from users where Username=@username";
+                var sql = "select count(*) as TotalItems from Users where Username=@username";
 
                 var command = new MySqlCommand(sql, connection);
                 command.Parameters.Add("@username", MySqlDbType.String).Value = username;
@@ -519,7 +549,7 @@ namespace LearningManagementSystem.DataAccess
             if (this.OpenConnection() == true)
             {
                 var sql = """
-                    insert into users (Username,PasswordHash,Email,users.Role,CreatedAt)
+                    insert into Users (Username,PasswordHash,Email,users.Role,CreatedAt)
                     values (@username,@passwordhash,null,@role,null);
                     """;
 
@@ -539,6 +569,178 @@ namespace LearningManagementSystem.DataAccess
             return false;
         }
 
+        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
+        {
+            try
+            {
+                bool connectionState = OpenConnection();
+                if (connectionState)
+                {
+                    Console.WriteLine("Connection is open");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            CloseConnection();
+            return [];
+        }
+
+        public (ObservableCollection<StudentVer2>, int) GetStudentsById(
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<int> chosenIds = null
+            )
+        {
+            ObservableCollection<StudentVer2> result = [];
+            int queryCount = 0;
+            if (OpenConnection() == true)
+            {
+                var Query = """
+                select count(*) over() as TotalItem, Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear
+                from Students
+                """;
+
+                if (chosenIds is not null && chosenIds.Any())
+                {
+                    Query += $"\nwhere Id in ({string.Join(", ", chosenIds)})";
+                }
+
+                Query += "\nlimit @Take offset @Skip";
+
+                var Command = new MySqlCommand(Query, connection);
+                Command.Parameters.Add("@Skip", MySqlDbType.Int32).Value = ignoringCount;
+                Command.Parameters.Add("@Take", MySqlDbType.Int32).Value = fetchingCount;
+
+                var finalquery = Query;
+
+                var QueryResultReader = Command.ExecuteReader();
+
+                bool isTotalItemFetched = false;
+
+                while (QueryResultReader.Read())
+                {
+                    if (!isTotalItemFetched)
+                    {
+                        queryCount = QueryResultReader.GetInt32("TotalItem");
+                        isTotalItemFetched = true;
+                    }
+
+                    int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
+                    int userIdColumn = QueryResultReader.GetOrdinal("UserId");
+                    StudentVer2 newStudent = new()
+                    {
+                        Id = QueryResultReader.GetInt32("Id"),
+                        StudentCode = QueryResultReader.GetString("StudentCode"),
+                        StudentName = QueryResultReader.GetString("StudentName"),
+                        Email = QueryResultReader.GetString("Email"),
+                        BirthDate = QueryResultReader.GetDateTime("BirthDate"),
+                        PhoneNo = QueryResultReader.GetString("PhoneNo"),
+                        UserId = (QueryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("UserId")
+                            ),
+                        EnrollmentYear = QueryResultReader.GetInt32("EnrollmentYear"),
+                        GraduationYear = (QueryResultReader.IsDBNull(graduationYearColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("GraduationYear")
+                            )
+                    };
+                     
+                    result.Add(newStudent);
+                };
+            }
+            CloseConnection();
+            return (result, queryCount);
+        }
+
+
+        public (ObservableCollection<StudentVer2>, int) GetStudents(
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            List<(StudentField field, Ordering order)> sortCriteria = null,
+            List<(StudentField field, object keyword)> searchKeyword = null,
+            List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
+        )
+        {
+            ObservableCollection<StudentVer2> result = [];
+            int totalItem = 0;
+            //if (OpenConnection())
+            //{
+            //    var sql = """
+            //        select count(*) over() as TotalItem, Id, StudentCode, StudentName, Email, Birthday, PhoneNo, UserId
+            //        from Students
+            //        """;
+
+            //    bool startingWhere = false;
+            //    var whereFormat = isStarting =>
+            //    {
+            //        if (isStarting)
+            //        {
+            //            return "where {0}\n";
+            //        }
+            //        else
+            //        {
+            //            return "    and {0}\n";
+            //        }
+            //    };
+
+            //    string temp;
+            //    foreach ((StudentField field, object keyword) in searchKeyword) {
+            //        var criteriaType = field.InferType();
+            //        switch (criteriaType)
+            //        {
+            //            case typeof(int):
+            //                temp = field.ToSqlAttributeName() + " = " + (keyword as int) as string;
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(string):
+            //                temp = field.ToSqlAttributeName() + " like \"" + (keyword as string) + "\"%";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(DateTime):
+            //                temp = field.ToSqlAttributeName() + " = \"" + ((keyword as DateTime) as Date).ToString() + "\"";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            default:
+            //                throw Exception("Invalid field type found!");
+            //        }
+            //        startingWhere = false;
+            //    }
+
+            //    foreach (
+            //        (
+            //            StudentField field, object leftBound, object rightBound,
+            //            bool containedLeftBound, bool withinBounds, bool containedRightBound
+            //        ) in filterCriteria)
+            //    {
+            //        var criteriaType = field.InferType();
+            //        switch (criteriaType)
+            //        {
+            //            case typeof(int):
+            //                temp = field.ToSqlAttributeName() + " = " + (keyword as int) as string;
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(string):
+            //                temp = field.ToSqlAttributeName() + " like \"" + (keyword as string) + "\"%";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(DateTime):
+            //                temp = field.ToSqlAttributeName() + " = \"" + ((keyword as DateTime) as Date).ToString() + "\"";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            default:
+            //                throw Exception("Invalid field type found!");
+            //        }
+            //        startingWhere = false;
+            //    }
+
+            //}
+            //CloseConnection();
+            return (result, totalItem);
+        }
 
         // --------------------------- RESOURCE --------------------------- //
         public List<ResourceCategory> findAllResourceCategories()

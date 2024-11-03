@@ -30,7 +30,9 @@ namespace LearningManagementSystem
             this.InitializeComponent();
             //NavigationService = new FrameNavigationService(this.ContentFrame);
             NavigateByTag("LearningManagementSystem.HomePage");
-            
+
+            // Remember to navigate back
+            // NavigateByTag("LearningManagementSystem.HomePage");
             menu.SelectionChanged += menu_SelectionChanged;
         }
 
@@ -39,33 +41,30 @@ namespace LearningManagementSystem
             if (args.SelectedItem is NavigationViewItem item &&
                 item.Tag is string tag)
             {
-<<<<<<< HEAD
-                TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
-            };
+            //     TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
+            // };
 
-            if (args.SelectedItemContainer.Tag is string selectedItemTag)
-            {
-                switch (selectedItemTag)
-                {
-                    case "home":
-                        ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
-                        break;
-                    case "courses":
-                        ContentFrame.NavigateToType(typeof(EnrollmentClassesPage), null, navOptions);
-                        break;
-                        //case "Students":
-                        //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
-                        //    break;
-                        //case "Teachers":
-                        //    ContentFrame.NavigateToType(typeof(Teachers), null, navOptions);
-                        //    break;
-                        //case "Settings":
-                        //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
-                        //    break;
-                }
-=======
+            // if (args.SelectedItemContainer.Tag is string selectedItemTag)
+            // {
+            //     switch (selectedItemTag)
+            //     {
+            //         case "home":
+            //             ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
+            //             break;
+            //         case "courses":
+            //             ContentFrame.NavigateToType(typeof(EnrollmentClassesPage), null, navOptions);
+            //             break;
+            //             //case "Students":
+            //             //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
+            //             //    break;
+            //             //case "Teachers":
+            //             //    ContentFrame.NavigateToType(typeof(Teachers), null, navOptions);
+            //             //    break;
+            //             //case "Settings":
+            //             //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
+            //             //    break;
+            //     }
                 NavigateByTag(tag);
->>>>>>> 5cf3ea88225951adb0ab9586671d22bc67155e04
             }
         }
 
@@ -77,7 +76,11 @@ namespace LearningManagementSystem
                 .FirstOrDefault() is NavigationViewItem item)
             {
                 this.menu.SelectedItem = item;
-                this.ContentFrame.Navigate(Type.GetType($"{item.Tag}"));
+                var navigatingType = Type.GetType($"{item.Tag}");
+                if (navigatingType is not null)
+                {
+                    this.ContentFrame.Navigate(navigatingType);
+                }
             }
         }
     }

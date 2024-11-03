@@ -28,6 +28,7 @@
 	  <Content Remove="Assets\teacher.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Controls\StudentDisplayer.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
@@ -35,6 +36,7 @@
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\AllStudentsPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
@@ -44,6 +46,7 @@
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
 		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
+		<None Remove="Views\StudentDisplayerPage.xaml" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -58,6 +61,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+		<PackageReference Include="Fody" Version="6.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
@@ -102,6 +110,7 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\AllStudentsPage.xaml">
 	  <Page Update="Views\NotificationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -124,6 +133,11 @@
 	  <Page Update="Views\AddCourse.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="Views\StudentDisplayerPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="CoursesPage.xaml">
@@ -159,6 +173,11 @@
 		<Page Update="Views\EnrollmentClassesPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\StudentDisplayer.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<!--

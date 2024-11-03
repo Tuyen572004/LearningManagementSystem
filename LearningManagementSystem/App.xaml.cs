@@ -42,6 +42,8 @@ namespace LearningManagementSystem
         {
 
             m_window = new LoginWindow();
+
+            // m_window = new DashBoard();
             m_window.Activate();
         }
 

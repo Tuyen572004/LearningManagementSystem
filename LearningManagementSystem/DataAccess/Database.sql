@@ -20,13 +20,18 @@ CREATE TABLE Students (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
     StudentCode VARCHAR(10) NOT NULL,   -- Changed from StudentId to StudentCode
     StudentName VARCHAR(100) NOT NULL,
+    EnrollmentYear INT NOT NULL,        -- This field is added as the graduation field is added.
+                                        -- Consider adding "LearningState" field, to control expelled students (that would not graduate of course)
+    GraduationYear INT DEFAULT NULL,    -- This field is added for the classification purpose, as students graduate overtime.
     Email VARCHAR(100) NOT NULL,
     BirthDate DATE NOT NULL,
     PhoneNo VARCHAR(30),
-    UserId INT NOT NULL,  -- Foreign key to Users table
+    -- UserId INT NOT NULL,  -- Foreign key to Users table
+    UserId INT DEFAULT NULL,
+        -- Removed NOT NULL, as you would naturally add students first
+        -- then you would add the corresponding number of users later.
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
-
 
 CREATE TABLE Departments (
     Id INT AUTO_INCREMENT PRIMARY KEY,  -- New auto-incrementing Id field
@@ -182,8 +187,25 @@ INSERT INTO Teachers (Id, TeacherCode, TeacherName, Email, PhoneNo, UserId) VALU
 -- (3, 'T003', 'Emily Johnson', 'emilyjohnson@example.com', '555-555-5555', 3);
 
 
+-- INSERT INTO Students
+INSERT INTO Students (Id, StudentCode, StudentName, EnrollmentYear, GraduationYear, Email, BirthDate, PhoneNo, UserId) VALUES
+(1, 'S001', 'Alice Johnson', 2021, null, 'alice.johnson@example.com', '2003-05-15', '555-1234', 1),
+(2, 'S002', 'Bob Smith', 2020, 2024, 'bob.smith@example.com', '2002-08-22', '555-5678', null),
+(3, 'S003', 'Charlie Brown', 2022, null, 'charlie.brown@example.com', '2004-11-30', '555-8765', null),
+(4, 'S004', 'David Wilson', 2021, null, 'david.wilson@example.com', '2003-07-20', '555-4321', null),
+(5, 'S005', 'Eva Green', 2020, null, 'eva.green@example.com', '2002-09-15', '555-8765', null),
+(6, 'S006', 'Frank White', 2022, null, 'frank.white@example.com', '2004-12-01', '555-5678', null),
+(7, 'S007', 'Grace Black', 2021, null, 'grace.black@example.com', '2003-03-25', '555-1234', null),
+(8, 'S008', 'Hannah Blue', 2020, 2024, 'hannah.blue@example.com', '2002-11-30', '555-4321', null);
 
-
+-- INSERT INTO Enrollments
+INSERT INTO Enrollments (Id, ClassId, StudentId, EnrollmentDate) VALUES
+(1, 1, 1, '2023-09-01'),
+(3, 1, 3, '2023-09-01'),
+(4, 2, 4, '2023-09-01'),
+(5, 2, 5, '2023-09-01'),
+(6, 2, 6, '2023-09-01'),
+(7, 3, 7, '2023-09-01'),
 
 -- INSERT INTO ResourceCategories
 INSERT INTO ResourceCategories (Id, Name,Summary) VALUES
