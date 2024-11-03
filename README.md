@@ -1,9 +1,9 @@
 # Project 1 - Milestone 1 - Learning Management System
 
 ## Team members: 
-22120363 - Phan Hồng Thức
-22120364 - Nguyễn Hoài Thương
-22120416 - Huỳnh Thị Kim Tuyền
+- 22120363 - Phan Hồng Thức
+- 22120364 - Nguyễn Hoài Thương
+- 22120416 - Huỳnh Thị Kim Tuyền
 
 ## How to run the project
 - Run file SQL Database.sql in folder DataAccess in MySQL to create database
