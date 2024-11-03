@@ -29,43 +29,18 @@ namespace LearningManagementSystem
     /// </summary>
     public partial class App : Application
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        /// 
-
-       // private ServiceProvider _serviceProvider;
 
         public App()
         {
             this.InitializeComponent();
- //           ConfigureServices();
         }
 
-        //private void ConfigureServices()
-        //{
-        //    var serviceCollection = new ServiceCollection();
-
-        //    // Register IDao with MockDao
-        //    serviceCollection.AddSingleton<IDao, MockDao>();
-
-        //    // Register MainWindow
-        //    serviceCollection.AddSingleton<MainWindow>();
-
-        //    // Register EnrollmentClassesViewModel
-        //    serviceCollection.AddTransient<EnrollmentClassesViewModel>();
-
-        //    // Build the service provider
-        //    _serviceProvider = serviceCollection.BuildServiceProvider();
-        //}
-
         /// <summary>
-        /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+
             m_window = new LoginWindow();
 
             // m_window = new DashBoard();

@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helper;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Composition;
 using System;
@@ -41,7 +42,7 @@ namespace LearningManagementSystem.DataAccess
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);
         public Department GetDepartmentById(int departmentId);
-        public ObservableCollection<Teacher> GetTeachersByClassId(int classId);
+        public FullObservableCollection<Teacher> GetTeachersByClassId(int classId);
         Teacher GetTeacherById(int teacherId);
 
         public bool CheckUserInfo(User user);
@@ -66,7 +67,6 @@ namespace LearningManagementSystem.DataAccess
         //{
         //    // temporary body, so that other IDao don't have to implement this method yet
         //    var studentsToo = DataProvider.StudentList();
-
         //    var filteredEnumerable = studentsToo.AsEnumerable();
 
         //    // Search
@@ -83,7 +83,6 @@ namespace LearningManagementSystem.DataAccess
         //            {
         //                return false;
         //            }
-
         //            try
         //            {
         //                // Try to convert object to string, then compare them
@@ -124,5 +123,16 @@ namespace LearningManagementSystem.DataAccess
         //    filteredEnumerable = filteredEnumerable.Skip(ignoringCount).Take(fetchingCount);
         //    return (new ObservableCollection<StudentVer2>(filteredEnumerable), queryTotal);
         //}
+
+        public List<ResourceCategory> findAllResourceCategories();
+        public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
+
+        public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);
+
+        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId);
+
+
+        public Class findClassById(int classId);
+        public Course findCourseByClassId(int classId);
     }
 }

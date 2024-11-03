@@ -1,8 +1,9 @@
+using LearningManagementSystem.ViewModels;
 using System;
 
 namespace LearningManagementSystem.Models
 {
-    public class Teacher
+    public class Teacher : BaseViewModel
     {
         public int Id { get; set; }  // Auto-incrementing Id field
         public string TeacherCode { get; set; }

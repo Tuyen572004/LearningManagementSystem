@@ -1,7 +1,9 @@
-﻿using LearningManagementSystem.Models;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
+using LearningManagementSystem.Helper;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,17 +11,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace LearningManagementSystem.DataAccess
 {
     public class SqlDao : IDao
     {
-        
+
         public MySqlConnection connection;
         public string server { get; set; }
         public string database { get; set; }
         public string username { get; set; }
-        public string password{ get; set; }
+        public string password { get; set; }
         public SqlDao()
         {
             Initialize();
@@ -37,7 +40,8 @@ namespace LearningManagementSystem.DataAccess
             server = "localhost";
             database = "learning_management_system";
             username = "root";
-            password = "LMSMySqlServer@123";
+            // password = "LMSMySqlServer@123";
+            password = "matkhaugitutim";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
         }
@@ -84,7 +88,7 @@ namespace LearningManagementSystem.DataAccess
 
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
-            var result=new List<Course>();
+            var result = new List<Course>();
 
             if (this.OpenConnection() == true)
             {
@@ -160,7 +164,7 @@ namespace LearningManagementSystem.DataAccess
 
         public void RemoveCourseByID(int id)
         {
-            if (this.OpenConnection()==true)
+            if (this.OpenConnection() == true)
             {
                 var sql = "delete from Courses where Id=@Id";
                 var command = new MySqlCommand(sql, connection);
@@ -191,31 +195,7 @@ namespace LearningManagementSystem.DataAccess
         }
 
 
-        public Course GetCourseById(int courseId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Department GetDepartmentById(int departmentId)
-        {
-            throw new NotImplementedException();
-        }
-
-        // --------------------------------------------- //
-        public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Teacher GetTeacherById(int teacherId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
-        {
-            throw new NotImplementedException();
-        }
+        // ---------------------------  DEPARTMENT------------------ //
 
         public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
@@ -339,6 +319,179 @@ namespace LearningManagementSystem.DataAccess
                 return result;
             }
             else return 0;
+        }
+
+        // ----------------------------------COURSE ---------------------------
+        public int CountCourse()
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = "select count(*) as TotalItems from courses";
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                reader.Read();
+
+                int result = reader.GetInt32("TotalItems");
+
+
+                this.CloseConnection();
+                return result;
+            }
+            else return 0;
+        }
+
+        public Course GetCourseById(int courseId)
+        {
+            Random random = new Random();
+            courseId = random.Next(1, 20);
+            if (courseId % 8 == 1)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE101",
+                    CourseDescription = "Introduction to Computer Science",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 2)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE102",
+                    CourseDescription = "Data Structures and Algorithms",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 3)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE103",
+                    CourseDescription = "Operating Systems",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 4)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE104",
+                    CourseDescription = "Computer Networks",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 5)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE105",
+                    CourseDescription = "Database Management Systems",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 6)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE106",
+                    CourseDescription = "Software Engineering",
+                    DepartmentId = 1
+                };
+            }
+            if (courseId % 8 == 7)
+            {
+                return new Course
+                {
+                    Id = courseId,
+                    CourseCode = "CSE107",
+                    CourseDescription = "Web Development",
+                    DepartmentId = 1
+                };
+            }
+
+            return new Course
+            {
+                Id = courseId,
+                CourseCode = "CSE108",
+                CourseDescription = "Computer Graphics",
+                DepartmentId = 1
+            };
+
+        } // MOCK
+
+        public Course findCourseByClassId(int classId)
+        {
+            var result = new Course();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select c.Id, c.CourseCode, c.CourseDescription, c.DepartmentId
+                    from Courses c
+                    join Classes cl on c.Id = cl.CourseId
+                    where cl.Id=@classId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@classId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Course
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseCode = reader.GetString("CourseCode"),
+                        CourseDescription = reader.GetString("CourseDescription"),
+                        DepartmentId = reader.GetInt32("DepartmentId")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+        // --------------------------------- CLASS -----------------------------
+
+        public Class findClassById(int classId)
+        {
+            var result = new Class();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
+                    from Classes
+                    where id=@classId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Class
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CourseId = reader.GetInt32("CourseId"),
+                        ClassCode = reader.GetString("ClassCode"),
+                        CycleId = reader.GetInt32("CycleId"),
+                        ClassStartDate = reader.GetDateTime("ClassStartDate"),
+                        ClassEndDate = reader.GetDateTime("ClassEndDate")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
         }
 
         public bool CheckUserInfo(User user)
@@ -588,5 +741,379 @@ namespace LearningManagementSystem.DataAccess
             //CloseConnection();
             return (result, totalItem);
         }
+
+        // --------------------------- RESOURCE --------------------------- //
+        public List<ResourceCategory> findAllResourceCategories()
+        {
+            var result = new List<ResourceCategory>();
+
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, Name, Summary
+                    from ResourceCategories
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result.Add(new ResourceCategory
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Name = reader.GetString("Name"),
+                        Summary = reader.GetString("Summary")
+                    });
+                }
+
+                this.CloseConnection();
+
+            }
+            return result;
+        }
+
+        public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId)
+        {
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+                
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, NotificationText, PostDate, Title
+                    from Notifications
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Notification
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        NotificationText = reader.GetString("NotificationText"),
+                        PostDate = reader.GetDateTime("PostDate"),
+                        Title = reader.GetString("Title")
+                    });
+                }
+                this.CloseConnection();
+            }
+
+            return result;
+        }
+
+        public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId)
+        {
+            // same to notification
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, Title, Description, DueDate
+                    from Assignments
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Assignment
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description"),
+                        DueDate = reader.GetDateTime("DueDate")
+                    });
+                }
+                this.CloseConnection();
+            }
+                return result;
+            
+        }
+
+        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId)
+        {
+            // same 
+            var result = new FullObservableCollection<BaseResource>();
+            if (this.OpenConnection() == true)
+            {
+
+                var sql = """
+                    select Id, ClassId, ResourceCategoryId, DocumentName, DocumentPath, UploadDate, Title
+                    from Documents
+                    where ClassId=@ClassId
+                    """;
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@ClassId", MySqlDbType.Int32).Value = classId;
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new Document
+                    {
+                        Id = reader.GetInt32("Id"),
+                        ClassId = reader.GetInt32("ClassId"),
+                        ResourceCategoryId = reader.GetInt32("ResourceCategoryId"),
+                        DocumentName = reader.GetString("DocumentName"),
+                        DocumentPath = reader.GetString("DocumentPath"),
+                        UploadDate = reader.GetDateTime("UploadDate"),
+                        Title = reader.GetString("Title")
+                    });
+                }
+                this.CloseConnection();
+            }
+                return result;
+            
+        }
+
+
+        // ------------------- MOCK --------------------
+        
+
+        public Department GetDepartmentById(int departmentId)
+        {
+            Random random = new Random();
+            departmentId = random.Next(1, 20);
+            if (departmentId % 5 == 1)
+            {
+                return new Department
+                {
+                    Id = departmentId,
+                    DepartmentCode = "CSE",
+                    DepartmentDesc = "Computer Science and Engineering"
+                };
+            }
+            if (departmentId % 5 == 2)
+            {
+                return new Department
+                {
+                    Id = departmentId,
+                    DepartmentCode = "ECE",
+                    DepartmentDesc = "Electronics and Communication Engineering"
+                };
+            }
+            if (departmentId % 5 == 3)
+            {
+                return new Department
+                {
+                    Id = departmentId,
+                    DepartmentCode = "EEE",
+                    DepartmentDesc = "Electrical and Electronics Engineering"
+                };
+            }
+            if (departmentId % 5 == 4)
+            {
+                return new Department
+                {
+                    Id = departmentId,
+                    DepartmentCode = "CIV",
+                    DepartmentDesc = "Civil Engineering"
+                };
+            }
+            return new Department
+            {
+                Id = departmentId,
+                DepartmentCode = "ME",
+                DepartmentDesc = "Mechanical Engineering"
+            };
+        }
+
+        public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId)
+        {
+            return new ObservableCollection<Class>
+            {
+                    new Class
+                {
+                    Id = 1,
+                    CourseId = 1,
+                    ClassCode = "APCS_1",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 2,
+                    CourseId = 2,
+                    ClassCode = "APCS_2",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 3,
+                    CourseId = 3,
+                    ClassCode = "HP_1",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 4,
+                    CourseId = 4,
+                    ClassCode = "HP_2",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 5,
+                    CourseId = 5,
+                    ClassCode = "HP_3",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 6,
+                    CourseId = 6,
+                    ClassCode = "HP_4",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 7,
+                    CourseId = 7,
+                    ClassCode = "HP_5",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 8,
+                    CourseId = 8,
+                    ClassCode = "GP_1",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 9,
+                    CourseId = 9,
+                    ClassCode = "GP_2",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 10,
+                    CourseId = 10,
+                    ClassCode = "GP_3",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 11,
+                    CourseId = 11,
+                    ClassCode = "GP_4",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 12,
+                    CourseId = 12,
+                    ClassCode = "GP_5",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 13,
+                    CourseId = 13,
+                    ClassCode = "GP_6",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 14,
+                    CourseId = 14,
+                    ClassCode = "GP_7",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                },
+                new Class
+                {
+                    Id = 15,
+                    CourseId = 15,
+                    ClassCode = "GP_8",
+                    CycleId = 1,
+                    ClassStartDate = new DateTime(2022, 1, 1),
+                    ClassEndDate = new DateTime(2022, 5, 1)
+                }
+
+            };
+        }
+
+        public Teacher GetTeacherById(int teacherId)
+        {
+            return new Teacher
+            {
+                Id = teacherId,
+                TeacherCode = "T001",
+                TeacherName = "John Doe",
+                Email = "johndoe@example.com",
+                PhoneNo = "1234567890",
+                UserId = 1
+            };
+        }
+
+        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
+        {
+            return new ObservableCollection<Teacher>
+                {
+                    new Teacher
+                    {
+                        Id = 1,
+                        TeacherCode = "T001",
+                        TeacherName = "John Doe",
+                        Email = "johndoe@example.com",
+                        PhoneNo = "1234567890",
+                        UserId = 1
+                    },
+                    new Teacher
+                    {
+                        Id = 2,
+                        TeacherCode = "T002",
+                        TeacherName = "Jane Smith",
+                        Email = "janesmith@example.com",
+                        PhoneNo = "9876543210",
+                        UserId = 2
+                    },
+                    new Teacher
+                    {
+                        Id = 3,
+                        TeacherCode = "T003",
+                        TeacherName = "Alice Johnson",
+                        Email = "janesmith@example.com",
+                        PhoneNo = "9876543210",
+                        UserId = 3
+                    }
+            };
+        }
+
     }
 }

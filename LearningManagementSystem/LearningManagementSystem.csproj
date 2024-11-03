@@ -37,11 +37,14 @@
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
 	  <None Remove="Views\AllStudentsPage.xaml" />
+	  <None Remove="Views\AssignmentPage.xaml" />
+	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
+		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
 		<None Remove="Views\StudentDisplayerPage.xaml" />
 	</ItemGroup>
@@ -108,6 +111,13 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <Page Update="Views\AllStudentsPage.xaml">
+	  <Page Update="Views\NotificationPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\AssignmentPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\DocumentPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\StackPanelTime.xaml">

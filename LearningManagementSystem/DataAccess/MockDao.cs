@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helper;
+using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,37 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
+        public List<ResourceCategory> findAllResourceCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findAssignmentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Class findClassById(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Course findCourseByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
         public int FindDepartmentID(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findDocumentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<BaseResource> findNotificationsByClassId(int classId)
         {
             throw new NotImplementedException();
         }
@@ -419,9 +450,9 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
-        public ObservableCollection<Teacher> GetTeachersByClassId(int classId)
+        public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            return new ObservableCollection<Teacher>
+            return new FullObservableCollection<Teacher>
                 {
                     new Teacher
                     {
@@ -559,6 +590,20 @@ namespace LearningManagementSystem.DataAccess
         }
 
         public (ObservableCollection<StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null)
+        
+        FullObservableCollection<BaseResource> IDao.findAssignmentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+       
+
+        FullObservableCollection<BaseResource> IDao.findDocumentsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        FullObservableCollection<BaseResource> IDao.findNotificationsByClassId(int classId)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,42 @@
+<Page
+    x:Class="LearningManagementSystem.Views.ClassDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem"
+    xmlns:vm="using:LearningManagementSystem.ViewModels"
+    xmlns:m="using:LearningManagementSystem.Models"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Background="White" HorizontalAlignment="Stretch">
+        <Border Background="Green" HorizontalAlignment="Stretch" MinHeight="100" VerticalAlignment="Stretch" Padding="30,30,0,0">
+            <TextBlock Text="{x:Bind EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" FontWeight="ExtraBold" Foreground="White"/>
+        </Border>
+
+        <ListBox ItemsSource="{x:Bind ResourceViewModel.ListResource.SingularResources, Mode=OneWay}" Background="LightBlue">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:SingularResourceViewModel">
+                    <StackPanel Background="Bisque" VerticalAlignment="Center" MinWidth="800">
+                        <Expander Expanding="Expander_Expanding" Tag="{x:Bind ResourceCategory}" MinWidth="800">
+                            <Expander.Header >
+                                <TextBlock Text="{x:Bind ResourceCategory.Name, Mode=OneWay}" Foreground="Blue" FontWeight="Bold"/>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <ItemsControl ItemsSource="{Binding Resources, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="m:BaseResource">
+                                            <TextBlock Text="{Binding Title, Mode=OneWay}" Foreground="Black" Tapped="TextBlock_Tapped"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander.Content>
+
+                        </Expander>
+                    </StackPanel>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="Back" Name="BackButton" Click="BackButton_Click" Margin="30,30,0,0"
+                Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left"></Button>
+    </StackPanel>
+</Page>
