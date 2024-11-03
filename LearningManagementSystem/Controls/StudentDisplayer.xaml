@@ -22,7 +22,7 @@
                 <controls:DataGridTextColumn Header="ID" Binding="{Binding Id}" />
                 <controls:DataGridTextColumn Header="Name" Binding="{Binding StudentCode}" />
                 <controls:DataGridTextColumn Header="Age" Binding="{Binding StudentName}" />
-                <controls:DataGridTextColumn Header="Enrolled Year" Binding="{Binding EnrolledYear}" />
+                <controls:DataGridTextColumn Header="Enrolled Year" Binding="{Binding EnrollmentYear}" />
             </controls:DataGrid.Columns>
         </controls:DataGrid>
     </Grid>

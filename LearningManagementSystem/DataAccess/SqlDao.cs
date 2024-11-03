@@ -1,4 +1,5 @@
 ﻿using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using MySql.Data.MySqlClient;
 using System;
@@ -431,6 +432,157 @@ namespace LearningManagementSystem.DataAccess
             }
             CloseConnection();
             return [];
+        }
+
+        public (ObservableCollection<StudentVer2>, int) GetStudentsById(
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<int> chosenIds = null
+            )
+        {
+            ObservableCollection<StudentVer2> result = [];
+            int queryCount = 0;
+            if (OpenConnection() == true)
+            {
+                var Query = """
+                select count(*) over() as TotalItem, Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear
+                from Students
+                """;
+
+                if (chosenIds is not null && chosenIds.Any())
+                {
+                    Query += $"\nwhere Id in ({string.Join(", ", chosenIds)})";
+                }
+
+                Query += "\nlimit @Take offset @Skip";
+
+                var Command = new MySqlCommand(Query, connection);
+                Command.Parameters.Add("@Skip", MySqlDbType.Int32).Value = ignoringCount;
+                Command.Parameters.Add("@Take", MySqlDbType.Int32).Value = fetchingCount;
+
+                var finalquery = Query;
+
+                var QueryResultReader = Command.ExecuteReader();
+
+                bool isTotalItemFetched = false;
+
+                while (QueryResultReader.Read())
+                {
+                    if (!isTotalItemFetched)
+                    {
+                        queryCount = QueryResultReader.GetInt32("TotalItem");
+                        isTotalItemFetched = true;
+                    }
+
+                    int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
+                    StudentVer2 newStudent = new()
+                    {
+                        Id = QueryResultReader.GetInt32("Id"),
+                        StudentCode = QueryResultReader.GetString("StudentCode"),
+                        StudentName = QueryResultReader.GetString("StudentName"),
+                        Email = QueryResultReader.GetString("Email"),
+                        BirthDate = QueryResultReader.GetDateTime("BirthDate"),
+                        PhoneNo = QueryResultReader.GetString("PhoneNo"),
+                        UserId = QueryResultReader.GetInt32("UserId"),
+                        EnrollmentYear = QueryResultReader.GetInt32("EnrollmentYear"),
+                        GraduationYear = (QueryResultReader.IsDBNull(graduationYearColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("GraduationYear")
+                            )
+                    };
+                     
+                    result.Add(newStudent);
+                };
+            }
+            CloseConnection();
+            return (result, queryCount);
+        }
+
+
+        public (ObservableCollection<StudentVer2>, int) GetStudents(
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            List<(StudentField field, Ordering order)> sortCriteria = null,
+            List<(StudentField field, object keyword)> searchKeyword = null,
+            List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
+        )
+        {
+            ObservableCollection<StudentVer2> result = [];
+            int totalItem = 0;
+            //if (OpenConnection())
+            //{
+            //    var sql = """
+            //        select count(*) over() as TotalItem, Id, StudentCode, StudentName, Email, Birthday, PhoneNo, UserId
+            //        from Students
+            //        """;
+
+            //    bool startingWhere = false;
+            //    var whereFormat = isStarting =>
+            //    {
+            //        if (isStarting)
+            //        {
+            //            return "where {0}\n";
+            //        }
+            //        else
+            //        {
+            //            return "    and {0}\n";
+            //        }
+            //    };
+
+            //    string temp;
+            //    foreach ((StudentField field, object keyword) in searchKeyword) {
+            //        var criteriaType = field.InferType();
+            //        switch (criteriaType)
+            //        {
+            //            case typeof(int):
+            //                temp = field.ToSqlAttributeName() + " = " + (keyword as int) as string;
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(string):
+            //                temp = field.ToSqlAttributeName() + " like \"" + (keyword as string) + "\"%";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(DateTime):
+            //                temp = field.ToSqlAttributeName() + " = \"" + ((keyword as DateTime) as Date).ToString() + "\"";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            default:
+            //                throw Exception("Invalid field type found!");
+            //        }
+            //        startingWhere = false;
+            //    }
+
+            //    foreach (
+            //        (
+            //            StudentField field, object leftBound, object rightBound,
+            //            bool containedLeftBound, bool withinBounds, bool containedRightBound
+            //        ) in filterCriteria)
+            //    {
+            //        var criteriaType = field.InferType();
+            //        switch (criteriaType)
+            //        {
+            //            case typeof(int):
+            //                temp = field.ToSqlAttributeName() + " = " + (keyword as int) as string;
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(string):
+            //                temp = field.ToSqlAttributeName() + " like \"" + (keyword as string) + "\"%";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            case typeof(DateTime):
+            //                temp = field.ToSqlAttributeName() + " = \"" + ((keyword as DateTime) as Date).ToString() + "\"";
+            //                sql = sql + string.Format(whereFormat(startingWhere), temp);
+            //                break;
+            //            default:
+            //                throw Exception("Invalid field type found!");
+            //        }
+            //        startingWhere = false;
+            //    }
+
+            //}
+            //CloseConnection();
+            return (result, totalItem);
         }
     }
 }

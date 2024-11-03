@@ -20,7 +20,7 @@ namespace LearningManagementSystem.Models
         // Navigation property
         // public User User { get; set; }
 
-        public int EnrolledYear { get; set; }
+        public int EnrollmentYear { get; set; }
         public int? GraduationYear { get; set; } = null;
     }
 }

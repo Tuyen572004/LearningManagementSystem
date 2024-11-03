@@ -453,6 +453,76 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
+        public (ObservableCollection<StudentVer2>, int) GetStudents(
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            List<(StudentField, Ordering)> sortCriteria = null,
+            List<(StudentField, object)> searchKeyword = null,
+            List<(StudentField, object, object, bool, bool, bool)> filterCriteria = null
+            )
+        {
+            // temporary body, so that other IDao don't have to implement this method yet
+            var studentsToo = DataProvider.StudentList();
+
+            var filteredEnumerable = studentsToo.AsEnumerable();
+
+            // Search
+            foreach ((StudentField field, object keyword) in searchKeyword)
+            {
+                filteredEnumerable = filteredEnumerable.Where(student =>
+                {
+                    if (keyword is null && student.GetValueByField(field) is null)
+                    {
+                        return true;
+                    }
+
+                    if (keyword is null || student.GetValueByField(field) is null)
+                    {
+                        return false;
+                    }
+
+                    try
+                    {
+                        // Try to convert object to string, then compare them
+                        return (student.GetValueByField(field) as string).Contains(keyword as string);
+                    }
+                    catch (InvalidCastException)
+                    {
+                        // If failed, then compare them directly, and hope it works
+                        return student.GetValueByField(field).Equals(keyword);
+                    }
+                });
+
+            }
+
+            // Filter
+            filteredEnumerable = filteredEnumerable.ConditionallyFiltered(filterCriteria);
+
+            // Sort
+            // SQL: Just use ORDER BY :'))
+            foreach ((StudentField field, Ordering order) in sortCriteria.AsEnumerable().Reverse())
+            {
+                if (order == Ordering.Ascending)
+                {
+                    filteredEnumerable = filteredEnumerable.OrderBy(student => student.GetValueByField(field));
+                }
+                else
+                {
+                    filteredEnumerable = filteredEnumerable.OrderByDescending(student => student.GetValueByField(field));
+                }
+            }
+
+            if (fetchingAll)
+            {
+                return (new ObservableCollection<StudentVer2>(filteredEnumerable), filteredEnumerable.Count());
+            }
+
+            var queryTotal = filteredEnumerable.Count();
+            filteredEnumerable = filteredEnumerable.Skip(ignoringCount).Take(fetchingCount);
+            return (new ObservableCollection<StudentVer2>(filteredEnumerable), queryTotal);
+        }
+
         public int InsertCourse(Course course)
         {
             throw new NotImplementedException();
@@ -484,6 +554,11 @@ namespace LearningManagementSystem.DataAccess
         }
 
         public void UpdateDepartment(Department department)
+        {
+            throw new NotImplementedException();
+        }
+
+        public (ObservableCollection<StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null)
         {
             throw new NotImplementedException();
         }

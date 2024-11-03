@@ -27,24 +27,24 @@ namespace LearningManagementSystem.ViewModels
         BirthDate,
         PhoneNo,
         UserId,
-        EnrolledYear,
+        EnrollmentYear,
         GraduationYear
     }
 
     public static partial class StudentFieldExtensions
     {
-        //public static Type InferType(this StudentField field)
-        //{
-        //    return field switch
-        //    {
-        //        StudentField.Id or StudentField.UserId => typeof(int),
-        //        StudentField.EnrolledYear or StudentField.GraduationYear => typeof(int),
-        //        StudentField.BirthDate => typeof(DateTime),
-        //        StudentField.StudentCode or StudentField.StudentName
-        //            or StudentField.Email or StudentField.PhoneNo => typeof(string),
-        //        _ => throw new ArgumentException("Invalid field passed")
-        //    };
-        //}
+        public static Type InferType(this StudentField field)
+        {
+            return field switch
+            {
+                StudentField.Id or StudentField.UserId => typeof(int),
+                StudentField.EnrollmentYear or StudentField.GraduationYear => typeof(int),
+                StudentField.BirthDate => typeof(DateTime),
+                StudentField.StudentCode or StudentField.StudentName
+                    or StudentField.Email or StudentField.PhoneNo => typeof(string),
+                _ => throw new ArgumentException("Invalid field passed")
+            };
+        }
 
         public static string ToSqlAttributeName(this StudentField field)
         {
@@ -57,7 +57,7 @@ namespace LearningManagementSystem.ViewModels
                 StudentField.BirthDate => "BirthDate",
                 StudentField.PhoneNo => "PhoneNo",
                 StudentField.UserId => "UserId",
-                StudentField.EnrolledYear => "EnrolledYear",
+                StudentField.EnrollmentYear => "EnrollmentdYear",
                 StudentField.GraduationYear => "GraduationYear",
                 _ => throw new ArgumentException("Invalid field passed")
             };
@@ -101,7 +101,7 @@ namespace LearningManagementSystem.ViewModels
                 StudentField.BirthDate => student.BirthDate,
                 StudentField.PhoneNo => student.PhoneNo,
                 StudentField.UserId => student.UserId,
-                StudentField.EnrolledYear => student.EnrolledYear,
+                StudentField.EnrollmentYear => student.EnrollmentYear,
                 StudentField.GraduationYear => student.GraduationYear, // This field is nullable
                 _ => throw new ArgumentException("Invalid field passed")
             };

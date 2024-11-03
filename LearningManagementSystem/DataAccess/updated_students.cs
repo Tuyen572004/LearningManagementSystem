@@ -13,8 +13,8 @@ namespace LearningManagementSystem.DataAccess
             foreach (var item in _studentList)
             {
                 item.GraduationYear =
-                    (item.EnrolledYear + 4 + deviation <= 2024) ?
-                    item.EnrolledYear + 4 + deviation :
+                    (item.EnrollmentYear + 4 + deviation <= 2024) ?
+                    item.EnrollmentYear + 4 + deviation :
                     null;
             }
             return _studentList;
@@ -29,7 +29,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 04, 24),
             PhoneNo = "0041-768-498",
             UserId = 1,
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
         },
         new StudentVer2{
             Id = 2,
@@ -39,7 +39,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 08, 27),
             PhoneNo = "0262-566-882",
             UserId = 2,
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
         },
         new StudentVer2{
             Id = 3,
@@ -49,7 +49,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 05, 01),
             PhoneNo = "0568-423-451",
             UserId = 3,
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
         },
         new StudentVer2{
             Id = 4,
@@ -59,7 +59,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 01, 16),
             PhoneNo = "0517-314-841",
             UserId = 4,
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
         },
         new StudentVer2{
             Id = 5,
@@ -69,7 +69,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 09, 09),
             PhoneNo = "0571-218-850",
             UserId = 5,
-            EnrolledYear = 2024
+            EnrollmentYear = 2024
         },
         new StudentVer2{
             Id = 6,
@@ -79,7 +79,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 04, 03),
             PhoneNo = "0621-515-576",
             UserId = 6,
-            EnrolledYear = 2024
+            EnrollmentYear = 2024
         },
         new StudentVer2{
             Id = 7,
@@ -89,7 +89,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 09, 13),
             PhoneNo = "0212-717-340",
             UserId = 7,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 8,
@@ -99,7 +99,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 02, 15),
             PhoneNo = "0053-317-146",
             UserId = 8,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 9,
@@ -109,7 +109,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 06, 15),
             PhoneNo = "0656-041-765",
             UserId = 9,
-            EnrolledYear = 2021
+            EnrollmentYear = 2021
         },
         new StudentVer2{
             Id = 10,
@@ -119,7 +119,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 04, 17),
             PhoneNo = "0711-889-247",
             UserId = 10,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 11,
@@ -129,7 +129,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 08, 21),
             PhoneNo = "0887-250-384",
             UserId = 11,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 12,
@@ -139,7 +139,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 07, 14),
             PhoneNo = "0358-423-564",
             UserId = 12,
-            EnrolledYear = 2024
+            EnrollmentYear = 2024
         },
         new StudentVer2{
             Id = 13,
@@ -149,7 +149,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 06, 23),
             PhoneNo = "0662-624-517",
             UserId = 13,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 14,
@@ -159,7 +159,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 05, 18),
             PhoneNo = "0787-355-779",
             UserId = 14,
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
         },
         new StudentVer2{
             Id = 15,
@@ -169,7 +169,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 07, 04),
             PhoneNo = "0015-119-284",
             UserId = 15,
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
         },
         new StudentVer2{
             Id = 16,
@@ -179,7 +179,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 04, 07),
             PhoneNo = "0895-326-452",
             UserId = 16,
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
         },
         new StudentVer2{
             Id = 17,
@@ -189,7 +189,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 05, 26),
             PhoneNo = "0148-565-158",
             UserId = 17,
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
         },
         new StudentVer2{
             Id = 18,
@@ -199,7 +199,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 10, 21),
             PhoneNo = "0648-127-362",
             UserId = 18,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2{
             Id = 19,
@@ -209,7 +209,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 09, 12),
             PhoneNo = "0568-718-660",
             UserId = 19,
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
         },
         new StudentVer2{
             Id = 20,
@@ -219,7 +219,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 08, 10),
             PhoneNo = "0164-182-401",
             UserId = 20,
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
         },
         new StudentVer2 {
 
@@ -237,7 +237,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 21,
 
-            EnrolledYear = 2018
+            EnrollmentYear = 2018
 
         },
 
@@ -257,7 +257,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 22,
 
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
 
         },
 
@@ -277,7 +277,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 23,
 
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
 
         },
 
@@ -297,7 +297,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 24,
 
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
 
         },
 
@@ -317,7 +317,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 25,
 
-            EnrolledYear = 2018
+            EnrollmentYear = 2018
 
         },
 
@@ -337,7 +337,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 26,
 
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
 
         },
 
@@ -357,7 +357,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 27,
 
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
 
         },
 
@@ -377,7 +377,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 28,
 
-            EnrolledYear = 2021
+            EnrollmentYear = 2021
 
         },
 
@@ -397,7 +397,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 29,
 
-            EnrolledYear = 2020
+            EnrollmentYear = 2020
 
         },
 
@@ -417,7 +417,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 30,
 
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
 
         },
 
@@ -437,7 +437,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 31,
 
-            EnrolledYear = 2018
+            EnrollmentYear = 2018
 
         },
 
@@ -457,7 +457,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 32,
 
-            EnrolledYear = 2018
+            EnrollmentYear = 2018
 
         },
 
@@ -477,7 +477,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 33,
 
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
 
         },
 
@@ -497,7 +497,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 34,
 
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
 
         },
 
@@ -517,7 +517,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 35,
 
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
 
         },
 
@@ -537,7 +537,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 36,
 
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
 
         },
 
@@ -557,7 +557,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 37,
 
-            EnrolledYear = 2018
+            EnrollmentYear = 2018
 
         },
 
@@ -577,7 +577,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 38,
 
-            EnrolledYear = 2021
+            EnrollmentYear = 2021
 
         },
 
@@ -597,7 +597,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 39,
 
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
 
         },
 
@@ -617,7 +617,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 40,
 
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
 
         },
 
@@ -637,7 +637,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 41,
 
-            EnrolledYear = 2024
+            EnrollmentYear = 2024
 
         },
 
@@ -657,7 +657,7 @@ namespace LearningManagementSystem.DataAccess
 
             UserId = 42,
 
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
 
         },
        new StudentVer2 {
@@ -668,7 +668,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 10, 01),
             PhoneNo = "0820-171-591",
             UserId = 43,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2 {
             Id = 44,
@@ -678,7 +678,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 01, 05),
             PhoneNo = "0331-260-256",
             UserId = 44,
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
         },
         new StudentVer2 {
             Id = 45,
@@ -688,7 +688,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 01, 13),
             PhoneNo = "0529-183-781",
             UserId = 45,
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
         },
         new StudentVer2 {
             Id = 46,
@@ -698,7 +698,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 03, 16),
             PhoneNo = "0360-132-588",
             UserId = 46,
-            EnrolledYear = 2023
+            EnrollmentYear = 2023
         },
         new StudentVer2 {
             Id = 47,
@@ -708,7 +708,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 02, 07),
             PhoneNo = "0616-908-681",
             UserId = 47,
-            EnrolledYear = 2022
+            EnrollmentYear = 2022
         },
         new StudentVer2 {
             Id = 48,
@@ -718,7 +718,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 02, 08),
             PhoneNo = "0115-282-133",
             UserId = 48,
-            EnrolledYear = 2019
+            EnrollmentYear = 2019
         },
         new StudentVer2 {
             Id = 49,
@@ -728,7 +728,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2024, 04, 25),
             PhoneNo = "0787-157-761",
             UserId = 49,
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
         },
         new StudentVer2 {
             Id = 50,
@@ -738,7 +738,7 @@ namespace LearningManagementSystem.DataAccess
             BirthDate = new DateTime(2025, 02, 03),
             PhoneNo = "0388-168-111",
             UserId = 50,
-            EnrolledYear = 2017
+            EnrollmentYear = 2017
         },
 
         ];
