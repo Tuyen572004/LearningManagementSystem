@@ -42,7 +42,7 @@ namespace LearningManagementSystem.DataAccess
             database = "LMSdb";
             username = "root";
             // password = "LMSMySqlServer@123";
-            password = "matkhaugitutim";
+            password = "nopassword";
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
             connection = new MySqlConnection(connectionString);
         }
@@ -294,7 +294,7 @@ namespace LearningManagementSystem.DataAccess
                 reader.Read();
 
                 int result = reader.GetInt32("TotalItems");
-                
+
 
                 this.CloseConnection();
                 return result;
@@ -648,7 +648,7 @@ namespace LearningManagementSystem.DataAccess
                             : QueryResultReader.GetInt32("GraduationYear")
                             )
                     };
-                     
+
                     result.Add(newStudent);
                 };
             }
@@ -780,7 +780,7 @@ namespace LearningManagementSystem.DataAccess
             var result = new FullObservableCollection<BaseResource>();
             if (this.OpenConnection() == true)
             {
-                
+
                 var sql = """
                     select Id, ClassId, ResourceCategoryId, NotificationText, PostDate, Title
                     from Notifications
@@ -836,8 +836,8 @@ namespace LearningManagementSystem.DataAccess
                 }
                 this.CloseConnection();
             }
-                return result;
-            
+            return result;
+
         }
 
         public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId)
@@ -870,13 +870,13 @@ namespace LearningManagementSystem.DataAccess
                 }
                 this.CloseConnection();
             }
-                return result;
-            
+            return result;
+
         }
 
 
         // ------------------- MOCK --------------------
-        
+
 
         public Department GetDepartmentById(int departmentId)
         {
