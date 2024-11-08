@@ -38,7 +38,8 @@ namespace LearningManagementSystem.DataAccess
             //connection = new MySqlConnection(connectionString);
 
             server = "localhost";
-            database = "learning_management_system";
+            //database = "learning_management_system";
+            database = "LMSdb";
             username = "root";
             // password = "LMSMySqlServer@123";
             password = "matkhaugitutim";

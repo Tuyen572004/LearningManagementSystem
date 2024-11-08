@@ -15,8 +15,13 @@
 1. Create initial database schema
 2. Make login screen check login information
 3. Create a dashboard screen and navigate to other pages
-4. Courses management - 3.5 hours
-5. Read list of students and 1 student detail screen - 3 hours
+4. Courses management - 4 hours
+    - Read list of courses and 1 course detail screen
+    - Create a new course
+    - Update a course
+    - Delete a course
+    - Paging, Sort, Filter
+5. Read list of students (with paging) and 1 student detail screen - 2.5 hours
 6. Read list of Classes, Then selecting 1 class to enter the class detail screen - 3.5 hours
     - When you enter the class, you will see the list of resources of the class: Assignments, Lectures, Documents
     - When you select 1 resource you will enter the resource detail page and see information of the resource. 
