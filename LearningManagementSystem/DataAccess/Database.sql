@@ -145,11 +145,14 @@ CREATE TABLE Documents (
 CREATE TABLE Submissions (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     AssignmentId INT NOT NULL,          -- Foreign key to Assignments table
-    StudentId INT NOT NULL,             -- Foreign key to Students table
+    UserId INT NOT NULL, 
     SubmissionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Answer TEXT NOT NULL,
+    FilePath VARCHAR(255) NOT NULL,
+    FileName NVARCHAR(255) NOT NULL,
+    FileType NVARCHAR(50),
     FOREIGN KEY (AssignmentId) REFERENCES Assignments(Id),
-    FOREIGN KEY (StudentId) REFERENCES Students(Id)
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+
 );
 
 INSERT INTO Users (Id, Username, PasswordHash, Email, Role, CreatedAt) VALUES

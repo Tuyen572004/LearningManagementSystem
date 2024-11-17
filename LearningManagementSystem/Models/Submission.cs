@@ -1,17 +1,19 @@
-﻿using System;
+﻿using LearningManagementSystem.ViewModels;
+using System;
 
 namespace LearningManagementSystem.Models
 {
-    internal class Submission
+    public class Submission : BaseViewModel
     {
         public int Id { get; set; }  // Auto-incrementing Id field
         public int AssignmentId { get; set; }  // Foreign key to Assignments table
-        public int StudentId { get; set; }  // Foreign key to Students table
+        public int UserId { get; set; }  // Foreign key to Students table
         public DateTime SubmissionDate { get; set; }
-        public string Answer { get; set; }
+        public string FilePath { get; set; }  // Path to the submitted file
 
-        // Navigation properties
-        // public Assignment Assignment { get; set; }
-        // public Student Student { get; set; }
+        public string FileName { get; set; }// Original name of the file
+        public string FileType { get; set;}  // MIME type or file extension
+
+
     }
 }

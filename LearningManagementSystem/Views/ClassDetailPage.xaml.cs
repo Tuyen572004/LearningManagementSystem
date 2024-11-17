@@ -13,7 +13,7 @@ namespace LearningManagementSystem.Views
 {
     public sealed partial class ClassDetailPage : Page
     {
-        public EnrollmentViewModel EnrollmentViewModel { get; set; }
+        public EnrollmentClassViewModel EnrollmentViewModel { get; set; }
 
         public ResourceViewModel ResourceViewModel { get; set; }
 
@@ -26,18 +26,18 @@ namespace LearningManagementSystem.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var classViewModel = e.Parameter as EnrollmentViewModel;
+            var classViewModel = e.Parameter as EnrollmentClassViewModel;
             DataContext = classViewModel;
             
-            if(e.Parameter is EnrollmentViewModel enrollmentViewModel)
+            if(e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage (click Enter button)
             {
                 EnrollmentViewModel = enrollmentViewModel;
                 ResourceViewModel = new ResourceViewModel();
             }
-            else if(e.Parameter is int classId)
+            else if(e.Parameter is int classId) // navigated by Resources Page (click Back button)
             {
                 ResourceViewModel = new ResourceViewModel();
-                EnrollmentViewModel = new EnrollmentViewModel();
+                EnrollmentViewModel = new EnrollmentClassViewModel();
                 EnrollmentViewModel.loadClassByClassId(classId);
 
             }

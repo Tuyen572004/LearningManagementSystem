@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="LearningManagementSystem.Views.AssignmentPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,16 +5,23 @@
     xmlns:local="using:LearningManagementSystem.Views"
     xmlns:vm="using:LearningManagementSystem.ViewModels"
     xmlns:m="using:LearningManagementSystem.Models"
+    xmlns:h="using:LearningManagementSystem.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:table="using:WinUI.TableView" d:DataContext="{d:DesignInstance Type=vm:SubmissionViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <h:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+    </Page.Resources>
+
     <StackPanel Background="White">
         <StackPanel Background="Green">
-            <TextBlock Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=OneTime}" HorizontalAlignment="Center" Margin="0,30" Style="{StaticResource TitleLargeTextBlockStyle}" Foreground="White"  FontWeight="Bold"/>
+            <TextBlock Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=OneTime}" HorizontalAlignment="Center" Margin="0,30" Foreground="White" FontWeight="Bold"/>
         </StackPanel>
-        
+
         <TextBlock Text="{x:Bind AssignmentViewModel.Assignment.Description, Mode=OneTime}" Margin="10,10" Foreground="Black"/>
 
         <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
@@ -34,22 +40,75 @@
             <Run Text="{x:Bind AssignmentViewModel.DueStatus, Mode=OneWay}" />
         </TextBlock>
 
-        <TextBlock Text="Showing all submissions:" FontWeight="Bold" Foreground="Gray" FontStyle="Italic" Margin="10,0,0,30"/>
+        <!-- Teacher View -->
+        <!--<StackPanel x:Name="TeacherView"
+                    Visibility="{x:Bind AssignmentViewModel.IsTeacher, 
+                                   Mode=OneWay,
+                                   Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Showing all submissions:" FontWeight="Bold" Foreground="Gray" FontStyle="Italic" Margin="10,0,0,30"/>
+            <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" IsScrollInertiaEnabled="True">
+                <ListView ItemsSource="{x:Bind AssignmentViewModel.Submissions}" Margin="10">
+                    <ListView.ItemTemplate>
+                        <StaticResource ResourceKey="TeacherTable"/>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </StackPanel>-->
 
-        <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left"></Button>
+        <!-- Student View -->
+        <StackPanel x:Name="StudentView" 
+                    Visibility="{x:Bind AssignmentViewModel.IsStudent, 
+                                   Mode=OneWay,
+                                   Converter={StaticResource BooleanToVisibilityConverter}}">
 
-        <!--<ListView ItemsSource="{Binding Submissions}" Margin="10">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:Submission">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding StudentName}" Width="150" />
-                        <TextBlock Text="{Binding StudentId}" Width="100" />
-                        <Button Content="Download" />
-                        <TextBlock Text="{Binding SubmittedOn:d}" Width="150" />
-                        <TextBlock Text="{Binding Grade}" Width="50" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
+            <StackPanel Orientation="Horizontal" 
+                        Visibility="{x:Bind AssignmentViewModel.HasNoSubmission,
+                                    Mode=OneWay,
+                                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Text="Submit your assignment:" FontWeight="Bold" Foreground="Gray" FontStyle="Italic" Margin="10,0,30,20"/>
+                <Button Content="Submit" Command="{x:Bind AssignmentViewModel.SubmitCommand}" 
+                        Foreground="Black" BorderBrush="Black" Background="Orange" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,30,20" Padding="10,5,10,5"/>
+            </StackPanel>
+
+            <table:TableView x:Name="tableView"
+                         Margin="16"
+                         ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
+                         Background="Black"
+                         ShowExportOptions="True"
+                         HeaderRowHeight="{StaticResource HubHeaderThemeFontSize}"
+                         HeaderTemplate="{StaticResource DefaultCompactErrorIconTemplate}"
+                         AutoGenerateColumns="False">
+
+                <table:TableView.Columns>
+                    <table:TableViewTextColumn Header="Id" 
+                                           Binding="{Binding Student.StudentCode, Mode=OneWay}" >
+                    </table:TableViewTextColumn>
+                    <table:TableViewTextColumn Header="Student Name"
+                                               Binding="{Binding Student.StudentName, Mode=OneWay}"/>
+                    <table:TableViewTextColumn Header="Submission Date"
+                                           Binding="{Binding Submission.SubmissionDate, Mode=OneWay}" />
+                    <table:TableViewTextColumn Header="File Name"
+                                           Binding="{Binding Submission.FileName, Mode=OneWay}" />
+
+                    <table:TableViewTemplateColumn Header="Actions">
+                        <table:TableViewTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:SubmissionViewModel">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
+                                    <Button Content="Update" Command="{Binding UpdateCommand}" Foreground="BlanchedAlmond" Background="Blue"/>
+                                    <Button Content="Delete" Command="{Binding DeleteCommand}" Foreground="DarkRed" Background="Red"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </table:TableViewTemplateColumn.CellTemplate>
+                    </table:TableViewTemplateColumn>
+                </table:TableView.Columns>
+                
+            </table:TableView>
+        </StackPanel>
+
+
+
+        <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" 
+                BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
     </StackPanel>
 </Page>

@@ -15,7 +15,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using LearningManagementSystem.Helper;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.DataAccess;
 using System.Threading.Tasks;
 using LearningManagementSystem.Views;

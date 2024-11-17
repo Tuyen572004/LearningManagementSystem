@@ -21,13 +21,20 @@
                                 <TextBlock Text="{x:Bind ResourceCategory.Name, Mode=OneWay}" Foreground="Blue" FontWeight="Bold"/>
                             </Expander.Header>
                             <Expander.Content>
-                                <ItemsControl ItemsSource="{Binding Resources, Mode=OneWay}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="m:BaseResource">
-                                            <TextBlock Text="{Binding Title, Mode=OneWay}" Foreground="Black" Tapped="TextBlock_Tapped"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <!--<ScrollView IsTabStop="True"-->
+                                    <!--ScrollAnimationStarting="ScrollView_ScrollAnimationStarting"
+                                    VerticalAlignment="Top" HorizontalAlignment="Left">-->
+                                    <ItemsControl ItemsSource="{Binding Resources, Mode=OneWay}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="m:BaseResource">
+                                                <Border BorderBrush="Black" BorderThickness="1" Margin="10,10" Width="800" Padding="10,10">
+                                                    <TextBlock Text="{Binding Title, Mode=OneWay}" Foreground="Black" Tapped="TextBlock_Tapped"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                <!--</ScrollView>-->
+
                             </Expander.Content>
 
                         </Expander>

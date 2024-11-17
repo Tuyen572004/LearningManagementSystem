@@ -1,4 +1,4 @@
-﻿using LearningManagementSystem.Helper;
+﻿using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Composition;
@@ -64,65 +64,6 @@ namespace LearningManagementSystem.DataAccess
             List<(StudentField field, object keyword)> searchKeyword = null,
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
             );
-        //{
-        //    // temporary body, so that other IDao don't have to implement this method yet
-        //    var studentsToo = DataProvider.StudentList();
-        //    var filteredEnumerable = studentsToo.AsEnumerable();
-
-        //    // Search
-        //    foreach ((StudentField field, object keyword) in searchKeyword)
-        //    {
-        //        filteredEnumerable = filteredEnumerable.Where(student =>
-        //        {
-        //            if (keyword is null && student.GetValueByField(field) is null)
-        //            {
-        //                return true;
-        //            }            
-                     
-        //            if (keyword is null || student.GetValueByField(field) is null)
-        //            {
-        //                return false;
-        //            }
-        //            try
-        //            {
-        //                // Try to convert object to string, then compare them
-        //                return (student.GetValueByField(field) as string).Contains(keyword as string);
-        //            }
-        //            catch (InvalidCastException)
-        //            {
-        //                // If failed, then compare them directly, and hope it works
-        //                return student.GetValueByField(field).Equals(keyword);
-        //            }
-        //        });
-                    
-        //    }
-
-        //    // Filter
-        //    filteredEnumerable = filteredEnumerable.ConditionallyFiltered(filterCriteria);
-
-        //    // Sort
-        //    // SQL: Just use ORDER BY :'))
-        //    foreach ((StudentField field, Ordering order) in sortCriteria.AsEnumerable().Reverse())
-        //    {
-        //        if (order == Ordering.Ascending)
-        //        {
-        //            filteredEnumerable = filteredEnumerable.OrderBy(student => student.GetValueByField(field));
-        //        }
-        //        else
-        //        {
-        //            filteredEnumerable = filteredEnumerable.OrderByDescending(student => student.GetValueByField(field));
-        //        }
-        //    }
-
-        //    if (fetchingAll)
-        //    {
-        //        return (new ObservableCollection<StudentVer2>(filteredEnumerable), filteredEnumerable.Count());
-        //    }
-
-        //    var queryTotal = filteredEnumerable.Count();
-        //    filteredEnumerable = filteredEnumerable.Skip(ignoringCount).Take(fetchingCount);
-        //    return (new ObservableCollection<StudentVer2>(filteredEnumerable), queryTotal);
-        //}
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
@@ -134,5 +75,14 @@ namespace LearningManagementSystem.DataAccess
 
         public Class findClassById(int classId);
         public Course findCourseByClassId(int classId);
+        Submission GetSubmissionById(int id);
+        Student GetStudentById(int studentId);
+        Assignment GetAssignmentById(int assignmentId);
+        Student GetStudentByUserId(int id);
+        void SaveSubmission(Submission submission);
+        List<Submission> GetSubmissionsByAssignmentId(int id);
+        List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2);
+        void UpdateSubmission(Submission submission);
+        void DeleteSubmissionById(int id);
     }
 }

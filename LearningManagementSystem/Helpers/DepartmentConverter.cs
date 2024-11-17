@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 using System;
 using System.Globalization;
 
-namespace LearningManagementSystem.Helper
+namespace LearningManagementSystem.Helpers
 {
     public class DepartmentConverter : IValueConverter
     {

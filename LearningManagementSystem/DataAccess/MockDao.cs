@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Helper;
+﻿
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.DataAccess
 {
-    internal class MockDao : IDao
+    public class MockDao : IDao
     {
         public bool AddUser(User user)
         {
@@ -137,7 +138,7 @@ namespace LearningManagementSystem.DataAccess
             var origin = database.Where(a => a.CourseDescription.Contains(keyword));
             if (nameAscending)
             {
-                origin=origin.OrderBy(a => a.CourseCode);
+                origin = origin.OrderBy(a => a.CourseCode);
 
             }
 
@@ -593,13 +594,13 @@ namespace LearningManagementSystem.DataAccess
         {
             throw new NotImplementedException();
         }
-        
+
         FullObservableCollection<BaseResource> IDao.findAssignmentsByClassId(int classId)
         {
             throw new NotImplementedException();
         }
 
-       
+
 
         FullObservableCollection<BaseResource> IDao.findDocumentsByClassId(int classId)
         {
@@ -607,6 +608,57 @@ namespace LearningManagementSystem.DataAccess
         }
 
         FullObservableCollection<BaseResource> IDao.findNotificationsByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        FullObservableCollection<Teacher> IDao.GetTeachersByClassId(int classId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Submission GetSubmissionById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Student GetStudentById(int studentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Assignment GetAssignmentById(int assignmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Student GetStudentByUserId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveSubmission(Submission submission)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Submission> GetSubmissionsByAssignmentId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateSubmission(Submission submission)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteSubmissionById(int id)
         {
             throw new NotImplementedException();
         }
