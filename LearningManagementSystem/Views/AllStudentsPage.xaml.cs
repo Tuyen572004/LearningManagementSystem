@@ -31,6 +31,7 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
 
+            _viewModel.RowsPerPage = 1;
             _viewModel.GetStudents();
         }
     

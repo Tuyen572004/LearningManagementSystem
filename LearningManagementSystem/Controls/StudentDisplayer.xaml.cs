@@ -1,3 +1,5 @@
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
@@ -22,6 +24,11 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
+    public class SortChangeInfo
+    {
+        public string ColumnTag { get; set; }
+        public DataGridSortDirection? SortDirection { get; set; }
+    }
     public interface IStudentProvider: INotifyPropertyChanged
     {
         public ObservableCollection<StudentVer2> ManagingStudents { get; }
@@ -35,7 +42,7 @@ namespace LearningManagementSystem.Controls
     public sealed partial class StudentDisplayer : UserControl
     {
         // private readonly IStudentProvider _dataContext = null;
-        public static readonly DependencyProperty ContextProviderProperty = 
+        public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.Register(
                 "ContextProvider",
                 typeof(IStudentProvider),
@@ -64,7 +71,38 @@ namespace LearningManagementSystem.Controls
             //{
             //    throw new ArgumentNullException("DataContext cannot be null");
             //}
+
+            
         }
 
+        public delegate void SortChangeHandler(object sender, SortChangeInfo e);
+        public event EventHandler<SortChangeInfo> SortChanged;
+
+        private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
+        {
+            SortChanged?.Invoke(this, new SortChangeInfo
+            {
+                ColumnTag = e.Column.Tag.ToString(),
+                SortDirection = e.Column.SortDirection
+            });
+        }
+
+        void SkipColumns(params string[] columnTags)
+        {
+            foreach (var tag in columnTags)
+            {
+                Dg.Columns.First(c => c.Tag.ToString() == tag).Visibility = Visibility.Collapsed;
+
+            }
+        }
+
+        void EnableColumns(params string[] columnTags)
+        {
+            foreach (var tag in columnTags)
+            {
+                Dg.Columns.First(c => c.Tag.ToString() == tag).Visibility = Visibility.Visible;
+
+            }
+        }
     }
 }

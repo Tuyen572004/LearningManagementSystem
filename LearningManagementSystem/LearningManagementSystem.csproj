@@ -29,6 +29,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="config.json" />
+	  <None Remove="Controls\PagingOptionsBar.xaml" />
 	  <None Remove="Controls\StudentDisplayer.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
@@ -37,6 +38,10 @@
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
+	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
+	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
+	  <None Remove="Views\Admin\StudentUploadPage.xaml" />
 	  <None Remove="Views\AllStudentsPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
@@ -114,6 +119,21 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\PagingOptionsBar.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\ClassPreviewPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentToClassAssignPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentQueryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentUploadPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\AllStudentsPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 	  </Page>

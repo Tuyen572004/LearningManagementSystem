@@ -14,6 +14,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -23,6 +24,8 @@
             <Button Name="Button_NextPage" Width="100" Height="50" Content="Next Page" Click="Button_NextPage_Click"/>
         </StackPanel>
 
-        <local:StudentDisplayer Grid.Row="1" ContextProvider="{x:Bind ViewModel}"/>
+        <local:PagingOptionsBar Grid.Row="1" ContextProvider="{x:Bind ViewModel}" />
+
+        <local:StudentDisplayer Grid.Row="2" ContextProvider="{x:Bind ViewModel}"/>
     </Grid>
 </Page>
