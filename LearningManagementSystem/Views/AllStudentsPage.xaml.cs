@@ -31,7 +31,10 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
 
-            _viewModel.RowsPerPage = 1;
+            _viewModel.RowsPerPage = 10;
+
+            StudentDisplayer.SortChanged += _viewModel.HandleSortChange;
+            SearchBar.SearchChanged += _viewModel.HandleSearchChange;
             _viewModel.GetStudents();
         }
     

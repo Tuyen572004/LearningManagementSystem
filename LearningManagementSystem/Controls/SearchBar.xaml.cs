@@ -1,0 +1,161 @@
+#nullable enable
+using Microsoft.Identity.Client;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
+
+namespace LearningManagementSystem.Controls
+{
+    /// <summary>
+    /// Currently don't support change SearchFields
+    /// </summary>
+    public interface ISearchProvider
+    {
+        public List<string> SearchFields { get; }
+    }
+
+    public class UnassignedSearchProvider : ISearchProvider
+    {
+        public List<string> SearchFields { get => []; }
+    }
+
+    public class SearchCriteria
+    {
+        public string? Field { get; set; }
+        public string? Pattern { get; set; }
+        // public bool IsCaseSensitive { get; set; }
+    }
+    public sealed partial class SearchBar : UserControl
+    {
+        public static readonly DependencyProperty ContextProviderProperty =
+            DependencyProperty.Register(
+                "ContextProvider",
+                typeof(ISearchProvider),
+                typeof(SearchBar),
+                new PropertyMetadata(new UnassignedSearchProvider(), OnDataChanged)
+                );
+
+        private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            
+        }
+
+        public ISearchProvider ContextProvider
+        {
+            get => (ISearchProvider)GetValue(ContextProviderProperty);
+            set
+            {
+                SetValue(ContextProviderProperty, value);
+            }
+        }
+
+        readonly public Dictionary<string, string> SearchPattern = new()
+        {
+            { "Contains", "like '%{0}%'" },
+            { "Starts with", "like '{0}%'" },
+            { "Ends with", "like '%{0}'" },
+            { "Match with", "like '{0}'" },
+            { "Is not null", "is not null" },
+            { "Is null", "is null" }
+        };
+
+        public List<string> SearchOptions { get; } 
+
+        public SearchBar()
+        {
+            this.InitializeComponent();
+
+            SearchOptions = new(SearchPattern.Keys);
+        }
+
+        private void ComboBox_SearchField_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Do nothing
+        }
+
+        private void ComboBox_SearchScheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                var selectedItemText = comboBox.SelectedItem?.ToString();
+                if (selectedItemText == "Is not null" || selectedItemText == "Is null")
+                {
+                    TextBox_Keyword.Text = "";
+                    TextBox_Keyword.IsEnabled = false;
+                }
+                else
+                {
+                    TextBox_Keyword.IsEnabled = true;
+                }
+            }
+        }
+
+        public event EventHandler<SearchCriteria?>? SearchChanged;
+
+        private async void Button_Search_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> problems = [];
+            if (ComboBox_SearchField.SelectedItem == null)
+            {
+                problems.Add("- Search field is not selected.");
+            }
+            if (ComboBox_SearchScheme.SelectedItem == null)
+            {
+                problems.Add("- Search scheme is not selected.");
+            }
+            if (TextBox_Keyword.Text.Trim().Length == 0 && // When the length of keyword is zero
+                !(ComboBox_SearchScheme.SelectedItem != null // But not when the scheme is null-check
+                && (ComboBox_SearchScheme.SelectedItem.ToString() == "Is null"
+                || ComboBox_SearchScheme.SelectedItem.ToString() == "Is not null"))
+                )
+            {
+                problems.Add("- Keyword is empty.");
+            }
+
+            if (problems.Count != 0)
+            {
+                var errorDialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Invalid Search Parameter(s)",
+                    Content = string.Join("\n", problems),
+                    DefaultButton = ContentDialogButton.Close,
+                    CloseButtonText = "OK"
+                };
+                var _ = await errorDialog.ShowAsync();
+                return;
+            }
+
+            var newSearchCriteria = new SearchCriteria
+            {
+                Field = ComboBox_SearchField.SelectedItem?.ToString(),
+                Pattern = string.Format(SearchPattern[ComboBox_SearchScheme.SelectedItem?.ToString() ?? ""], TextBox_Keyword.Text),
+                // IsCaseSensitive = CheckBox_CaseSensitive.IsChecked == true
+            };
+
+            SearchChanged?.Invoke(this, newSearchCriteria);
+        }
+
+        private void Button_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox_Keyword.Text = string.Empty;
+            SearchChanged?.Invoke(this, null);
+        }
+    }
+}

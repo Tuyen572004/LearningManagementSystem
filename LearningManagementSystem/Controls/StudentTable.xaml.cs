@@ -24,9 +24,9 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    public class SortChangeInfo
+    public class SortCriteria
     {
-        public string ColumnTag { get; set; }
+        required public string ColumnTag { get; set; }
         public DataGridSortDirection? SortDirection { get; set; }
     }
     public interface IStudentProvider: INotifyPropertyChanged
@@ -39,14 +39,14 @@ namespace LearningManagementSystem.Controls
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
-    public sealed partial class StudentDisplayer : UserControl
+    public sealed partial class StudentTable : UserControl
     {
         // private readonly IStudentProvider _dataContext = null;
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.Register(
                 "ContextProvider",
                 typeof(IStudentProvider),
-                typeof(StudentDisplayer),
+                typeof(StudentTable),
                 new PropertyMetadata(new UnassignedStudentProvider(), OnDataChanged)
                 );
 
@@ -61,33 +61,53 @@ namespace LearningManagementSystem.Controls
             // Do nothing currently
         }
 
-        public StudentDisplayer()
+        public StudentTable()
         {
             this.InitializeComponent();
-
-            // _dataContext = ContextProvider;
-
-            //if (_dataContext is null)
-            //{
-            //    throw new ArgumentNullException("DataContext cannot be null");
-            //}
-
-            
         }
 
-        public delegate void SortChangeHandler(object sender, SortChangeInfo e);
-        public event EventHandler<SortChangeInfo> SortChanged;
+        public event EventHandler<List<SortCriteria>> SortChanged;
+        private readonly List<SortCriteria> _sortList = [];
 
         private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
         {
-            SortChanged?.Invoke(this, new SortChangeInfo
+            if (e.Column.SortDirection == null)
+            {
+                e.Column.SortDirection = DataGridSortDirection.Ascending;
+            }
+            else if (e.Column.SortDirection == DataGridSortDirection.Ascending)
+            {
+                e.Column.SortDirection = DataGridSortDirection.Descending;
+            }
+            else
+            {
+                _sortList.RemoveAll(s => s.ColumnTag == e.Column.Tag.ToString());
+                e.Column.SortDirection = null;
+                SortChanged?.Invoke(this, _sortList);
+                return;
+            }
+
+            var oldItem = _sortList.FirstOrDefault(s => s?.ColumnTag == e.Column.Tag.ToString(), null);
+            if (oldItem is not null)
+            {
+                oldItem.SortDirection = e.Column.SortDirection;
+            }
+            _sortList.Add(new SortCriteria
             {
                 ColumnTag = e.Column.Tag.ToString(),
                 SortDirection = e.Column.SortDirection
             });
+
+            //SortChanged?.Invoke(this, new SortCriteria
+            //{
+            //    ColumnTag = e.Column.Tag.ToString(),
+            //    SortDirection = e.Column.SortDirection
+            //});
+
+            SortChanged?.Invoke(this, _sortList);
         }
 
-        void SkipColumns(params string[] columnTags)
+        public void SkipColumns(params string[] columnTags)
         {
             foreach (var tag in columnTags)
             {
@@ -96,12 +116,30 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        void EnableColumns(params string[] columnTags)
+        public void EnableColumns(params string[] columnTags)
         {
             foreach (var tag in columnTags)
             {
                 Dg.Columns.First(c => c.Tag.ToString() == tag).Visibility = Visibility.Visible;
 
+            }
+        }
+
+        public event EventHandler<List<StudentVer2>> StudentSelected;
+        private void Dg_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                StudentSelected?.Invoke(this, e.AddedItems as List<StudentVer2>);
+            }
+        }
+
+        public event EventHandler<StudentVer2> StudentDoubleTapped;
+        private void Dg_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (Dg.SelectedItem is StudentVer2 student)
+            {
+                StudentDoubleTapped?.Invoke(this, student);
             }
         }
     }

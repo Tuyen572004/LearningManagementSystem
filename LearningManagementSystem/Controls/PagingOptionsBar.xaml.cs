@@ -66,6 +66,7 @@ namespace LearningManagementSystem.Controls
             if (e.PropertyName == nameof(IPagingProvider.PageCount))
             {
                 // Call the desired function when PageCount changes
+                ResetCurrentPage(preservedIfAble: true);
                 CreatePageButtons();
             }
         }
@@ -86,7 +87,7 @@ namespace LearningManagementSystem.Controls
             this.InitializeComponent();
         }
 
-        public void ResetCurrentPage(bool preservedIfAble = true)
+        public void ResetCurrentPage(bool preservedIfAble = false)
         {
             if (!preservedIfAble || CurrentPage > ContextProvider.PageCount)
             {
@@ -97,7 +98,6 @@ namespace LearningManagementSystem.Controls
         private void CreatePageButtons()
         {
             ButtonContainer.Children.Clear();
-            ResetCurrentPage();
             int pageCount = ContextProvider.PageCount;
             int leftBound = Math.Max(CurrentPage - PageWindowSize, 1);
             int rightBound = Math.Min(CurrentPage + PageWindowSize, pageCount);
@@ -108,6 +108,7 @@ namespace LearningManagementSystem.Controls
                 Tag = "Previous",
                 Style = (Style)Resources["PagingButtonStyle"]
             };
+
             previousButton.Click += PreviousButton_Click;
             if (CurrentPage <= 1)
             {
@@ -199,6 +200,7 @@ namespace LearningManagementSystem.Controls
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             CurrentPage += 1;
+            CreatePageButtons();
             ContextProvider.NavigateToPage(CurrentPage);
             
         }
@@ -206,6 +208,7 @@ namespace LearningManagementSystem.Controls
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
             CurrentPage -= 1;
+            CreatePageButtons();
             ContextProvider.NavigateToPage(CurrentPage);
         }
 
@@ -214,6 +217,7 @@ namespace LearningManagementSystem.Controls
             if (sender is Button button)
             {
                 CurrentPage = (int)button.Tag;
+                CreatePageButtons();
                 ContextProvider.NavigateToPage(CurrentPage);
             }
         }

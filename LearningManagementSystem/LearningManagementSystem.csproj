@@ -30,7 +30,8 @@
 	<ItemGroup>
 	  <None Remove="config.json" />
 	  <None Remove="Controls\PagingOptionsBar.xaml" />
-	  <None Remove="Controls\StudentDisplayer.xaml" />
+	  <None Remove="Controls\SearchBar.xaml" />
+	  <None Remove="Controls\StudentTable.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
@@ -119,6 +120,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\SearchBar.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Controls\PagingOptionsBar.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -201,7 +205,7 @@
 		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\StudentDisplayer.xaml">
+	  <Page Update="Controls\StudentTable.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

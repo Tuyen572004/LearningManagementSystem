@@ -291,8 +291,9 @@ namespace LearningManagementSystem.ViewModels
                 getAll,
                 (CurrentPage - 1) * RowsPerPage,
                 RowsPerPage,
-                SortCriteria,
-                SearchKeyword,
+                null,
+                null,
+                null,
                 FilterCriteria
                 );
             ItemCount = queryCount;

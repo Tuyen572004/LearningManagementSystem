@@ -14,6 +14,8 @@ using Windows.ApplicationModel.Activation;
 using System.Configuration;
 using System.Text.Json;
 using System.IO;
+using LearningManagementSystem.Controls;
+using CommunityToolkit.WinUI.UI.Controls;
 
 
 
@@ -654,13 +656,138 @@ namespace LearningManagementSystem.DataAccess
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
-            List<(StudentField field, Ordering order)> sortCriteria = null,
-            List<(StudentField field, object keyword)> searchKeyword = null,
+            IEnumerable<int> chosenIds = null,
+            IEnumerable<SortCriteria> sortCriteria = null,
+            SearchCriteria searchCriteria = null,
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
         )
         {
             ObservableCollection<StudentVer2> result = [];
-            int totalItem = 0;
+            int queryCount = 0;
+
+
+            if (OpenConnection() == true)
+            {
+                var Query =
+                """
+                select count(*) over() as TotalItem, Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear
+                from Students
+                """;
+
+                Query += '\n';
+
+                bool startingWhere = true;
+                string whereCondition(string condition)
+                {
+                    if (startingWhere)
+                    {
+                        startingWhere = false;
+                        return String.Format("where {0}\n", condition);
+                    }
+                    else
+                    {
+                        return String.Format("    and {0}\n", condition);
+                    }
+                }
+
+                if (chosenIds is not null && chosenIds.Any())
+                {
+                    // Query += $"\nwhere Id in ({string.Join(", ", chosenIds)})";
+
+                    Query += whereCondition($"Id in ({string.Join(", ", chosenIds)})");
+
+                }
+
+                if (searchCriteria is not null)
+                {
+                    string searchCondition = "";
+                    searchCondition = searchCriteria.Field switch
+                    {
+                        _ => $"{searchCriteria.Field}",
+                    };
+
+
+                    searchCondition = searchCriteria.Pattern switch
+                    {
+                        "is not null" or "is null" => $"{searchCondition} {searchCriteria.Pattern}",
+                        _ => $"ifnull(cast({searchCondition} as char), '') {searchCriteria.Pattern}",
+                    };
+
+                    Query += whereCondition(searchCondition);
+                }
+
+                List<string> sortQuery = sortCriteria
+                    ?.Select(s => 
+                    {
+                        string sortField = s.ColumnTag;
+                        string sortDirection = s.SortDirection == DataGridSortDirection.Ascending ? "asc" : "desc";
+                        return $"{sortField} {sortDirection}";
+                    }
+                    ).ToList()
+                    ?? [];
+
+                if (sortQuery.Count != 0)
+                {
+                    Query += $"order by {string.Join(", ", sortQuery)}\n";
+                }
+
+
+                if (!fetchingAll)
+                {
+                    Query += "limit @Take offset @Skip\n";
+                }
+                
+
+                var Command = new MySqlCommand(Query, connection);
+
+                if (!fetchingAll)
+                {
+                    Command.Parameters.Add("@Skip", MySqlDbType.Int32).Value = ignoringCount;
+                    Command.Parameters.Add("@Take", MySqlDbType.Int32).Value = fetchingCount;
+                }
+
+                var finalquery = Query;
+
+                var QueryResultReader = Command.ExecuteReader();
+
+                bool isTotalItemFetched = false;
+
+                while (QueryResultReader.Read())
+                {
+                    if (!isTotalItemFetched)
+                    {
+                        queryCount = QueryResultReader.GetInt32("TotalItem");
+                        isTotalItemFetched = true;
+                    }
+
+                    int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
+                    int userIdColumn = QueryResultReader.GetOrdinal("UserId");
+                    StudentVer2 newStudent = new()
+                    {
+                        Id = QueryResultReader.GetInt32("Id"),
+                        StudentCode = QueryResultReader.GetString("StudentCode"),
+                        StudentName = QueryResultReader.GetString("StudentName"),
+                        Email = QueryResultReader.GetString("Email"),
+                        BirthDate = QueryResultReader.GetDateTime("BirthDate"),
+                        PhoneNo = QueryResultReader.GetString("PhoneNo"),
+                        UserId = (QueryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("UserId")
+                            ),
+                        EnrollmentYear = QueryResultReader.GetInt32("EnrollmentYear"),
+                        GraduationYear = (QueryResultReader.IsDBNull(graduationYearColumn)
+                            ? null
+                            : QueryResultReader.GetInt32("GraduationYear")
+                            )
+                    };
+
+                    result.Add(newStudent);
+                };
+            }
+            CloseConnection();
+            return (result, queryCount);
+
+
             //if (OpenConnection())
             //{
             //    var sql = """
@@ -669,7 +796,7 @@ namespace LearningManagementSystem.DataAccess
             //        """;
 
             //    bool startingWhere = false;
-            //    var whereFormat = isStarting =>
+            //    var whereFormat = static (isStarting) =>
             //    {
             //        if (isStarting)
             //        {
@@ -682,7 +809,8 @@ namespace LearningManagementSystem.DataAccess
             //    };
 
             //    string temp;
-            //    foreach ((StudentField field, object keyword) in searchKeyword) {
+            //    foreach ((StudentField field, object keyword) in searchKeyword)
+            //    {
             //        var criteriaType = field.InferType();
             //        switch (criteriaType)
             //        {
@@ -732,8 +860,7 @@ namespace LearningManagementSystem.DataAccess
             //    }
 
             //}
-            //CloseConnection();
-            return (result, totalItem);
+            
         }
 
         // --------------------------- RESOURCE --------------------------- //

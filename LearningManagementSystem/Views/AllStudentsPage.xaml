@@ -11,11 +11,12 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Margin="10, 0, 0, 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
@@ -24,8 +25,8 @@
             <Button Name="Button_NextPage" Width="100" Height="50" Content="Next Page" Click="Button_NextPage_Click"/>
         </StackPanel>
 
-        <local:PagingOptionsBar Grid.Row="1" ContextProvider="{x:Bind ViewModel}" />
-
-        <local:StudentDisplayer Grid.Row="2" ContextProvider="{x:Bind ViewModel}"/>
+        <local:SearchBar x:Name="SearchBar" Grid.Row="1" ContextProvider="{x:Bind ViewModel}" />
+        <local:StudentTable x:Name="StudentDisplayer" Grid.Row="2" ContextProvider="{x:Bind ViewModel}"/>
+        <local:PagingOptionsBar x:Name="PagingOptionsBar" Grid.Row="3" ContextProvider="{x:Bind ViewModel}" />
     </Grid>
 </Page>

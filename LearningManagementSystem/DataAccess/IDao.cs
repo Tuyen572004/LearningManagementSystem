@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Helpers;
+﻿using LearningManagementSystem.Controls;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Composition;
@@ -60,10 +61,14 @@ namespace LearningManagementSystem.DataAccess
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
-            List<(StudentField field, Ordering order)> sortCriteria = null,
-            List<(StudentField field, object keyword)> searchKeyword = null,
+            IEnumerable<int> chosenIds = null,
+            IEnumerable<SortCriteria> sortCriteria = null,
+            SearchCriteria searchCriteria = null,
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
-            );
+        )
+        {
+            return (null, 0);
+        }
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
