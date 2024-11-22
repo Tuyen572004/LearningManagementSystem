@@ -21,12 +21,16 @@ namespace LearningManagementSystem.Controls
 {
     public interface IPagingProvider: INotifyPropertyChanged
     {
-        public int PageCount { get; }
+        public int CurrentPage { get; }
+        public int ItemCount { get; }
+        public int RowsPerPage { get; set; }
         public void NavigateToPage(int page);
     }
     public partial class UnassignedPagingProvider : IPagingProvider
     {
-        public int PageCount => 0;
+        public int CurrentPage => 1;
+        public int ItemCount => 0;
+        public int RowsPerPage { get; set; } = 10;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -58,16 +62,20 @@ namespace LearningManagementSystem.Controls
                 {
                     newProvider.PropertyChanged += control.OnContextProviderPropertyChanged;
                 }
+
+                control.RefreshPaging();
+                
             }
         }
 
         private void OnContextProviderPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(IPagingProvider.PageCount))
+            if (e.PropertyName == nameof(IPagingProvider.ItemCount)
+                || e.PropertyName == nameof(IPagingProvider.CurrentPage)
+                || e.PropertyName == nameof(IPagingProvider.RowsPerPage))
             {
                 // Call the desired function when PageCount changes
-                ResetCurrentPage(preservedIfAble: true);
-                CreatePageButtons();
+                RefreshPaging();
             }
         }
 
@@ -76,47 +84,55 @@ namespace LearningManagementSystem.Controls
             get => (IPagingProvider)GetValue(ContextProviderProperty);
             set {
                 SetValue(ContextProviderProperty, value);
-                CreatePageButtons();
+                RefreshPaging();
             }
         }
 
-        private int CurrentPage { get; set; } = 1;
+        public int CurrentPage { get => ContextProvider.CurrentPage; }
+        public int ItemCount { get => ContextProvider.ItemCount; }
+        public int PageCount => ItemCount / ContextProvider.RowsPerPage + ((ItemCount % ContextProvider.RowsPerPage > 0) ? 1 : 0);
         public int PageWindowSize { get; set; } = 1;
+        private int FirstItemIndexInPage => (CurrentPage - 1) * ContextProvider.RowsPerPage + 1;
+        public string PageCountText =>
+            $"displaying item(s) " +
+            ((FirstItemIndexInPage < ItemCount) ? $"{FirstItemIndexInPage} to " : "") +
+            $"{Math.Min(ItemCount, CurrentPage * ContextProvider.RowsPerPage)} (of {ItemCount} total item(s))";
+        public readonly List<int> PageSizes = [5, 10, 20, 50, 100];
         public PagingOptionsBar()
         {
             this.InitializeComponent();
+
+            RefreshPaging();
         }
 
-        public void ResetCurrentPage(bool preservedIfAble = false)
+        public void RefreshPaging()
         {
-            if (!preservedIfAble || CurrentPage > ContextProvider.PageCount)
-            {
-                CurrentPage = 1;
-            }
+            CreatePageButtons();
+            PagingInfo.Text = PageCountText;
+            RowSizeSelector.SelectedItem = null;
+            RowSizeSelector.PlaceholderText = ContextProvider.RowsPerPage.ToString();
         }
-
         private void CreatePageButtons()
         {
             ButtonContainer.Children.Clear();
-            int pageCount = ContextProvider.PageCount;
             int leftBound = Math.Max(CurrentPage - PageWindowSize, 1);
-            int rightBound = Math.Min(CurrentPage + PageWindowSize, pageCount);
+            // int rightBound = Math.Min(CurrentPage + PageWindowSize, pageCount);
+            int rightBound = CurrentPage + PageWindowSize;
 
             Button previousButton = new()
             {
                 Content = "Previous",
                 Tag = "Previous",
                 Style = (Style)Resources["PagingButtonStyle"]
-            };
-
-            previousButton.Click += PreviousButton_Click;
-            if (CurrentPage <= 1)
+            };     
+            if (CurrentPage <= 1 || PageCount <= 0 || CurrentPage > PageCount + 1)
             {
                 previousButton.IsEnabled = false;
             }
             else
             {
                 previousButton.IsEnabled = true;
+                previousButton.Click += PreviousButton_Click;
             }
             ButtonContainer.Children.Add(previousButton);
 
@@ -125,19 +141,19 @@ namespace LearningManagementSystem.Controls
                 Content = "Next",
                 Tag = "Next",
                 Style = (Style)Resources["PagingButtonStyle"]
-            };
-            nextButton.Click += NextButton_Click;
-            if (CurrentPage >= pageCount)
+            };  
+            if (CurrentPage >= PageCount)
             {
                 nextButton.IsEnabled = false;
             }
             else
             {
                 nextButton.IsEnabled = true;
+                nextButton.Click += NextButton_Click;
             }
             ButtonContainer.Children.Add(nextButton);
 
-            if (leftBound > 1)
+            if (leftBound > 1 && PageCount > 0)
             {
                 Button firstButton = new()
                 {
@@ -160,7 +176,7 @@ namespace LearningManagementSystem.Controls
                 }
             }
 
-            for (int i = leftBound; i <= rightBound; i++)
+            for (int i = leftBound; i <= rightBound && i <= PageCount; i++)
             {
                 Button button = new()
                 {
@@ -168,13 +184,17 @@ namespace LearningManagementSystem.Controls
                     Tag = i,
                     Style = (Style)Resources["PagingButtonStyle"]
                 };
+                if (i == CurrentPage)
+                {
+                    button.IsEnabled = false;
+                }
                 button.Click += Button_Click;
                 ButtonContainer.Children.Add(button);
             }
 
-            if (rightBound < pageCount)
+            if ((rightBound < PageCount) || (CurrentPage > PageCount && PageCount > 0))
             {
-                if (rightBound < pageCount - 1)
+                if (rightBound < PageCount - 1)
                 {
                     TextBlock ellipsisBlock = new()
                     {
@@ -187,38 +207,67 @@ namespace LearningManagementSystem.Controls
 
                 Button lastButton = new()
                 {
-                    Content = pageCount,
-                    Tag = pageCount,
+                    Content = PageCount,
+                    Tag = PageCount,
                     Style = (Style)Resources["PagingButtonStyle"]
                 };
                 lastButton.Click += Button_Click;
                 ButtonContainer.Children.Add(lastButton);
             }
 
+            if (CurrentPage > PageCount && PageCount > 0)
+            {
+                if (CurrentPage > PageCount + 1)
+                {
+                    TextBlock ellipsisBlock = new()
+                    {
+                        Text = "...",
+                        Tag = PageCount + 1,
+                        Style = (Style)Resources["EllipsisTextBlockStyle"]
+                    };
+                    ButtonContainer.Children.Add(ellipsisBlock);
+                }
+
+                Button outOfBoundButton = new()
+                {
+                    Content = CurrentPage,
+                    Tag = CurrentPage,
+                    Style = (Style)Resources["PagingButtonStyle"]
+                };
+                outOfBoundButton.IsEnabled = false;
+                outOfBoundButton.Click += Button_Click;
+                ButtonContainer.Children.Add(outOfBoundButton);
+            }
+
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            CurrentPage += 1;
-            CreatePageButtons();
-            ContextProvider.NavigateToPage(CurrentPage);
-            
+            ContextProvider.NavigateToPage(CurrentPage + 1);
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            CurrentPage -= 1;
-            CreatePageButtons();
-            ContextProvider.NavigateToPage(CurrentPage);
+            ContextProvider.NavigateToPage(CurrentPage - 1);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
             {
-                CurrentPage = (int)button.Tag;
-                CreatePageButtons();
-                ContextProvider.NavigateToPage(CurrentPage);
+                ContextProvider.NavigateToPage((int)button.Tag);
+            }
+        }
+
+        private void RowSizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {
+                if (comboBox.SelectedItem is int newSize)
+                {
+                    ContextProvider.RowsPerPage = newSize;
+                    ContextProvider.NavigateToPage(1);
+                }
             }
         }
     }

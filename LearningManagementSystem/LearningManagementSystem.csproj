@@ -30,6 +30,7 @@
 	<ItemGroup>
 	  <None Remove="config.json" />
 	  <None Remove="Controls\PagingOptionsBar.xaml" />
+	  <None Remove="Controls\QueryableStudentDisplayer.xaml" />
 	  <None Remove="Controls\SearchBar.xaml" />
 	  <None Remove="Controls\StudentTable.xaml" />
 	  <None Remove="CoursesPage.xaml" />
@@ -120,6 +121,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Controls\SearchBar.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

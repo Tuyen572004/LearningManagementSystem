@@ -25,27 +25,18 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AllStudentsPage : Page
     {
-        private readonly SimpleStudentsViewModel _viewModel = new(new SqlDao());
-        public SimpleStudentsViewModel ViewModel => _viewModel;
+        private readonly StudentReaderViewModel _viewModel = new(new SqlDao());
+        public StudentReaderViewModel ViewModel => _viewModel;
         public AllStudentsPage()
         {
             this.InitializeComponent();
 
-            _viewModel.RowsPerPage = 10;
+            _viewModel.RowsPerPage = 3;
 
             StudentDisplayer.SortChanged += _viewModel.HandleSortChange;
             SearchBar.SearchChanged += _viewModel.HandleSearchChange;
             _viewModel.GetStudents();
         }
     
-        private void Button_NextPage_Click(object sender, RoutedEventArgs e)
-        {
-            _viewModel.NavigateToPage(_viewModel.CurrentPage + 1);
-        }
-
-        private void Button_PreviousPage_Click(object sender, RoutedEventArgs e)
-        {
-            _viewModel.NavigateToPage(_viewModel.CurrentPage - 1);
-        }
     }
 }

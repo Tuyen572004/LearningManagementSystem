@@ -22,12 +22,10 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    /// <summary>
-    /// Currently don't support change SearchFields
-    /// </summary>
     public interface ISearchProvider
     {
         public List<string> SearchFields { get; }
+        public EventHandler<SearchCriteria?>? SearchChangedHandler => null; 
     }
 
     public class UnassignedSearchProvider : ISearchProvider

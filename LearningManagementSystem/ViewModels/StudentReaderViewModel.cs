@@ -14,13 +14,18 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class SimpleStudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider, IPagingProvider, ISearchProvider
+    public partial class StudentReaderViewModel(IDao dao) : BaseViewModel, IStudentProvider, IPagingProvider, ISearchProvider
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;
+
+        /// <summary>
+        /// Should be non-zero all the time
+        /// </summary>
         public int CurrentPage { get; internal set; } = 1;
         private int _rowsPerPage = DEFAULT_ROWS_PER_PAGE;
 
+        [AlsoNotifyFor(nameof(PageCount))]
         public int RowsPerPage
         {
             get => _rowsPerPage;
@@ -33,6 +38,7 @@ namespace LearningManagementSystem.ViewModels
                 _rowsPerPage = value;
             }
         }
+
         [AlsoNotifyFor(nameof(PageCount))]
         public int ItemCount { get; private set; } = 0;
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
@@ -49,20 +55,37 @@ namespace LearningManagementSystem.ViewModels
 
         public void NavigateToPage(int pageNumber)
         {
-            if (pageNumber < 1 || pageNumber > PageCount)
+            //if (pageNumber < 1 || pageNumber > PageCount)
+            //{
+            //    return;
+            //}
+
+            if (pageNumber < 1)
             {
                 return;
-                // throw new ArgumentException("Invalid page number");
             }
+
             CurrentPage = pageNumber;
             GetStudents();
+
+            //if (CurrentPage > PageCount + 1)
+            //{
+            //    CurrentPage = PageCount + 1;
+            //}
+
+            RaisePropertyChanged(nameof(CurrentPage));
             return;
         }
-        public void GetStudents(IEnumerable<int>? ids = null)
+        public void GetStudents(IEnumerable<int>? ids = null, bool resetPaging = false)
         {
             if (ids != null)
             {
                 ManagingIds = ids.ToList();
+            }
+
+            if (resetPaging)
+            {
+                CurrentPage = 1;
             }
 
             // ManagingIds = ids?.ToList();
@@ -84,20 +107,24 @@ namespace LearningManagementSystem.ViewModels
 
             // You must "roar" by yourself :'))
             RaisePropertyChanged(nameof(ManagingStudents));
-            // RaisePropertyChanged(nameof(PageCount));
+            RaisePropertyChanged(nameof(ItemCount));
         }
 
-        public void HandleSortChange(object sender, List<SortCriteria> e)
+        public void HandleSortChange(object? sender, List<SortCriteria>? e)
         {
+            if (sender is null)
+            {
+                return;
+            }
             SortCriteria = e;
             GetStudents();
         }
-
-        public void HandleSearchChange(object sender, SearchCriteria e)
+        public EventHandler<List<SortCriteria>>? SortChangedHandler => HandleSortChange;
+        public void HandleSearchChange(object? sender, SearchCriteria? e)
         {
             SearchCriteria = e;
-            GetStudents();
+            GetStudents(resetPaging: true);
         }
-
+        public EventHandler<SearchCriteria?>? SearchChangedHandler => HandleSearchChange;
     }
 }

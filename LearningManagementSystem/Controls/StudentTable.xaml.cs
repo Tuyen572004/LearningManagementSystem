@@ -1,3 +1,4 @@
+#nullable enable
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Models;
@@ -32,12 +33,14 @@ namespace LearningManagementSystem.Controls
     public interface IStudentProvider: INotifyPropertyChanged
     {
         public ObservableCollection<StudentVer2> ManagingStudents { get; }
+        public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
+        public EventHandler<StudentVer2>? DoubleTappedHandler => null;
     }
     public partial class UnassignedStudentProvider : IStudentProvider
     {
         public ObservableCollection<StudentVer2> ManagingStudents { get; } = [];
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
     public sealed partial class StudentTable : UserControl
     {
@@ -66,7 +69,7 @@ namespace LearningManagementSystem.Controls
             this.InitializeComponent();
         }
 
-        public event EventHandler<List<SortCriteria>> SortChanged;
+        public event EventHandler<List<SortCriteria>>? SortChanged;
         private readonly List<SortCriteria> _sortList = [];
 
         private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
@@ -92,11 +95,13 @@ namespace LearningManagementSystem.Controls
             {
                 oldItem.SortDirection = e.Column.SortDirection;
             }
+#pragma warning disable CS8601 // Possible null reference assignment.
             _sortList.Add(new SortCriteria
             {
                 ColumnTag = e.Column.Tag.ToString(),
                 SortDirection = e.Column.SortDirection
             });
+#pragma warning restore CS8601 // Possible null reference assignment.
 
             //SortChanged?.Invoke(this, new SortCriteria
             //{
@@ -125,22 +130,24 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        public event EventHandler<List<StudentVer2>> StudentSelected;
-        private void Dg_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public bool IsEditable
         {
-            if (e.AddedItems.Count > 0)
-            {
-                StudentSelected?.Invoke(this, e.AddedItems as List<StudentVer2>);
-            }
+            get => Dg.IsReadOnly;
+            set => Dg.IsReadOnly = !value;
         }
 
-        public event EventHandler<StudentVer2> StudentDoubleTapped;
+        public event EventHandler<StudentVer2>? StudentDoubleTapped;
         private void Dg_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             if (Dg.SelectedItem is StudentVer2 student)
             {
                 StudentDoubleTapped?.Invoke(this, student);
             }
+        }
+
+        private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
+        {
+            SortChanged?.Invoke(this, _sortList);
         }
     }
 }
