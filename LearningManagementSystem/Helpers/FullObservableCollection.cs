@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 
-namespace LearningManagementSystem.Helper
+namespace LearningManagementSystem.Helpers
 {
     public sealed class FullObservableCollection<T> : ObservableCollection<T>
     where T : INotifyPropertyChanged

@@ -1,4 +1,4 @@
-﻿using LearningManagementSystem.Helper;
+﻿using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using System;
 using System.Collections.Generic;

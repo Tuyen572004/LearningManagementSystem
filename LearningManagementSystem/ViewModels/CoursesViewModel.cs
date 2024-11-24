@@ -1,8 +1,8 @@
 ﻿using LearningManagementSystem.Models;
 using LearningManagementSystem.DataAccess;
-using LearningManagementSystem.Helper;
 using System.Collections.ObjectModel;
 using System;
+using LearningManagementSystem.Helpers;
 
 namespace LearningManagementSystem.ViewModels
 {

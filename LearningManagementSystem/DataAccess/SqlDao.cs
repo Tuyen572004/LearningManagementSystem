@@ -1,7 +1,7 @@
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
-using LearningManagementSystem.Helper;
+using LearningManagementSystem.Helpers;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI.Common;
 using System;
@@ -11,14 +11,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using static Mysqlx.Expect.Open.Types.Condition.Types;
+using System.Configuration;
+using System.Text.Json;
+using System.IO;
+
+
+
 
 namespace LearningManagementSystem.DataAccess
 {
+    public class Config
+    {
+        public string DB_SERVER { get; set; }
+        public string DB_DATABASE { get; set; }
+        public string DB_USERNAME { get; set; }
+        public string DB_PASSWORD { get; set; }
+    }
     public class SqlDao : IDao
     {
 
         public MySqlConnection connection;
+
         public string server { get; set; }
         public string database { get; set; }
         public string username { get; set; }
@@ -30,20 +43,21 @@ namespace LearningManagementSystem.DataAccess
 
         public void Initialize()
         {
-            //server = "localhost";
-            //database = "LMSdb";
-            //username = "root";
-            //password = "nopassword";
-            //string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
-            //connection = new MySqlConnection(connectionString);
 
-            server = "localhost";
-            database = "lmsdb";
-            username = "root";
-            // password = "LMSMySqlServer@123";
-            password = "nopassword";
+            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+            string configContent = File.ReadAllText(configFilePath);
+            Config config = JsonSerializer.Deserialize<Config>(configContent);
+
+            server = config.DB_SERVER;
+            database = config.DB_DATABASE;
+            username = config.DB_USERNAME;
+            password = config.DB_PASSWORD;
+
+            // Use the credentials to create a connection string or connect to the database
             string connectionString = $"SERVER={server};DATABASE={database};UID={username};PASSWORD={password}";
+
             connection = new MySqlConnection(connectionString);
+
         }
 
         public bool OpenConnection()
@@ -321,26 +335,6 @@ namespace LearningManagementSystem.DataAccess
             else return 0;
         }
 
-        // ----------------------------------COURSE ---------------------------
-        //public int CountCourse()
-        //{
-        //    if (this.OpenConnection() == true)
-        //    {
-        //        var sql = "select count(*) as TotalItems from courses";
-        //        var command = new MySqlCommand(sql, connection);
-
-        //        var reader = command.ExecuteReader();
-
-        //        reader.Read();
-
-        //        int result = reader.GetInt32("TotalItems");
-
-
-        //        this.CloseConnection();
-        //        return result;
-        //    }
-        //    else return 0;
-        //}
 
         public Course GetCourseById(int courseId)
         {
@@ -1115,5 +1109,219 @@ namespace LearningManagementSystem.DataAccess
             };
         }
 
+        public Submission GetSubmissionById(int id)
+        {
+            var result = new Submission();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, AssignmentId, UserId, SubmissionDate, FilePath,FileName,FileType
+                    from Submissions
+                    where Id=@Id
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Submission
+                    {
+                        Id = reader.GetInt32("Id"),
+                        AssignmentId = reader.GetInt32("AssignmentId"),
+                        UserId = reader.GetInt32("UserId"),
+                        SubmissionDate = reader.GetDateTime("SubmissionDate"),
+                        FilePath = reader.GetString("FilePath"),
+                        FileName = reader.GetString("FileName"),
+                        FileType = reader.GetString("FileType")
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+        public Student GetStudentById(int studentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Assignment GetAssignmentById(int assignmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Student GetStudentByUserId(int id)
+        {
+            var result = new Student();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId
+                    from Students
+                    where UserId=@UserId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@UserId", MySqlDbType.Int32).Value = id;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result = new Student
+                    {
+                        Id = reader.GetInt32("Id"),
+                        StudentCode = reader.GetString("StudentCode"),
+                        StudentName = reader.GetString("StudentName"),
+                        Email = reader.GetString("Email"),
+                        BirthDate = reader.GetDateTime("BirthDate"),
+                        PhoneNo = reader.GetString("PhoneNo"),
+                        UserId = reader.GetInt32("UserId")
+
+                    };
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+
+        public void SaveSubmission(Submission submission)
+        {
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                insert into Submissions (AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType)
+                values (@AssignmentId, @UserId, @SubmissionDate, @FilePath, @FileName, @FileType)
+                """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@AssignmentId", MySqlDbType.Int32).Value = submission.AssignmentId;
+                command.Parameters.Add("@UserId", MySqlDbType.Int32).Value = submission.UserId;
+                command.Parameters.Add("@SubmissionDate", MySqlDbType.DateTime).Value = submission.SubmissionDate;
+                command.Parameters.Add("@FilePath", MySqlDbType.String).Value = submission.FilePath;
+                command.Parameters.Add("@FileName", MySqlDbType.String).Value = submission.FileName;
+                command.Parameters.Add("@FileType", MySqlDbType.String).Value = submission.FileType;
+
+                command.ExecuteNonQuery();
+                this.CloseConnection();
+            }
+        }
+
+        public List<Submission> GetSubmissionsByAssignmentId(int id)
+        {
+            var result = new List<Submission>();
+            if (this.OpenConnection() == true)
+            {
+                var sql = """
+                    select s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, u.Username
+                    from Submissions s
+                    join Users u on s.UserId = u.Id
+                    where s.AssignmentId=@AssignmentId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@AssignmentId", MySqlDbType.Int32).Value = id;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result.Add(new Submission
+                    {
+                        Id = reader.GetInt32("Id"),
+                        AssignmentId = reader.GetInt32("AssignmentId"),
+                        UserId = reader.GetInt32("UserId"),
+                        SubmissionDate = reader.GetDateTime("SubmissionDate"),
+                        FilePath = reader.GetString("FilePath"),
+                        FileName = reader.GetString("FileName"),
+                        FileType = reader.GetString("FileType")
+                    });
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+        public List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2)
+        {
+            var result = new List<Submission>();
+            if(this.OpenConnection() == true)
+            {
+                var sql = """
+                    select s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType
+                    from Submissions s
+                    join Users u on s.UserId = u.Id
+                    where s.AssignmentId=@AssignmentId and s.UserId=@UserId
+                    """;
+
+                var command = new MySqlCommand(sql, connection);
+                command.Parameters.Add("@AssignmentId", MySqlDbType.Int32).Value = id1;
+                command.Parameters.Add("@UserId", MySqlDbType.Int32).Value = id2;
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    result.Add(new Submission
+                    {
+                        Id = reader.GetInt32("Id"),
+                        AssignmentId = reader.GetInt32("AssignmentId"),
+                        UserId = reader.GetInt32("UserId"),
+                        SubmissionDate = reader.GetDateTime("SubmissionDate"),
+                        FilePath = reader.GetString("FilePath"),
+                        FileName = reader.GetString("FileName"),
+                        FileType = reader.GetString("FileType")
+                    });
+                }
+
+                this.CloseConnection();
+            }
+            return result;
+        }
+
+        public void UpdateSubmission(Submission submission)
+        {
+            // find submission by id
+            Submission submission1 = GetSubmissionById(submission.Id);
+            if (submission1 != null)
+            {
+                if (this.OpenConnection() == true)
+                {
+                    var sql = """
+                    update Submissions set AssignmentId=@AssignmentId, UserId=@UserId, SubmissionDate=@SubmissionDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType
+                    where Id=@Id
+                    """;
+
+                    var command = new MySqlCommand(sql, connection);
+                    command.Parameters.Add("@AssignmentId", MySqlDbType.Int32).Value = submission.AssignmentId;
+                    command.Parameters.Add("@UserId", MySqlDbType.Int32).Value = submission.UserId;
+                    command.Parameters.Add("@SubmissionDate", MySqlDbType.DateTime).Value = submission.SubmissionDate;
+                    command.Parameters.Add("@FilePath", MySqlDbType.String).Value = submission.FilePath;
+                    command.Parameters.Add("@FileName", MySqlDbType.String).Value = submission.FileName;
+                    command.Parameters.Add("@FileType", MySqlDbType.String).Value = submission.FileType;
+                    command.Parameters.Add("@Id", MySqlDbType.Int32).Value = submission.Id;
+
+                    command.ExecuteNonQuery();
+                    this.CloseConnection();
+                }
+            }
+            else
+            {
+                throw new Exception("Submission not found");
+            }
+        }
+
+        public void DeleteSubmissionById(int id)
+        {
+            OpenConnection();
+            var sql = "delete from Submissions where Id=@Id";
+            var command = new MySqlCommand(sql, connection);
+            command.Parameters.Add("@Id", MySqlDbType.Int32).Value = id;
+            command.ExecuteNonQuery();
+            CloseConnection();
+        }
     }
 }

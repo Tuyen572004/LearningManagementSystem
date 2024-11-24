@@ -22,12 +22,17 @@ namespace LearningManagementSystem
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DashBoard : Window { 
+    public sealed partial class DashBoard : Window {
 
-         //public static INavigationService NavigationService { get; private set; }
+        //public static INavigationService NavigationService { get; private set; }
+
+        public static IntPtr HWND { get; set; }
         public DashBoard()
         {
             this.InitializeComponent();
+
+            HWND = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
             //NavigationService = new FrameNavigationService(this.ContentFrame);
             NavigateByTag("LearningManagementSystem.HomePage");
 
@@ -41,29 +46,6 @@ namespace LearningManagementSystem
             if (args.SelectedItem is NavigationViewItem item &&
                 item.Tag is string tag)
             {
-            //     TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
-            // };
-
-            // if (args.SelectedItemContainer.Tag is string selectedItemTag)
-            // {
-            //     switch (selectedItemTag)
-            //     {
-            //         case "home":
-            //             ContentFrame.NavigateToType(typeof(HomePage), null, navOptions);
-            //             break;
-            //         case "courses":
-            //             ContentFrame.NavigateToType(typeof(EnrollmentClassesPage), null, navOptions);
-            //             break;
-            //             //case "Students":
-            //             //    ContentFrame.NavigateToType(typeof(Students), null, navOptions);
-            //             //    break;
-            //             //case "Teachers":
-            //             //    ContentFrame.NavigateToType(typeof(Teachers), null, navOptions);
-            //             //    break;
-            //             //case "Settings":
-            //             //    ContentFrame.NavigateToType(typeof(Settings), null, navOptions);
-            //             //    break;
-            //     }
                 NavigateByTag(tag);
             }
         }

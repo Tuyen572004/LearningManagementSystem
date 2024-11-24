@@ -1,4 +1,8 @@
+using CommunityToolkit.Mvvm.Messaging;
+using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Services;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,7 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -27,23 +33,49 @@ namespace LearningManagementSystem.Views
     {
 
         public AssignmentViewModel AssignmentViewModel { get; set; }
+
+        private readonly IDao _dao = new SqlDao();
+        private readonly UserService userService = new UserService();
         public AssignmentPage()
         {
             this.InitializeComponent();
             AssignmentViewModel = new AssignmentViewModel();
             this.DataContext = AssignmentViewModel;
+
+            WeakReferenceMessenger.Default.Register<DialogMessage>(this, async (r, m) =>
+            {
+                await ShowMessageDialog(m.Title, m.Value);
+            });
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into 1 assignment to see it in detail)
         {
-            base.OnNavigatedTo(e);
             AssignmentViewModel.Assignment = e.Parameter as Assignment;
-
+            AssignmentViewModel.LoadSubmissions();
+            base.OnNavigatedTo(e);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
         }
+
+
+
+        private async Task ShowMessageDialog(string title, string content)
+        {
+            var messageDialog = new ContentDialog
+            {
+                Title = title,
+                Content = content,
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+            };
+
+            await messageDialog.ShowAsync();
+        }
+
+
+
     }
 }

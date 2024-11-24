@@ -1,7 +1,7 @@
-﻿using LearningManagementSystem.Command;
+﻿
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
-using LearningManagementSystem.Helper;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using System;
 using System.Collections.ObjectModel;

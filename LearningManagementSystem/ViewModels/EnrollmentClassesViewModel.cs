@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using LearningManagementSystem.Command;
 using LearningManagementSystem.DataAccess;
-using LearningManagementSystem.Helper;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml;
@@ -19,13 +18,12 @@ namespace LearningManagementSystem.ViewModels
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance
-        public ObservableCollection<EnrollmentViewModel> enrolledClassesViewModel { get; set; }
-        //public ICommand NavigateCommand { get; set; }
+        public ObservableCollection<EnrollmentClassViewModel> enrolledClassesViewModel { get; set; }
 
         public EnrollmentClassesViewModel() 
         {
-            enrolledClassesViewModel = new FullObservableCollection<EnrollmentViewModel>();
-            _dao = new MockDao();
+            enrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
+            _dao = new SqlDao(); 
         }
 
         public EnrollmentClassesViewModel(IDao dao) // Constructor accepting IDao
@@ -47,7 +45,7 @@ namespace LearningManagementSystem.ViewModels
                 // get teachers
                 var teachers = new FullObservableCollection<Teacher>(_dao.GetTeachersByClassId(enrolledClass.Id));
 
-                enrolledClassesViewModel.Add(new EnrollmentViewModel
+                enrolledClassesViewModel.Add(new EnrollmentClassViewModel
                 {
                     Class = enrolledClass,
                     Course = course,
