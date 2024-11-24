@@ -1,5 +1,12 @@
 ﻿-- link to dbdiagram : https://dbdiagram.io/d/LMS-6717750097a66db9a3d71486
 
+/*
+
+dotnet ef dbcontext scaffold "Server=localhost;Database=lmsdb;User=root;Password=matkhaugitutim;" MySql.EntityFrameworkCore --output-dir EModels --context-dir DataAccess
+
+
+*/
+
 drop database if exists LMSdb;
 
 create database LMSDb;

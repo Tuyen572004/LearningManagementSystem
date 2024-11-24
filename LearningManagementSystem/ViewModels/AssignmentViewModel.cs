@@ -53,21 +53,16 @@ namespace LearningManagementSystem.ViewModels
         public bool IsTeacher { get; set; }
         public bool IsStudent { get; set; }
 
-        private readonly IDao _dao = new SqlDao();
+        private readonly IDao _dao;
 
         public ICommand SubmitCommand { get; }
 
-        
-
         public User User { get; set; }
-
-
 
         public AssignmentViewModel()
         {
             _userService = new UserService();
-
-
+            _dao = new ESqlDao();
 
             // Initialize submissions collection
             Submissions = new FullObservableCollection<SubmissionViewModel>();
@@ -83,14 +78,13 @@ namespace LearningManagementSystem.ViewModels
             {
                 DeleteSubmission(m.Value);
             });
-
-
         }
 
         private void Submissions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(HasNoSubmission));
         }
+
         public async void checkRole()
         {
             User = await _userService.GetCurrentUser();
@@ -106,18 +100,16 @@ namespace LearningManagementSystem.ViewModels
                 List<Submission> submissions = _dao.GetSubmissionsByAssignmentId(Assignment.Id);
                 foreach (var submission in submissions)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission,Assignment));
+                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
                 }
             }
             else
             {
-                var submission = _dao.GetSubmissionsByAssignmentIdAndUserId(Assignment.Id, User.Id);
-                var student = _dao.GetStudentByUserId(User.Id);
-                for (int i = 0; i < submission.Count; i++)
+                var submissions = _dao.GetSubmissionsByAssignmentIdAndUserId(Assignment.Id, User.Id);
+                foreach (var submission in submissions)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission[i],Assignment));
+                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
                 }
-
             }
         }
 
@@ -125,7 +117,6 @@ namespace LearningManagementSystem.ViewModels
 
         public async void SubmitAssignment()
         {
-
             StorageFile file = await FileHelper.ChooseFile();
 
             if (file != null)
@@ -148,7 +139,7 @@ namespace LearningManagementSystem.ViewModels
 
                 // Save submission to your database here
                 _dao.SaveSubmission(submission);
-                   
+
                 Submissions.Add(new SubmissionViewModel(submission, Assignment));
             }
             else
