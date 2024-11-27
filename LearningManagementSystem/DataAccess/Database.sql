@@ -2,7 +2,7 @@
 
 /*
 
-dotnet ef dbcontext scaffold "Server=localhost;Database=lmsdb;User=root;Password=matkhaugitutim;" MySql.EntityFrameworkCore --output-dir EModels --context-dir DataAccess
+dotnet ef dbcontext scaffold "Server=localhost;Database=lmsdb;User=root;Password=matkhaugitutim;" MySql.EntityFrameworkCore --output-dir EModels --context-dir DataAccess --force
 
 
 */
@@ -99,7 +99,8 @@ CREATE TABLE TeachersPerClass (
     ClassId INT NOT NULL,              -- Foreign key to Courses table
     TeacherId INT NOT NULL,             -- Foreign key to Teachers table
     
-    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
+    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id),
+    FOREIGN KEY (ClassId) REFERENCES Classes(Id)
 );
 
 
@@ -157,6 +158,7 @@ CREATE TABLE Submissions (
     FilePath VARCHAR(255) NOT NULL,
     FileName NVARCHAR(255) NOT NULL,
     FileType NVARCHAR(50),
+    Grade DECIMAL(5, 2),
     FOREIGN KEY (AssignmentId) REFERENCES Assignments(Id),
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 
@@ -233,7 +235,7 @@ INSERT INTO Notifications (Id, ClassId, ResourceCategoryId, NotificationText,Tit
 INSERT INTO Assignments (Id, ClassId, TeacherId, ResourceCategoryId, Title, Description, DueDate) VALUES
 (1, 1, 1, 1, 'Homework 1', 'Complete the exercises in chapter 1.', '2023-11-01'),
 (2, 1, 1, 1, 'Homework 2', 'Complete the exercises in chapter 2.', '2023-11-08'),
-(3, 2, 1, 3, 'Midterm Exam', 'Study chapters 1-5.', '2023-12-01');
+(3, 2, 1, 1, 'Midterm Exam', 'Study chapters 1-5.', '2023-12-01');
 
 -- INSERT INTO Documents
 INSERT INTO Documents (Id, ClassId, ResourceCategoryId,Title, DocumentName, DocumentPath) VALUES

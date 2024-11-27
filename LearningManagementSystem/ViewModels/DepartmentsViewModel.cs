@@ -1,15 +1,11 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
-using LearningManagementSystem.Models;
+using LearningManagementSystem.EModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class DepartmentsViewModel
+    public class DepartmentsViewModel : PropertyChangedClass
     {
         public string Keyword { get; set; } = "";
         public bool NameAscending { get; set; } = false;
@@ -25,7 +21,7 @@ namespace LearningManagementSystem.ViewModels
 
         public DepartmentsViewModel()
         {
-            _dao = new SqlDao();
+            _dao = new ESqlDao();
             GetAllDepartments();
         }
 

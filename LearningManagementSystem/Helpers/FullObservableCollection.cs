@@ -15,7 +15,6 @@ namespace LearningManagementSystem.Helpers
     {
         public FullObservableCollection()
         {
-            CollectionChanged += FullObservableCollectionCollectionChanged;
         }
 
         public FullObservableCollection(IEnumerable<T> pItems) : this()

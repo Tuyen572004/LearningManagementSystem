@@ -22,7 +22,5 @@ namespace LearningManagementSystem.Models
                 DepartmentId = this.DepartmentId
             };
         }
-        // Navigation property
-        // public Department Department { get; set; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using LearningManagementSystem.Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace LearningManagementSystem.EModels;
 
-public partial class Department
+public partial class Department: PropertyChangedClass
 {
     public int Id { get; set; }
 

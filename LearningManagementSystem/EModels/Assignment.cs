@@ -1,7 +1,10 @@
-﻿using System;
+﻿using LearningManagementSystem.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 
 namespace LearningManagementSystem.EModels;
+
 
 public partial class Assignment
 {
@@ -23,7 +26,7 @@ public partial class Assignment
 
     public virtual Resourcecategory ResourceCategory { get; set; }
 
-    public virtual ICollection<Submission> Submissions { get; set; } = new List<Submission>();
+    public virtual FullObservableCollection<Submission> Submissions { get; set; } = new FullObservableCollection<Submission>();
 
     public virtual Teacher Teacher { get; set; }
 }

@@ -1,30 +1,22 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
-using LearningManagementSystem.Models;
+using LearningManagementSystem.EModels;
 using LearningManagementSystem.Services;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
 using RelayCommand = CommunityToolkit.Mvvm.Input.RelayCommand;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class AssignmentViewModel : BaseViewModel
+    public class AssignmentViewModel : PropertyChangedClass
     {
         public Assignment Assignment { get; set; }
 
         public string DueStatus => IsDue ? "Closed" : "On Going";
-
-        public FullObservableCollection<SubmissionViewModel> Submissions { get; set; }
 
 
         public string DueDate
@@ -39,7 +31,7 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-        public bool HasNoSubmission => Submissions.Count == 0;
+        public bool HasNoSubmission => Assignment.Submissions.Count == 0;
 
         public bool IsDue
         {
@@ -65,9 +57,9 @@ namespace LearningManagementSystem.ViewModels
             _dao = new ESqlDao();
 
             // Initialize submissions collection
-            Submissions = new FullObservableCollection<SubmissionViewModel>();
+            Assignment.Submissions = new FullObservableCollection<Submission>();
 
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
+            Assignment.Submissions.CollectionChanged += Submissions_CollectionChanged;
 
             SubmitCommand = new RelayCommand(SubmitAssignment);
 
@@ -100,7 +92,7 @@ namespace LearningManagementSystem.ViewModels
                 List<Submission> submissions = _dao.GetSubmissionsByAssignmentId(Assignment.Id);
                 foreach (var submission in submissions)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
+                    Assignment.Submissions.Add(new Submission(submission));
                 }
             }
             else
@@ -108,7 +100,7 @@ namespace LearningManagementSystem.ViewModels
                 var submissions = _dao.GetSubmissionsByAssignmentIdAndUserId(Assignment.Id, User.Id);
                 foreach (var submission in submissions)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
+                    Assignment.Submissions.Add(new Submission(submission));
                 }
             }
         }
@@ -157,7 +149,7 @@ namespace LearningManagementSystem.ViewModels
 
                 _dao.DeleteSubmissionById(model.Submission.Id);
 
-                Submissions.Remove(model);
+                Assignment.Submissions.Remove(model);
             }
             catch (Exception ex)
             {

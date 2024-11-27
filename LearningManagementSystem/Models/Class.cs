@@ -11,9 +11,5 @@ namespace LearningManagementSystem.Models
         public int CycleId { get; set; }   // Foreign key to Cycles table
         public DateTime ClassStartDate { get; set; }
         public DateTime ClassEndDate { get; set; }
-
-        // Navigation properties
-        // public Course Course { get; set; }
-        // public Cycle Cycle { get; set; }
     }
 }

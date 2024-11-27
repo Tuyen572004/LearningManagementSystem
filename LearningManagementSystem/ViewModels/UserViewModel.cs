@@ -1,13 +1,10 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.EModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningManagementSystem.Helpers;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class UserViewModel: BaseViewModel
+    public partial class UserViewModel: PropertyChangedClass
     {
         // Get information in User
         // Get enrolled courses in Enrollment

@@ -2,16 +2,12 @@
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningManagementSystem.Helpers;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class StudentsInClassViewModel : BaseViewModel, IStudentProvider
+    public partial class StudentsInClassViewModel : PropertyChangedClass, IStudentProvider
     {
         // Enrollment
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];

@@ -3,7 +3,7 @@ using System;
 
 namespace LearningManagementSystem.Models
 {
-    public class Assignment : BaseResource
+    public class Assignment : 
     {
         public int TeacherId { get; set; }
         public string Description { get; set; }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LearningManagementSystem.Helpers;
 
 namespace LearningManagementSystem.EModels;
 
-public partial class Teacher
+public partial class Teacher : PropertyChangedClass
 {
     public int Id { get; set; }
 

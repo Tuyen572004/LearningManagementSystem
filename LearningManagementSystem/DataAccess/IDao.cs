@@ -1,5 +1,5 @@
 ﻿using LearningManagementSystem.Helpers;
-using LearningManagementSystem.Models;
+using LearningManagementSystem.EModels;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Composition;
 using System;
@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace LearningManagementSystem.DataAccess
 {
@@ -50,13 +51,13 @@ namespace LearningManagementSystem.DataAccess
         public bool IsExistsUsername(string username);
         public bool AddUser(User user);
 
-        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId);
-        public (ObservableCollection<StudentVer2>, int) GetStudentsById(
+        public ObservableCollection<Models.StudentVer2> GetStudentsByClassId(int classId);
+        public (ObservableCollection< Models.StudentVer2>, int) GetStudentsById(
             int ignoringCount = 0,
             int fetchingCount = 0,
             IEnumerable<int> chosenIds = null
             );
-        public (ObservableCollection<StudentVer2>, int) GetStudents(
+        public (ObservableCollection<Models.StudentVer2>, int) GetStudents(
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
@@ -65,7 +66,7 @@ namespace LearningManagementSystem.DataAccess
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
             );
 
-        public List<ResourceCategory> findAllResourceCategories();
+        public List<Resourcecategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
 
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);

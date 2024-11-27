@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningManagementSystem.Helpers;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class SimpleStudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider
+    public partial class SimpleStudentsViewModel(IDao dao) : PropertyChangedClass, IStudentProvider
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;

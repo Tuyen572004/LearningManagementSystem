@@ -1,20 +1,14 @@
 ﻿using LearningManagementSystem.Helpers;
-using LearningManagementSystem.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningManagementSystem.EModels;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class SingularResourceViewModel : BaseViewModel
+    public class SingularResourceViewModel : PropertyChangedClass
     {
-        public ResourceCategory ResourceCategory { get; set; }
+        public Resourcecategory ResourceCategory { get; set; }
         public FullObservableCollection<BaseResource> Resources { get; set; }
 
-        public SingularResourceViewModel(ResourceCategory resourceCategory)
+        public SingularResourceViewModel(Resourcecategory resourceCategory)
         {
             ResourceCategory = resourceCategory;
             Resources = new FullObservableCollection<BaseResource>();

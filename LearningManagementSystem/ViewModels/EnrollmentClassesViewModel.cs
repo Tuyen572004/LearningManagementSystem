@@ -1,34 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using LearningManagementSystem.DataAccess;
+﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.EModels;
 using LearningManagementSystem.Helpers;
-using LearningManagementSystem.Models;
-using LearningManagementSystem.Views;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.ViewModels
 {
-   
-    public class EnrollmentClassesViewModel : BaseViewModel
+    public class EnrollmentClassesViewModel : PropertyChangedClass
     {
         private IDao _dao; // Private field to hold the dao instance
-        public ObservableCollection<EnrollmentClassViewModel> enrolledClassesViewModel { get; set; }
+        public ObservableCollection<EnrollmentClassViewModel> EnrolledClassesViewModel { get; set; }
 
-        public EnrollmentClassesViewModel() 
+        public EnrollmentClassesViewModel()
         {
-            enrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
-            _dao = new SqlDao(); 
+            EnrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
+            _dao = new ESqlDao(); // Instantiate the dao instance
         }
 
         public EnrollmentClassesViewModel(IDao dao) // Constructor accepting IDao
         {
             _dao = dao; // Assign the dao instance to the private field
+            EnrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
         }
 
         public void LoadEnrolledClasses()
@@ -38,18 +29,12 @@ namespace LearningManagementSystem.ViewModels
 
             foreach (var enrolledClass in enrolledClasses)
             {
-                // get course, department
-                var course = _dao.GetCourseById(enrolledClass.CourseId);
-                var department = _dao.GetDepartmentById(course.DepartmentId);
-
                 // get teachers
-                var teachers = new FullObservableCollection<Teacher>(_dao.GetTeachersByClassId(enrolledClass.Id));
+                var teachers = new ObservableCollection<Teacher>(_dao.GetTeachersByClassId(enrolledClass.Id));
 
-                enrolledClassesViewModel.Add(new EnrollmentClassViewModel
+                EnrolledClassesViewModel.Add(new EnrollmentClassViewModel
                 {
                     Class = enrolledClass,
-                    Course = course,
-                    Department = department,
                     Teachers = teachers
                 });
             }

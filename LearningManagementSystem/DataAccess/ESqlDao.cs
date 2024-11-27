@@ -1,5 +1,5 @@
 ﻿using LearningManagementSystem.Helpers;
-using LearningManagementSystem.Models;
+using LearningManagementSystem.EModels;
 using LearningManagementSystem.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -53,14 +53,13 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
-        public List<ResourceCategory> findAllResourceCategories()
+        public List<Resourcecategory> findAllResourceCategories()
         {
-            return _context.Resourcecategories.ToList();
+            throw new NotImplementedException();
         }
 
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
@@ -82,13 +81,11 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
@@ -163,21 +160,18 @@ namespace LearningManagementSystem.DataAccess
             return _context.Students.FirstOrDefault(s => s.UserId == id);
         }
 
-        public (ObservableCollection<StudentVer2>, int) GetStudents(bool fetchingAll = false, int ignoringCount = 0, int fetchingCount = 0, List<(StudentField field, Ordering order)> sortCriteria = null, List<(StudentField field, object keyword)> searchKeyword = null, List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null)
+        public (ObservableCollection<Models.StudentVer2>, int) GetStudents(bool fetchingAll = false, int ignoringCount = 0, int fetchingCount = 0, List<(StudentField field, Ordering order)> sortCriteria = null, List<(StudentField field, object keyword)> searchKeyword = null, List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
-        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
+        public ObservableCollection<Models.StudentVer2> GetStudentsByClassId(int classId)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
-        public (ObservableCollection<StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null)
+        public (ObservableCollection<Models.StudentVer2>, int) GetStudentsById(int ignoringCount = 0, int fetchingCount = 0, IEnumerable<int> chosenIds = null)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 
@@ -203,7 +197,6 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            // Implement this method based on your specific requirements
             throw new NotImplementedException();
         }
 

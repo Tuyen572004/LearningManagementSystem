@@ -1,12 +1,11 @@
-﻿using LearningManagementSystem.Models;
-using LearningManagementSystem.DataAccess;
-using System.Collections.ObjectModel;
-using System;
+﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.EModels;
 using LearningManagementSystem.Helpers;
+using System;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class CourseViewModel : BaseViewModel
+    public class CourseViewModel : PropertyChangedClass
     {
         public string Keyword { get; set; } = "";
         public bool NameAscending { get; set; } = false;
@@ -23,7 +22,7 @@ namespace LearningManagementSystem.ViewModels
 
         public CourseViewModel()
         {
-            _dao = new SqlDao();
+            _dao = new ESqlDao();
             SelectedCourse = new Course();
             GetAllCourse();
         }

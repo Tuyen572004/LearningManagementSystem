@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public class ResourceViewModel : BaseViewModel
+    public class ResourceViewModel : PropertyChangedClass
     {
         public ListResource ListResource { get; set; }
 

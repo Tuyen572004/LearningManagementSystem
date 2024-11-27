@@ -1,8 +1,7 @@
-﻿
+﻿using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.Helpers;
-namespace LearningManagementSystem.Models
-    
 
+namespace LearningManagementSystem.EModels
 {
     public class BaseResource : PropertyChangedClass
     {
