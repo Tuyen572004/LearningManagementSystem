@@ -1,6 +1,6 @@
-  {
-    "DB_SERVER": "localhost",
-    "DB_DATABASE": "Lmsdb",
-    "DB_USERNAME": "root",
-    "DB_PASSWORD": "matkhaugitutim"
-  }
+{
+  "DB_SERVER": "localhost",
+  "DB_DATABASE": "lmsdb",
+  "DB_USERNAME": "root",
+  "DB_PASSWORD": "nopassword"
+}
