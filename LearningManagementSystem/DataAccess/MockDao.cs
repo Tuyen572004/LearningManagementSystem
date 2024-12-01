@@ -662,5 +662,30 @@ namespace LearningManagementSystem.DataAccess
         {
             throw new NotImplementedException();
         }
+
+        public void SaveAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAttachmentByAssignmentId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAssignmentById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

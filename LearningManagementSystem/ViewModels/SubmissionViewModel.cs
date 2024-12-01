@@ -26,6 +26,8 @@ namespace LearningManagementSystem.ViewModels
 
         public Assignment Assignment { get; set; }
 
+        private CloudinaryService _cloudinaryService = new CloudinaryService();
+
 
         private readonly IDao _dao;
         private readonly FileHelper FileHelper = new FileHelper();
@@ -44,7 +46,7 @@ namespace LearningManagementSystem.ViewModels
             Student = new Student();
             Assignment = new Assignment();
 
-            UpdateCommand = new RelayCommand(UpdateAssignment);
+            UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
             DeleteCommand = new RelayCommand(DeleteSubmission);
         }
@@ -56,7 +58,7 @@ namespace LearningManagementSystem.ViewModels
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;
 
-            UpdateCommand = new RelayCommand(UpdateAssignment);
+            UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
             DeleteCommand = new RelayCommand(DeleteSubmission);
 
@@ -65,7 +67,7 @@ namespace LearningManagementSystem.ViewModels
 
 
 
-        public async void UpdateAssignment()
+        public async Task UpdateSubmission()
         {
             try
             {
@@ -73,11 +75,12 @@ namespace LearningManagementSystem.ViewModels
                 StorageFile selectedFile = await FileHelper.ChooseFile();
                 if (selectedFile == null) return; // User canceled file selection
 
-                // Save the new file
-                await FileHelper.SaveFile(selectedFile);
 
                 // Update submission details
-                UpdateSubmissionDetails(selectedFile);
+                await UpdateSubmissionDetails(selectedFile);
+
+                // delete old file
+                await _cloudinaryService.DeleteFileByUriAsync(Submission.FilePath);
 
                 RaisePropertyChanged(nameof(Submission));
 
@@ -91,53 +94,33 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-        public string GetOldFilePath(string oldFileName)
+        public async Task<bool> CanUpdateSubmission()
         {
-            return !string.IsNullOrWhiteSpace(oldFileName) ? Path.Combine("D:\\Files\\Submissions", oldFileName) : null;
+            User user = await userService.GetCurrentUser();
+            return user.Role == "Student" && DateTime.Now < Assignment.DueDate;
         }
 
-        public void UpdateSubmissionDetails(StorageFile selectedFile)
+        public async Task UpdateSubmissionDetails(StorageFile selectedFile)
         {
             Submission.SubmissionDate = DateTime.Now;
             Submission.FileName = selectedFile.Name;
             Submission.FileType = selectedFile.FileType;
-            Submission.FilePath = Path.Combine("D:\\Files\\Submissions", selectedFile.Name);
-        }
-
-        public void DeleteOldFile(string oldFilePath)
-        {
-            if (!string.IsNullOrWhiteSpace(oldFilePath) && File.Exists(oldFilePath))
-            {
-                File.Delete(oldFilePath);
-            }
-        }
-
-
-        private async Task<bool> CanUpdateAssignment(SubmissionViewModel submissionViewModel)
-        {
-            var role = await userService.getCurrentUserRole();
-            return role == "Student";
+            Submission.FilePath =await _cloudinaryService.UploadFileAsync(selectedFile.Path);
         }
 
         public async void DownloadSubmission()
         {
             try
             {
-                // Ensure the file exists in the database folder
-                string sourceFilePath = Path.Combine("D:\\Files\\Submissions", Submission.FileName);
-                if (!File.Exists(sourceFilePath))
-                {
-                    throw new FileNotFoundException("The file does not exist in the database folder.");
-                }
-
-                // Copy the file to the C:\\Downloads folder
                 StorageFolder selectedFolder = await FileHelper.ChooseFolder();
 
                 if(selectedFolder == null) return; // User canceled folder selection
 
-                var targetFilePath = Path.Combine(selectedFolder.Path, Submission.FileName);
+                // build path to file
+                var targetFilePath = selectedFolder.Path;
+                targetFilePath = Path.Combine(targetFilePath, Submission.FileName);
 
-                File.Copy(sourceFilePath, targetFilePath, true);
+                await _cloudinaryService.DownloadFileAsync(Submission.FilePath, targetFilePath);
 
                 // Send success message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Successful", $"File downloaded successfully to {selectedFolder.Path}"));
@@ -153,7 +136,13 @@ namespace LearningManagementSystem.ViewModels
         public void DeleteSubmission()
         {
             // Send delete message
-            WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
+            WeakReferenceMessenger.Default.Send(new DeleteMessage(Submission));
+        }
+
+        public async Task<bool> CanDeleteSubmission(SubmissionViewModel submissionViewModel)
+        {
+            var role = await userService.getCurrentUserRole();
+            return role == "Student" && DateTime.Now < submissionViewModel.Assignment.DueDate;
         }
     }
 }

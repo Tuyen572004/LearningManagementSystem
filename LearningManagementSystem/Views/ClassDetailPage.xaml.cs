@@ -1,64 +1,87 @@
-using LearningManagementSystem.ViewModels;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI;
+using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
+using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Windows.UI.Xaml;
+using LearningManagementSystem.Services;
+using LearningManagementSystem.ViewModels;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace LearningManagementSystem.Views
 {
     public sealed partial class ClassDetailPage : Page
     {
-        public EnrollmentClassViewModel EnrollmentViewModel { get; set; }
-
-        public ResourceViewModel ResourceViewModel { get; set; }
+        public ClassDetailViewModel ClassDetailViewModel { get; set; }
 
         public ClassDetailPage()
         {
             this.InitializeComponent();
+
+            ClassDetailViewModel = new ClassDetailViewModel();
+
             this.DataContext = this;
+
+            // r : receiver, m : message
+            WeakReferenceMessenger.Default.Register<NavigationMessage>(this, (r, m) =>
+            {
+                Frame.Navigate(m.DestinationPage, m.Parameter);
+            });
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            //base.OnNavigatedTo(e);
+            //var classViewModel = e.Parameter as EnrollmentClassViewModel;
+            //DataContext = this;
             base.OnNavigatedTo(e);
-            var classViewModel = e.Parameter as EnrollmentClassViewModel;
-            DataContext = classViewModel;
+
+            if (e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage (click Enter button)
+            {
+                ClassDetailViewModel.EnrollmentViewModel = enrollmentViewModel;
+                // Eager loading
+                ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
+
+            }
+            else if (e.Parameter is int classId) // navigated by Resources Page (click Back button)
+            {
+                ClassDetailViewModel.EnrollmentViewModel.loadClassByClassId(classId);
+                // Eager loading
+                ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
+            }
             
-            if(e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage (click Enter button)
-            {
-                EnrollmentViewModel = enrollmentViewModel;
-                ResourceViewModel = new ResourceViewModel();
-            }
-            else if(e.Parameter is int classId) // navigated by Resources Page (click Back button)
-            {
-                ResourceViewModel = new ResourceViewModel();
-                EnrollmentViewModel = new EnrollmentClassViewModel();
-                EnrollmentViewModel.loadClassByClassId(classId);
-
-            }
-            base.OnNavigatedTo(e);
+            
 
         }
 
-        private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            var category = (ResourceCategory)sender.Tag;
-            ResourceViewModel.LoadMoreItems(category, EnrollmentViewModel.Class.Id);
-
+            base.OnNavigatedFrom(e);
+            //if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Forward)
+            //{
+                WeakReferenceMessenger.Default.Unregister<NavigationMessage>(this);
+                
+            //}
         }
 
-        private void TextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+
+        public void Title_DoubleTapped(object sender,DoubleTappedRoutedEventArgs e)
         {
             var textBlock = sender as TextBlock;
-            var resource = textBlock.DataContext as BaseResource;
+            var parameter = textBlock.DataContext as BaseResourceViewModel;
+            var resource = parameter.BaseResource;
             if (resource != null)
             {
-                if(resource is Assignment)
+                if (resource is Assignment)
                 {
                     var assignment = resource as Assignment;
                     Frame.Navigate(typeof(AssignmentPage), assignment);
@@ -78,9 +101,10 @@ namespace LearningManagementSystem.Views
         }
 
         // IMPLEMENT LATER
-        private void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        public void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EnrollmentClassesPage));
         }
     }
 }
+

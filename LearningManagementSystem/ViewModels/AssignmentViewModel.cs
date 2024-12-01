@@ -5,98 +5,211 @@ using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
-using RelayCommand = CommunityToolkit.Mvvm.Input.RelayCommand;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class AssignmentViewModel : BaseViewModel
     {
-        public Assignment Assignment { get; set; }
+        private Assignment _assignment;
 
-        public string DueStatus => IsDue ? "Closed" : "On Going";
+        //    Reason why we have to set manually eventhough we have Fody.PropertyChanged
+        //    Hanlde nested property change.If we just do as normally {get;set;} it will only trigger when the whole object is changed(not the attributes)
+        // Error : Due date change but Due Status is not updated even though I use PropertyChanged += UpdateAssignmentDependentProperties, DependsOn, whatever I tried
+        public Assignment Assignment
+        {
+            get => _assignment;
+            set
+            {
+                if (_assignment != value)
+                {
+                    if (_assignment != null) // Unsubscribe from previous assignment
+                    {
+                        _assignment.PropertyChanged -= UpdateAssignmentDependentProperties;
+                    }
+
+                    _assignment = value;
+
+                    if (_assignment != null)
+                    {
+                        _assignment.PropertyChanged += UpdateAssignmentDependentProperties;
+                    }
+                }
+            }
+        }
+
+
+        private void UpdateAssignmentDependentProperties(object sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(Assignment));
+            if (e.PropertyName == nameof(Assignment.DueDate))
+            {
+                RaisePropertyChanged(nameof(DueStatus));
+            }
+
+        }
 
         public FullObservableCollection<SubmissionViewModel> Submissions { get; set; }
 
+        public User User { get; set; }
+        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
 
-        public string DueDate
-        {
-            get
-            {
-                return Assignment.DueDate.ToString("dd/MM/yyyy, HH:mm");
-            }
-            set
-            {
-                Assignment.DueDate = DateTime.Parse(value);
-            }
-        }
-
-        public bool HasNoSubmission => Submissions.Count == 0;
-
-        public bool IsDue
-        {
-            get
-            {
-                return Assignment.DueDate < DateTime.Now;
-            }
-        }
-
-        private readonly UserService _userService;
         public bool IsTeacher { get; set; }
-        public bool IsStudent { get; set; }
+        public bool IsStudent => !IsTeacher;
 
-        private readonly IDao _dao = new SqlDao();
+        public bool IsEditing { get; set; }
+
+        public bool IsNotEditing => !IsEditing;
+
+        public string EditButtonText => IsEditing ? "Save Changes" : "Edit Assignment";
+
+        private bool IsDue => Assignment.DueDate < DateTime.Now;
+
+        public string DueStatus => IsDue ? "Closed" : "On Going";
+
+        public bool SubmitVisibility => Submissions.Count == 0 && !IsDue;
 
         public ICommand SubmitCommand { get; }
+        public ICommand ToggleEditCommand { get; }
+        public ICommand ChangeAttachmentCommand { get; }
 
-        
+        public ICommand DownloadAttachmentCommand { get; }
 
-        public User User { get; set; }
+        public ICommand DeleteAttachmentCommand { get; }
+
+        public ICommand AddAssignmentCommand { get; }
 
 
+        private readonly IDao _dao = new SqlDao();
+        private readonly UserService _userService;
+        public FileHelper FileHelper = new FileHelper();
+
+        // Events for dependencies
+        public event Action EditingChanged;
 
         public AssignmentViewModel()
         {
             _userService = new UserService();
-
-
-
-            // Initialize submissions collection
-            Submissions = new FullObservableCollection<SubmissionViewModel>();
-
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
-
-            SubmitCommand = new RelayCommand(SubmitAssignment);
-
             checkRole();
 
+            Submissions = new FullObservableCollection<SubmissionViewModel>();
+
+            SubmitCommand = new AsyncRelayCommand(SubmitAssignment, canSubmitAssignment);
+
+            ToggleEditCommand = new RelayCommand(ToggleEditMode);
+
+            ChangeAttachmentCommand = new AsyncRelayCommand(ChangeAttachment);
+
+            DownloadAttachmentCommand = new AsyncRelayCommand(DownloadAttachment);
+
+            DeleteAttachmentCommand = new AsyncRelayCommand(DeleteAttachment,CanDeleteAttachment);
+
+            AddAssignmentCommand = new RelayCommand(AddAssignment, CanAddAssignment);
+
             // Register to receive delete messages
-            WeakReferenceMessenger.Default.Register<DeleteSubmissionMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<DeleteMessage>(this, async (r, m) =>
             {
-                DeleteSubmission(m.Value);
+                await DeleteSubmission(m.Value as SubmissionViewModel);
+
             });
 
+            Assignment = new Assignment();
 
+            // Subscribe to events
+            EditingChanged += UpdateEditingDependentProperties;
+
+            Submissions.CollectionChanged += OnSubmissionsChanged;
         }
 
-        private void Submissions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private bool CanAddAssignment()
         {
-            OnPropertyChanged(nameof(HasNoSubmission));
+            return IsTeacher;
         }
+
+        private void AddAssignment()
+        {
+            try
+            {
+                _dao.AddAssignment(Assignment);
+                // send success message
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Assignment Added", "Assignment added successfully"));
+            }
+            catch (Exception e)
+            {
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}"));
+            }
+        }
+
+        private bool CanDeleteAttachment()
+        {
+            return Assignment.FilePath != null && IsTeacher;
+        }
+
+        private async Task DeleteAttachment()
+        {
+            try
+            {
+                await _cloudinaryService.DeleteFileByUriAsync(Assignment.FilePath);
+
+                _dao.DeleteAttachmentByAssignmentId(Assignment.Id); ;
+
+                Assignment.FileName = null;
+                Assignment.FilePath = null;
+                Assignment.FileType = null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error deleting submission: {ex.Message}");
+            }
+        }
+
+        private async Task DownloadAttachment()
+        {
+            if (string.IsNullOrEmpty(Assignment.FileName))
+            {
+                WeakReferenceMessenger.Default.Send(new DialogMessage("No attachment", "No file attached to download"));
+                return;
+            }
+            try
+            {
+                StorageFolder selectedFolder = await FileHelper.ChooseFolder();
+
+                if (selectedFolder == null) return; // User canceled folder selection
+
+                // build path to file
+                var targetFilePath = selectedFolder.Path;
+                targetFilePath = Path.Combine(targetFilePath, Assignment.FileName);
+
+                await _cloudinaryService.DownloadFileAsync(Assignment.FilePath, targetFilePath);
+
+                // Send success message
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Successful", $"File downloaded successfully to {selectedFolder.Path}"));
+
+            }
+            catch (Exception ex)
+            {
+                // Send error message
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}"));
+            }
+        }
+
+        private bool canSubmitAssignment()
+        {
+            return true;
+        }
+
         public async void checkRole()
         {
             User = await _userService.GetCurrentUser();
             var role = User.Role;
             IsTeacher = role == "Teacher";
-            IsStudent = !IsTeacher;
         }
 
         public void LoadSubmissions()
@@ -106,7 +219,7 @@ namespace LearningManagementSystem.ViewModels
                 List<Submission> submissions = _dao.GetSubmissionsByAssignmentId(Assignment.Id);
                 foreach (var submission in submissions)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission,Assignment));
+                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
                 }
             }
             else
@@ -115,24 +228,20 @@ namespace LearningManagementSystem.ViewModels
                 var student = _dao.GetStudentByUserId(User.Id);
                 for (int i = 0; i < submission.Count; i++)
                 {
-                    Submissions.Add(new SubmissionViewModel(submission[i],Assignment));
+                    Submissions.Add(new SubmissionViewModel(submission[i], Assignment));
                 }
-
             }
         }
 
-        public FileHelper FileHelper = new FileHelper();
 
-        public async void SubmitAssignment()
+
+        public async Task SubmitAssignment()
         {
-
             StorageFile file = await FileHelper.ChooseFile();
 
             if (file != null)
             {
-                await FileHelper.SaveFile(file);
-                var pathFolder = "D:\\Files\\Submissions";
-                string filePath = $"{pathFolder}\\{file.Name}"; // This is the path that will be saved in the database
+                string filePath = await _cloudinaryService.UploadFileAsync(file.Path);
                 string fileName = file.Name;
                 string fileType = file.FileType;
 
@@ -148,21 +257,16 @@ namespace LearningManagementSystem.ViewModels
 
                 // Save submission to your database here
                 _dao.SaveSubmission(submission);
-                   
+
                 Submissions.Add(new SubmissionViewModel(submission, Assignment));
-            }
-            else
-            {
-                // Handle the case where no file was selected
-                return;
             }
         }
 
-        public void DeleteSubmission(SubmissionViewModel model)
+        public async Task DeleteSubmission(SubmissionViewModel model)
         {
             try
             {
-                model.DeleteOldFile(model.GetOldFilePath(model.Submission.FileName));
+                await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
 
                 _dao.DeleteSubmissionById(model.Submission.Id);
 
@@ -174,5 +278,50 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        private void ToggleEditMode()
+        {
+            if (IsEditing)
+            {
+                // Save changes
+                _dao.UpdateAssignment(Assignment);
+            }
+            IsEditing = !IsEditing;
+        }
+
+        private async Task ChangeAttachment()
+        {
+            StorageFile selectedFile = await FileHelper.ChooseFile();
+            if (selectedFile == null) return; // User canceled file selection
+
+            // Save the new file
+            Assignment.FilePath = await _cloudinaryService.UploadFileAsync(selectedFile.Path);
+
+            // Update assignment attachment details
+            Assignment.FileName = selectedFile.Name;
+            Assignment.FileType = selectedFile.FileType;
+
+        }
+
+
+        private void OnSubmissionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(Submissions));
+            RaisePropertyChanged(nameof(SubmitVisibility));
+        }
+
+        private void UpdateEditingDependentProperties()
+        {
+            RaisePropertyChanged(nameof(IsEditing));
+            RaisePropertyChanged(nameof(IsNotEditing));
+            RaisePropertyChanged(nameof(EditButtonText));
+        }
+
+        ~AssignmentViewModel()
+        {
+            // Unregister from receiving delete messages
+            WeakReferenceMessenger.Default.Unregister<DeleteMessage>(this);
+        }
+
     }
 }
+

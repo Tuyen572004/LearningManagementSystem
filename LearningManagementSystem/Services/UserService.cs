@@ -23,7 +23,7 @@ namespace LearningManagementSystem.Services
                 Username = "S001",
                 PasswordHash = "YWRtaW5zdHVkZW50",
                 Email = "email",
-                Role = "student",
+                Role = "Teacher",
                 CreatedAt = DateTime.Parse("1000-01-01 00:00:00")
             });
         }

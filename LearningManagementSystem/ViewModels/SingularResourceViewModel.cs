@@ -1,23 +1,27 @@
-﻿using LearningManagementSystem.Helpers;
+﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LearningManagementSystem.Services;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class SingularResourceViewModel : BaseViewModel
     {
         public ResourceCategory ResourceCategory { get; set; }
-        public FullObservableCollection<BaseResource> Resources { get; set; }
+        public FullObservableCollection<BaseResourceViewModel> Resources { get; set; }
+
+        private readonly IDao _dao = new SqlDao();
+
+        private readonly UserService _userService = new UserService();
+        private readonly User _user;
+
 
         public SingularResourceViewModel(ResourceCategory resourceCategory)
         {
             ResourceCategory = resourceCategory;
-            Resources = new FullObservableCollection<BaseResource>();
+            Resources = new FullObservableCollection<BaseResourceViewModel>();
         }
+
+
     }
 }

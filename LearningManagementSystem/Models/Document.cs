@@ -8,8 +8,10 @@ namespace LearningManagementSystem.Models
 {
     public class Document : BaseResource
     {
-        public string DocumentName { get; set; }
-        public string DocumentPath { get; set; }
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+
+        public string FileType { get; set; }
         public DateTime UploadDate { get; set; }
     }
 }

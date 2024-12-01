@@ -5,45 +5,119 @@
     xmlns:local="using:LearningManagementSystem"
     xmlns:vm="using:LearningManagementSystem.ViewModels"
     xmlns:m="using:LearningManagementSystem.Models"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Background="White" HorizontalAlignment="Stretch">
-        <Border Background="Green" HorizontalAlignment="Stretch" MinHeight="100" VerticalAlignment="Stretch" Padding="30,30,0,0">
-            <TextBlock Text="{x:Bind EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" FontWeight="ExtraBold" Foreground="White"/>
-        </Border>
+    <Page.Resources>
+        <!-- Add any resources here if needed -->
+    </Page.Resources>
 
-        <ListBox ItemsSource="{x:Bind ResourceViewModel.ListResource.SingularResources, Mode=OneWay}" Background="LightBlue">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" 
+                   Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" 
+                   Height="Auto" Width="Auto"/>
+
+        <TextBlock Text="{x:Bind ClassDetailViewModel.EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" FontWeight="ExtraBold" Foreground="White" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="20,0,0,0"/>
+
+        <Button x:Name="BackButton" Content="Back" Click="BackButton_Click" Margin="30,30,0,0" Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1"/>
+
+        <ComboBox SelectionChanged="{x:Bind ClassDetailViewModel.ComboBox_SelectionChanged}" 
+              ItemsSource="{x:Bind ClassDetailViewModel.ResourceViewModel.SingularResources, Mode=OneWay}"
+              Header="Add Resources" PlaceholderText="Pick a resource type"
+              Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right"
+              FontWeight="Bold">
+            <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:SingularResourceViewModel">
+                    <TextBlock Text="{x:Bind ResourceCategory.Name, Mode=OneWay}" FontWeight="Bold" Foreground="White"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        
+
+
+        <ListBox ItemsSource="{x:Bind ClassDetailViewModel.ResourceViewModel.SingularResources, Mode=OneWay}"
+                 Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5"
+                 Name="Top"
+                 Margin="0,20,0,40">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:SingularResourceViewModel">
-                    <StackPanel Background="Bisque" VerticalAlignment="Center" MinWidth="800">
-                        <Expander Expanding="Expander_Expanding" Tag="{x:Bind ResourceCategory}" MinWidth="800">
-                            <Expander.Header >
-                                <TextBlock Text="{x:Bind ResourceCategory.Name, Mode=OneWay}" Foreground="Blue" FontWeight="Bold"/>
-                            </Expander.Header>
-                            <Expander.Content>
-                                <!--<ScrollView IsTabStop="True"-->
-                                    <!--ScrollAnimationStarting="ScrollView_ScrollAnimationStarting"
-                                    VerticalAlignment="Top" HorizontalAlignment="Left">-->
-                                    <ItemsControl ItemsSource="{Binding Resources, Mode=OneWay}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="m:BaseResource">
-                                                <Border BorderBrush="Black" BorderThickness="1" Margin="10,10" Width="800" Padding="10,10">
-                                                    <TextBlock Text="{Binding Title, Mode=OneWay}" Foreground="Black" Tapped="TextBlock_Tapped"/>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                <!--</ScrollView>-->
+                    <Expander Tag="{x:Bind ResourceCategory, Mode=OneWay}"
+                              Width="900"
+                              Name="Expander">
+                        <Expander.Header >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" />
 
-                            </Expander.Content>
+                                    <ColumnDefinition Width="*" />
 
-                        </Expander>
-                    </StackPanel>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
+                                <TextBlock Grid.Column="0"
+                                               Text="{x:Bind ResourceCategory.Name, Mode=OneWay}" 
+                                               VerticalAlignment="Center" 
+                                               FontSize="20"
+                                               Foreground="White"
+                                               FontWeight="ExtraBold"/>
+
+                            </Grid>
+
+                        </Expander.Header>
+                        <Expander.Content>
+                            <ListBox ItemsSource="{Binding Resources,Mode=OneWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:BaseResourceViewModel">
+                                        <Border BorderBrush="Black" BorderThickness="0.5" Padding="10" Width="850">
+                                            <Grid >
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="9*" />
+                                                    <ColumnDefinition Width="1*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Grid.Row="0"
+                                                            Text="{Binding BaseResource.Title,Mode=OneWay}" 
+                                                            FontSize="14"
+                                                            Foreground="White" 
+                                                            DoubleTapped="Title_DoubleTapped"/>
+
+                                                <Button Grid.Column="1" Grid.Row="0"
+                                                        Content="Delete" 
+                                                        BorderBrush="Orange" 
+                                                        Foreground="DarkRed" 
+                                                        Background="Red" 
+                                                        FontWeight="Bold"
+                                                        HorizontalAlignment="Left"
+                                                        Command="{Binding DeleteCommand, Mode=OneWay}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                        </Expander.Content>
+                    </Expander>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Content="Back" Name="BackButton" Click="BackButton_Click" Margin="30,30,0,0"
-                Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left"></Button>
-    </StackPanel>
+    </Grid>
+
 </Page>
