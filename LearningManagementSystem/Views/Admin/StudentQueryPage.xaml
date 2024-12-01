@@ -11,6 +11,18 @@
     xmlns:controls="using:LearningManagementSystem.Controls">
 
     <Grid>
-        <controls:QueryableStudentDisplayer x:Name="QueryableStudentDisplayer" DataContext="{x:Bind _viewModel}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Rectangle Grid.Row="0" Fill="ForestGreen" />
+        <TextBlock 
+            Text="Student Query" Width="400" Height="50"
+            FontSize="40" FontWeight="Bold"
+            TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
+            Grid.Row="0"
+            />
+        <controls:QueryableStudentDisplayer x:Name="QueryableStudentDisplayer" Grid.Row="1" DataContext="{x:Bind _viewModel}"/>
     </Grid>
 </Page>

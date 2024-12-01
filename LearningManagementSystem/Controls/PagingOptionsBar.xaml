@@ -38,7 +38,8 @@
         <StackPanel 
             x:Name="PagingDetail" Grid.Row="0"
             Orientation="Horizontal"
-            Spacing="5" >
+            Spacing="5"
+            Visibility="Collapsed">
             <TextBlock 
                 Height="40" VerticalAlignment="Bottom" Width="Auto"
                 Text="With up to" TextWrapping="Wrap" TextAlignment="Center" Padding="5" />
@@ -55,9 +56,28 @@
                 TextWrapping="Wrap" TextAlignment="Center" Padding="5" />
         </StackPanel>
 
-        <StackPanel 
-            x:Name="ButtonContainer" Grid.Row="1"
+        <StackPanel
             Orientation="Horizontal"
-            />
+            Grid.Row="1"
+            Spacing="10">
+
+            <CheckBox
+                x:Name="PagingDetailEnabler"
+                Height="40" Width="auto"
+                Content="Show paging details"
+                IsChecked="False"
+                Checked="PagingDetailEnabler_Checked"
+                Unchecked="PagingDetailEnabler_Unchecked"
+                VerticalContentAlignment="Center"
+                />
+
+            <StackPanel 
+                x:Name="ButtonContainer"
+                Orientation="Horizontal"
+                />  
+        </StackPanel>
+        
+        
+        
     </Grid>
 </UserControl>

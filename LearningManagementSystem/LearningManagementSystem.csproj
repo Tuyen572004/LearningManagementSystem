@@ -41,9 +41,9 @@
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
 	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
+	  <None Remove="Views\Admin\StudentCRUDPage.xaml" />
 	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
 	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
-	  <None Remove="Views\Admin\StudentUploadPage.xaml" />
 	  <None Remove="Views\AllStudentsPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
@@ -139,7 +139,7 @@
 	  <Page Update="Views\Admin\StudentQueryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Views\Admin\StudentUploadPage.xaml">
+	  <Page Update="Views\Admin\StudentCRUDPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\AllStudentsPage.xaml">

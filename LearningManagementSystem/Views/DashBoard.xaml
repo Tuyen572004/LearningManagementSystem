@@ -27,6 +27,7 @@
             <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
             <NavigationViewItem Content="See All Students (Mock)" Tag="LearningManagementSystem.Views.StudentDisplayerPage" Icon="ContactPresence"/>
             <NavigationViewItem Content="Admin: Read Students" Tag="LearningManagementSystem.Views.Admin.StudentQueryPage" Icon="ContactPresence" />
+            <NavigationViewItem Content="Admin: CRUD Students" Tag="LearningManagementSystem.Views.Admin.StudentCRUDPage" Icon="ContactPresence" />
             <!--NavigationViewItem Content="See Students In Classes" Tag="LearningManagementSystem.Views.ClassPreviewPage" Icon="People" /-->
         </NavigationView.MenuItems>
         <NavigationView.FooterMenuItems>

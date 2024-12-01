@@ -18,7 +18,7 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    public interface IQueryableProvider: IStudentProvider, ISearchProvider, IPagingProvider;
+    // public interface IQueryableProvider: IStudentProvider, ISearchProvider, IPagingProvider;
     public sealed partial class QueryableStudentDisplayer : UserControl, IDisposable
     {
         private bool disposedValue;
@@ -41,17 +41,35 @@ namespace LearningManagementSystem.Controls
             if (args.NewValue is ISearchProvider newSearchProvider)
             {
                 SearchBar.SearchChanged += newSearchProvider.SearchChangedHandler;
+                SetBinding(SearchBar, SearchBar.ContextProviderProperty);
+                SearchBar.Visibility = Visibility.Visible;
             }
             if (args.NewValue is IStudentProvider newStudentProvider)
             {
                 StudentTable.SortChanged += newStudentProvider.SortChangedHandler;
                 StudentTable.StudentDoubleTapped += newStudentProvider.DoubleTappedHandler;
+                
+                
             }
-            //if (args.NewValue is IPagingProvider newPagingProvider)
-            //{
-            //    // var context = PagingOptionsBar.ContextProvider;
-            //    PagingOptionsBar.ContextProvider = newPagingProvider;
-            //}
+            if (args.NewValue is IPagingProvider)
+            {
+                SetBinding(PagingOptionsBar, PagingOptionsBar.ContextProviderProperty);
+                PagingOptionsBar.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void SetBinding(DependencyObject target, DependencyProperty property)
+        {
+            // Create a new Binding
+            var binding = new Binding
+            {
+                Path = new PropertyPath(string.Empty),  // Bind to the current DataContext
+                Source = DataContext,         // Set the binding source
+                Mode = BindingMode.OneWay     // Use OneWay binding mode
+            };
+
+            // Apply the binding to the target property
+            BindingOperations.SetBinding(target, property, binding);
         }
 
         private void Dispose(bool disposing)

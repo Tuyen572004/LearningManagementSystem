@@ -270,5 +270,36 @@ namespace LearningManagementSystem.Controls
                 }
             }
         }
+
+        private void PagingDetailEnabler_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is ToggleButton toggleButton)
+            {
+                if (toggleButton.IsChecked == true)
+                {
+                    PagingDetail.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PagingDetail.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                PagingDetail.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                PagingDetail.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

@@ -29,9 +29,11 @@ namespace LearningManagementSystem.Views.Admin
         public StudentQueryPage()
         {
             this.InitializeComponent();
-  
-            _viewModel = new StudentReaderViewModel(new SqlDao());
-            _viewModel.RowsPerPage = 2;
+
+            _viewModel = new StudentReaderViewModel(new SqlDao())
+            {
+                RowsPerPage = 2
+            };
             _viewModel.GetStudents();
         }
     }
