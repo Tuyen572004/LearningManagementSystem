@@ -34,7 +34,8 @@ namespace LearningManagementSystem.Controls
     {
         public ObservableCollection<StudentVer2> ManagingStudents { get; }
         public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
-        public EventHandler<StudentVer2>? DoubleTappedHandler => null;
+        public EventHandler<StudentVer2>? StudentDoubleTappedHandler => null;
+        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => null;
     }
     public partial class UnassignedStudentProvider : IStudentProvider
     {
@@ -148,6 +149,51 @@ namespace LearningManagementSystem.Controls
         private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
         {
             SortChanged?.Invoke(this, _sortList);
+        }
+
+        
+        public event EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEditted;
+
+        // Don't delete this private variable
+        // This code somehow runs Dg_CellEditEnding indefinitely if ran without the _isEdittingRow flag guard
+        private bool _isEdittingRow = false;
+        private StudentVer2? _originalStudent = null;
+        private void Dg_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            _isEdittingRow = true;
+            _originalStudent = (StudentVer2)((ICloneable)e.Row.DataContext).Clone();
+        }
+        private void Dg_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            //if (!_isEdittingRow || _originalStudent is null)
+            //{
+            //    return;
+            //}
+            //if (e.EditAction == DataGridEditAction.Commit)
+            //{
+            //    _isEdittingRow = false;
+            //    StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+            //}
+            //else if (e.EditAction == DataGridEditAction.Cancel)
+            //{
+            //    _isEdittingRow = false;
+            //    _originalStudent = null;
+            //}
+            //return;
+        }
+
+        private void Dg_CellEditEnded(object sender, DataGridCellEditEndedEventArgs e)
+        {
+            if (!_isEdittingRow || _originalStudent is null)
+            {
+                return;
+            }
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+            }
+            _isEdittingRow = false;
+            _originalStudent = null;
         }
     }
 }

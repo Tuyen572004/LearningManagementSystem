@@ -23,10 +23,11 @@ namespace LearningManagementSystem.Views.Admin
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class StudentCRUDPage : Page
+    public sealed partial class StudentCRUDPage : Page, IDisposable
     {
         private readonly StudentReaderViewModel _readerViewModel;
         private readonly StudentCUDViewModel _cudViewModel;
+        private bool disposedValue;
 
         public StudentCRUDPage()
         {
@@ -42,6 +43,63 @@ namespace LearningManagementSystem.Views.Admin
             {
                 RowsPerPage = 5
             };
+
+            StudentReaderDisplayer.StudentTable.StudentDoubleTapped += _cudViewModel.StudentTransferHandler;
+            StudentCUDDisplayer.StudentTable.IsEditable = true;
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    StudentReaderDisplayer.StudentTable.StudentDoubleTapped -= _cudViewModel.StudentTransferHandler;
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~StudentCRUDPage()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void ImportButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EditAllButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

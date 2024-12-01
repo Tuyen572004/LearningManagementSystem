@@ -47,9 +47,10 @@ namespace LearningManagementSystem.Controls
             if (args.NewValue is IStudentProvider newStudentProvider)
             {
                 StudentTable.SortChanged += newStudentProvider.SortChangedHandler;
-                StudentTable.StudentDoubleTapped += newStudentProvider.DoubleTappedHandler;
-                
-                
+                StudentTable.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
+                StudentTable.StudentEditted += newStudentProvider.StudentEdittedHandler;
+
+
             }
             if (args.NewValue is IPagingProvider)
             {
@@ -88,7 +89,8 @@ namespace LearningManagementSystem.Controls
                     if (DataContext is IStudentProvider studentProvider)
                     {
                         StudentTable.SortChanged -= studentProvider.SortChangedHandler;
-                        StudentTable.StudentDoubleTapped -= studentProvider.DoubleTappedHandler;
+                        StudentTable.StudentDoubleTapped -= studentProvider.StudentDoubleTappedHandler;
+                        StudentTable.StudentEditted -= studentProvider.StudentEdittedHandler;
                     }
                 }
 

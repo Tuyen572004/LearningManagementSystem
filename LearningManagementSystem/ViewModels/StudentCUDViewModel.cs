@@ -2,6 +2,7 @@
 using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using PropertyChanged;
 using System;
@@ -53,30 +54,19 @@ namespace LearningManagementSystem.ViewModels
             }
 
             CurrentPage = pageNumber;
-            ManagingStudents = new (
-                AllStudents.AsEnumerable()
-                    .Skip((CurrentPage - 1) * RowsPerPage)
-                    .Take(RowsPerPage)
-            );
-
-            RaisePropertyChanged(nameof(ManagingStudents));
+            RefreshManagingStudents();
             RaisePropertyChanged(nameof(CurrentPage));
             return;
         }
 
-        public void HandleSortChange(object? sender, List<SortCriteria>? e)
+        private void SortByItsCriteria()
         {
-            if (sender is null)
-            {
-                return;
-            }
-            SortCriteria = e;
-            if (e is null)
+            if (SortCriteria is null || SortCriteria.Count == 0)
             {
                 return;
             }
             IEnumerable<StudentVer2> sortResult = AllStudents;
-            foreach (var criteria in e.AsEnumerable().Reverse())
+            foreach (var criteria in SortCriteria.AsEnumerable().Reverse())
             {
                 var column = criteria.ColumnTag;
                 var direction = criteria.SortDirection;
@@ -91,7 +81,68 @@ namespace LearningManagementSystem.ViewModels
             }
             AllStudents = new ObservableCollection<StudentVer2>(sortResult);
         }
+        public void RefreshManagingStudents()
+        {
+            SortByItsCriteria();
+            ManagingStudents = new(
+                AllStudents.AsEnumerable()
+                    .Skip((CurrentPage - 1) * RowsPerPage)
+                    .Take(RowsPerPage)
+            );
+            RaisePropertyChanged(nameof(ManagingStudents));
+        }
+
+        public void HandleSortChange(object? sender, List<SortCriteria>? e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            SortCriteria = e;
+            RefreshManagingStudents();
+        }
         public EventHandler<List<SortCriteria>>? SortChangedHandler => HandleSortChange;
+
+        public event EventHandler<StudentVer2>? InvalidTransferingStudentHandler;
+        public void HandleStudentTransfer(object? sender, StudentVer2 e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == e.Id, null);
+            if (existingStudent != null)
+            {
+                InvalidTransferingStudentHandler?.Invoke(this, e);
+                return;
+            }
+            AllStudents.Add((StudentVer2)e.Clone());
+            ItemCount++;
+            RaisePropertyChanged(nameof(ItemCount));
+
+            RefreshManagingStudents();
+        }
+        public EventHandler<StudentVer2> StudentTransferHandler => HandleStudentTransfer;
+
+        public void HandleStudentEdit(object? sender, (StudentVer2 oldStudent, StudentVer2 newStudent) e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == e.oldStudent.Id, null);
+            if (existingStudent == null)
+            {
+                return;
+            }
+            if (e.newStudent.BirthDate.Date == DateTimeToStringConverter.ERROR_DATETIME.Date)
+            {
+                e.newStudent.BirthDate = e.oldStudent.BirthDate;
+            }
+            existingStudent.Copy(e.newStudent);
+            RefreshManagingStudents();
+        }
+        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => HandleStudentEdit;
     }
 }
 

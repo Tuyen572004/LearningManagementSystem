@@ -70,6 +70,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="EntityFramework" Version="6.5.1" />
 		<PackageReference Include="Fody" Version="6.8.2">

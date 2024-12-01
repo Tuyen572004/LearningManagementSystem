@@ -8,9 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:models="using:LearningManagementSystem.Models"
+    xmlns:helpers="using:LearningManagementSystem.Helpers"
     d:DataContext="{d:DesignInstance Type=models:StudentVer2}"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <helpers:DateTimeToStringConverter x:Key="DateTimeConverter"/>
+        <helpers:NullableIntToStringConverter x:Key="NullableIntConverter" />
+    </UserControl.Resources>
+    
     <Grid>
         <controls:DataGrid
             Grid.Row="1"
@@ -22,6 +28,9 @@
             IsDoubleTapEnabled="True"
             DoubleTapped="Dg_DoubleTapped"
             IsReadOnly="True"
+            CellEditEnding="Dg_CellEditEnding"
+            CellEditEnded="Dg_CellEditEnded"
+            BeginningEdit="Dg_BeginningEdit"
             >
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="ID" Binding="{Binding Id}" Tag="Id" IsReadOnly="True"/>
@@ -29,10 +38,10 @@
                 <controls:DataGridTextColumn Header="Code" Binding="{Binding StudentCode}" Tag="StudentCode"/>
                 <controls:DataGridTextColumn Header="Name" Binding="{Binding StudentName}" Tag="StudentName"/>
                 <controls:DataGridTextColumn Header="Email" Binding="{Binding Email}" Tag="Email"/>
-                <controls:DataGridTextColumn Header="Birthdate" Binding="{Binding BirthDate}" Tag="BirthDate"/>
+                <controls:DataGridTextColumn Header="Birthdate" Binding="{Binding BirthDate, Converter={StaticResource DateTimeConverter}}" Tag="BirthDate"/>
                 <controls:DataGridTextColumn Header="Phone Number" Binding="{Binding PhoneNo}" Tag="PhoneNo"/>
                 <controls:DataGridTextColumn Header="Enrollment Year" Binding="{Binding EnrollmentYear}" Tag="EnrollmentYear"/>
-                <controls:DataGridTextColumn Header="Graduation Year" Binding="{Binding GraduationYear}" Tag="GraduationYear"/>
+                <controls:DataGridTextColumn Header="Graduation Year" Binding="{Binding GraduationYear, Converter={StaticResource NullableIntConverter}}" Tag="GraduationYear"/>
             </controls:DataGrid.Columns>
 
             <controls:DataGrid.ContextFlyout>

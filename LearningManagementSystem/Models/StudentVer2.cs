@@ -7,7 +7,7 @@ using Windows.Globalization.DateTimeFormatting;
 
 namespace LearningManagementSystem.Models
 {
-    public class StudentVer2 : Student
+    public partial class StudentVer2 : Student
     {
         //public int Id { get; set; }  // Auto-incrementing Id field
         //public string StudentCode { get; set; }

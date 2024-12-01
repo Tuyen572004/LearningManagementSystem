@@ -10,11 +10,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     xmlns:controls="using:LearningManagementSystem.Controls">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Left">
+        <Grid RowSpacing="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
-                <RowDefinition Height="800" />
+                <RowDefinition Height="400" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="400" />
             </Grid.RowDefinitions>
 
@@ -26,7 +28,25 @@
             Grid.Row="0"
         />
             <controls:QueryableStudentDisplayer x:Name="StudentReaderDisplayer" Grid.Row="1" DataContext="{x:Bind _readerViewModel}"/>
-            <controls:QueryableStudentDisplayer x:Name="StudentCUDDisplayer" Grid.Row="2" DataContext="{x:Bind _cudViewModel}" />
+
+            <Rectangle Grid.Row="2" Fill="ForestGreen" Height="20" />
+
+            <!-- TODO: Change to Grid-->
+            <RelativePanel Grid.Row="3">
+                <StackPanel Orientation="Horizontal" Spacing="10" RelativePanel.AlignLeftWithPanel="True">
+                    <Button x:Name="CreateButton" Height="40" Content="Create" Click="CreateButton_Click"/>
+                    <Button x:Name="UpdateButton" Height="40" Content="Update" Click="UpdateButton_Click"/>
+                    <Button x:Name="DeleteButton" Height="40" Content="Delete" Click="DeleteButton_Click" Background="PaleVioletRed"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" RelativePanel.AlignRightWithPanel="True">
+                    <Button x:Name="EditAllButton" Height="40" Content="Edit all selected" Click="EditAllButton_Click"/>
+                    <Button x:Name="ImportButton" Height="40" Content="Import from file" Click="ImportButton_Click"/>
+                </StackPanel>
+
+            </RelativePanel>
+
+            <controls:QueryableStudentDisplayer Grid.Row="4" x:Name="StudentCUDDisplayer" DataContext="{x:Bind _cudViewModel}" />
         </Grid>
     </ScrollViewer>
 </Page>
