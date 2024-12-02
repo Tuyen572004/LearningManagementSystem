@@ -53,21 +53,36 @@ namespace LearningManagementSystem.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
+            //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
+            Frame.GoBack();
         }
+
 
         private async Task ShowMessageDialog(string title, string content)
         {
+            
             var messageDialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "OK",
+                CloseButtonText = "Close",
+                PrimaryButtonText = "Go Back",
                 XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
             };
 
-            await messageDialog.ShowAsync();
+
+            var result = await messageDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                messageDialog.Hide();
+            }
         }
+
 
     }
 }

@@ -24,6 +24,8 @@ namespace LearningManagementSystem.ViewModels
 
         private readonly UserService _userService = new UserService();
 
+        public readonly bool IsTeacher;
+
         public SelectionChangedEventHandler ComboBox_SelectionChanged { get; }
 
 
@@ -31,9 +33,10 @@ namespace LearningManagementSystem.ViewModels
         {
             EnrollmentViewModel = new EnrollmentClassViewModel();
             ResourceViewModel = new ResourceViewModel();
+            IsTeacher = _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
 
             ComboBox_SelectionChanged = new SelectionChangedEventHandler(OnSelectionChanged);
-            WeakReferenceMessenger.Default.Register<DeleteMessage>(this,async (r, m) =>
+            WeakReferenceMessenger.Default.Register<DeleteResourceMessage>(this,async (r, m) =>
             {
                 await DeleteResource(m.Value as BaseResourceViewModel);
             });

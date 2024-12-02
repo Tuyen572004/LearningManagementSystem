@@ -14,6 +14,6 @@ namespace LearningManagementSystem.Models
         public string FileName { get; set; }// Original name of the file
         public string FileType { get; set;}  // MIME type or file extension
 
-        public Decimal? Grade { get; set; } 
+        public Double? Grade { get; set; } 
     }
 }

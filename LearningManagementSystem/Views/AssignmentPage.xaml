@@ -19,7 +19,7 @@
     </Page.Resources>
 
     <ScrollView ScrollViewer.HorizontalScrollBarVisibility="Visible">
-        <StackPanel Background="White" >
+        <StackPanel>
 
             <!--<StackPanel >-->
             <Grid>
@@ -39,7 +39,7 @@
                 </Grid.ColumnDefinitions>
 
 
-                <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+                <Rectangle RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
                 <TextBlock  Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=OneWay}" 
                             FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
@@ -64,33 +64,37 @@
 
             <!--</StackPanel>-->
 
+            <TextBlock Text="Description " FontSize="14" Margin="10,30,30,0" FontWeight="Bold"/>
             <TextBlock Text="{x:Bind AssignmentViewModel.Assignment.Description, Mode=OneWay}" 
-                   Margin="10,10" Foreground="Black"
+                   Margin="10,10"
+                   MinHeight="50"
                    Visibility="{x:Bind AssignmentViewModel.IsNotEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 Margin="10,10" Foreground="Black"
+                 Margin="10,10"
                  Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
             <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
-                <TextBlock Text="Deadline: " FontSize="14" Foreground="Black" Margin="0,0,30,0" FontWeight="Bold"/>
+                <TextBlock Text="Deadline: " FontSize="14" Margin="0,0,30,0" FontWeight="Bold"/>
                 <TextBlock Text="{x:Bind AssignmentViewModel.Assignment.DueDate, Mode=OneWay}" 
                        FontSize="14" Foreground="Red"
                        Visibility="{x:Bind AssignmentViewModel.IsNotEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <StackPanel Orientation="Horizontal">
-                    <CalendarDatePicker Date="{x:Bind AssignmentViewModel.Assignment.DueDate, 
-                                                Mode=TwoWay,Converter={StaticResource DateTimeToDateTimeOffsetConverter}, 
-                                                UpdateSourceTrigger=PropertyChanged}" 
-                                    FontSize="14" Foreground="White" Background="Brown"
-                                    Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <!--<TimePicker Time="{x:Bind AssignmentViewModel.Assignment.DueDate, Mode=TwoWay, Converter={StaticResource DateTimeToTimeSpanConverter}, UpdateSourceTrigger=LostFocus}"
-                        FontSize="14" Foreground="Brown"
-                        Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>--> 
+                    <CalendarDatePicker Date="{x:Bind AssignmentViewModel.DueDate, 
+                                    Mode=TwoWay, 
+                                    UpdateSourceTrigger=PropertyChanged}" 
+                            FontSize="14" Foreground="White" Background="Brown"
+                            Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <TimePicker Time="{x:Bind AssignmentViewModel.DueTime, 
+                            Mode=TwoWay, 
+                            UpdateSourceTrigger=PropertyChanged}" Foreground="White"
+                    FontSize="14" Background="Brown"
+                    Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
-                <TextBlock Foreground="Black">
-                <Run Text="Attachment: " FontSize="14" Foreground="Black" FontWeight="Bold"/>
+                <TextBlock>
+                <Run Text="Attachment: " FontSize="14" FontWeight="Bold"/>
                 <Run Text="{x:Bind AssignmentViewModel.Assignment.FileName, Mode=OneWay}" />
                 </TextBlock>
                 <Button Content="Download" 
@@ -106,7 +110,7 @@
                         Command="{x:Bind AssignmentViewModel.DeleteAttachmentCommand}" 
                         BorderBrush="Orange"  Foreground="DarkRed" Background="Red" Width="80" FontWeight="Bold"
                         Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                        Margin="10,0,0,0"/>     
+                        Margin="10,0,0,0"/>
             </StackPanel>
 
             <TextBlock Margin="10,0,0,30" FontStyle="Italic" Foreground="Red" FontWeight="Bold">
@@ -123,13 +127,13 @@
                        Foreground="Gray" FontStyle="Italic" Margin="10,0,0,0"/>
 
                 <table:TableView x:Name="tableTeacherView"
-                 Margin="16"
-                 ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
-                 Background="Black"
-                 ShowExportOptions="True"
-                 HeaderRowHeight="{StaticResource HubHeaderThemeFontSize}"
-                 HeaderTemplate="{StaticResource DefaultCompactErrorIconTemplate}"
-                 AutoGenerateColumns="False">
+                                         Margin="16"
+                                         ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
+                 
+                                         ShowExportOptions="True"
+                                         HeaderRowHeight="{StaticResource HubHeaderThemeFontSize}"
+                                         HeaderTemplate="{StaticResource DefaultCompactErrorIconTemplate}"
+                                         AutoGenerateColumns="False">
 
                     <table:TableView.Columns>
                         <table:TableViewTextColumn Header="Id" 
@@ -141,18 +145,22 @@
                                    Binding="{Binding Submission.SubmissionDate, Mode=OneWay}" />
                         <table:TableViewTextColumn Header="File Name"
                                    Binding="{Binding Submission.FileName, Mode=OneWay}" />
+                        
+                        
 
+                        <table:TableViewNumberColumn Header="Grade" Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <table:TableViewTemplateColumn Header="Actions">
                             <table:TableViewTemplateColumn.CellTemplate>
                                 <DataTemplate x:DataType="vm:SubmissionViewModel">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
+                                        <Button Content="Grade" Command="{Binding GradeCommand}" Foreground="White" Background="Green"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </table:TableViewTemplateColumn.CellTemplate>
                         </table:TableViewTemplateColumn>
 
-                        <table:TableViewNumberColumn Header="Grade" Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                     </table:TableView.Columns>
 
                 </table:TableView>
@@ -192,6 +200,8 @@
                                            Binding="{Binding Submission.SubmissionDate, Mode=OneWay}" />
                         <table:TableViewTextColumn Header="File Name"
                                            Binding="{Binding Submission.FileName, Mode=OneWay}" />
+
+                        <table:TableViewNumberColumn Header="Grade" Binding="{Binding Submission.Grade, Mode=OneWay}"/>
 
                         <table:TableViewTemplateColumn Header="Actions">
                             <table:TableViewTemplateColumn.CellTemplate>

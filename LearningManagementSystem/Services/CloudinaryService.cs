@@ -5,6 +5,7 @@ using MySqlX.XDevAPI;
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Services
@@ -21,36 +22,26 @@ namespace LearningManagementSystem.Services
 
         public CloudinaryService()
         {
-            var account = new Account(
-                "ddw1pv5un",
-                "513955292673775",
-                "Qs1OEpFUNzzKU39-mHVq3NDCszw"
-            );
-
+            Account account = Initialize();
             _cloudinary = new Cloudinary(account);
         }
 
-        //public CloudinaryService()
-        //{
-        //    Initialize();
-        //}
+        private Account Initialize()
+        {
+            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+            string configContent = File.ReadAllText(configFilePath);
+            var configJson = JsonDocument.Parse(configContent);
+            var cloudinaryConfig = configJson.RootElement.GetProperty("Cloudinary").ToString();
+            CloudinaryConfig config = JsonSerializer.Deserialize<CloudinaryConfig>(cloudinaryConfig);
 
-        //private void Initialize()
-        //{
-        //    string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-        //    string configContent = File.ReadAllText(configFilePath);
-        //    var configJson = JsonDocument.Parse(configContent);
-        //    var cloudinaryConfig = configJson.RootElement.GetProperty("Cloudinary").ToString();
-        //    CloudinaryConfig config = JsonSerializer.Deserialize<CloudinaryConfig>(cloudinaryConfig);
+            var account = new Account(
+                config.CloudName,
+                config.ApiKey,
+                config.ApiSecret
+            );
 
-        //    var account = new Account(
-        //        config.CloudName,
-        //        config.ApiKey,
-        //        config.ApiSecret
-        //    );
-
-        //    _cloudinary = new Cloudinary(account);
-        //}
+            return account;
+        }
 
         public async Task<string> UploadFileAsync(string filePath)
         {

@@ -45,6 +45,34 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        public DateTimeOffset DueDate
+        {
+            get => new DateTimeOffset(Assignment.DueDate);
+            set
+            {
+                if (Assignment.DueDate.Date != value.Date)
+                {
+                    Assignment.DueDate = new DateTime(value.Year, value.Month, value.Day, Assignment.DueDate.Hour, Assignment.DueDate.Minute, Assignment.DueDate.Second);
+                    RaisePropertyChanged(nameof(DueDate));
+                    RaisePropertyChanged(nameof(DueTime));
+                }
+            }
+        }
+
+        public TimeSpan DueTime
+        {
+            get => Assignment.DueDate.TimeOfDay;
+            set
+            {
+                if (Assignment.DueDate.TimeOfDay != value)
+                {
+                    Assignment.DueDate = new DateTime(Assignment.DueDate.Year, Assignment.DueDate.Month, Assignment.DueDate.Day, value.Hours, value.Minutes, value.Seconds);
+                    RaisePropertyChanged(nameof(DueDate));
+                    RaisePropertyChanged(nameof(DueTime));
+                }
+            }
+        }
+
 
         private void UpdateAssignmentDependentProperties(object sender, PropertyChangedEventArgs e)
         {
@@ -109,12 +137,12 @@ namespace LearningManagementSystem.ViewModels
 
             DownloadAttachmentCommand = new AsyncRelayCommand(DownloadAttachment);
 
-            DeleteAttachmentCommand = new AsyncRelayCommand(DeleteAttachment,CanDeleteAttachment);
+            DeleteAttachmentCommand = new AsyncRelayCommand(DeleteAttachment, CanDeleteAttachment);
 
             AddAssignmentCommand = new RelayCommand(AddAssignment, CanAddAssignment);
 
             // Register to receive delete messages
-            WeakReferenceMessenger.Default.Register<DeleteMessage>(this, async (r, m) =>
+            WeakReferenceMessenger.Default.Register<DeleteSubmissionMessage>(this, async (r, m) =>
             {
                 await DeleteSubmission(m.Value as SubmissionViewModel);
 
@@ -266,7 +294,11 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
-                await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
+                if (model.Submission.FilePath != null)
+                {
+                    await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
+                }
+
 
                 _dao.DeleteSubmissionById(model.Submission.Id);
 
@@ -274,7 +306,7 @@ namespace LearningManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error deleting submission: {ex.Message}");
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}"));
             }
         }
 
@@ -314,12 +346,6 @@ namespace LearningManagementSystem.ViewModels
             RaisePropertyChanged(nameof(IsEditing));
             RaisePropertyChanged(nameof(IsNotEditing));
             RaisePropertyChanged(nameof(EditButtonText));
-        }
-
-        ~AssignmentViewModel()
-        {
-            // Unregister from receiving delete messages
-            WeakReferenceMessenger.Default.Unregister<DeleteMessage>(this);
         }
 
     }

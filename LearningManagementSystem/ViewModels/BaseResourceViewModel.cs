@@ -17,26 +17,30 @@ namespace LearningManagementSystem.ViewModels
 
         private readonly UserService _userService = new UserService();
 
+        public readonly bool IsTeacher;
+
         public BaseResourceViewModel()
         {
             BaseResource = new BaseResource();
             DeleteCommand = new RelayCommand(Delete,CanDelete);
+            IsTeacher = _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
         }
 
         public BaseResourceViewModel(BaseResource x)
         {
             BaseResource = x;
             DeleteCommand = new RelayCommand(Delete, CanDelete);
+            IsTeacher = _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
         }
 
         private bool CanDelete()
         {
-            return _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            return IsTeacher;
         }
 
         private void Delete()
         {
-            WeakReferenceMessenger.Default.Send(new DeleteMessage(this));
+            WeakReferenceMessenger.Default.Send(new DeleteResourceMessage(this));
         }
 
     }

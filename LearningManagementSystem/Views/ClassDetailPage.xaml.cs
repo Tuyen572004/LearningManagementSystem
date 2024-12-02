@@ -1,19 +1,10 @@
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI;
-using LearningManagementSystem.DataAccess;
-using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
 using LearningManagementSystem.ViewModels;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace LearningManagementSystem.Views
@@ -40,9 +31,6 @@ namespace LearningManagementSystem.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //base.OnNavigatedTo(e);
-            //var classViewModel = e.Parameter as EnrollmentClassViewModel;
-            //DataContext = this;
             base.OnNavigatedTo(e);
 
             if (e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage (click Enter button)
@@ -52,25 +40,22 @@ namespace LearningManagementSystem.Views
                 ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
 
             }
-            else if (e.Parameter is int classId) // navigated by Resources Page (click Back button)
-            {
-                ClassDetailViewModel.EnrollmentViewModel.loadClassByClassId(classId);
-                // Eager loading
-                ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
-            }
-            
-            
+            // USE GO BACK SO I DON'T NEED IT ANYMORE
+            //else if (e.Parameter is int classId) // navigated by Resources Page (click Back button)
+            //{
+            //    ClassDetailViewModel.EnrollmentViewModel.loadClassByClassId(classId);
+            //    // Eager loading
+            //    ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
+            //}
+
+
 
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            //if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Forward)
-            //{
-                WeakReferenceMessenger.Default.Unregister<NavigationMessage>(this);
-                
-            //}
+            WeakReferenceMessenger.Default.Unregister<NavigationMessage>(this);
         }
 
 
@@ -100,7 +85,8 @@ namespace LearningManagementSystem.Views
             }
         }
 
-        // IMPLEMENT LATER
+        // No Use Go Back: in case this page navigated by Resources Page
+        // it will navigate to Resources Page instead of EnrollmentClassesPage
         public void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EnrollmentClassesPage));

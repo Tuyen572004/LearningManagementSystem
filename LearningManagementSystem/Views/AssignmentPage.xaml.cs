@@ -21,7 +21,7 @@ namespace LearningManagementSystem.Views
     public sealed partial class AssignmentPage : Page
     {
 
-        public AssignmentViewModel AssignmentViewModel { get; set; }
+        public AssignmentViewModel AssignmentViewModel {get; set; }
 
         private readonly IDao _dao = new SqlDao();
         private readonly UserService userService = new UserService();
@@ -46,7 +46,14 @@ namespace LearningManagementSystem.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
+            //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
+            Frame.GoBack();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
         }
 
 
@@ -57,11 +64,22 @@ namespace LearningManagementSystem.Views
             {
                 Title = title,
                 Content = content,
-                CloseButtonText = "OK",
+                CloseButtonText = "Close",
+                PrimaryButtonText = "Go Back",
                 XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
             };
 
-            await messageDialog.ShowAsync();
+
+            var result = await messageDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                messageDialog.Hide();
+            }
         }
 
 

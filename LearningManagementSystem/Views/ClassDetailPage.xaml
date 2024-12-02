@@ -6,10 +6,11 @@
     xmlns:vm="using:LearningManagementSystem.ViewModels"
     xmlns:m="using:LearningManagementSystem.Models"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:h="using:LearningManagementSystem.Helpers"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <!-- Add any resources here if needed -->
+        <h:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -38,6 +39,7 @@
         <Button x:Name="BackButton" Content="Back" Click="BackButton_Click" Margin="30,30,0,0" Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1"/>
 
         <ComboBox SelectionChanged="{x:Bind ClassDetailViewModel.ComboBox_SelectionChanged}" 
+                  Visibility="{x:Bind ClassDetailViewModel.IsTeacher, Converter={StaticResource BooleanToVisibilityConverter}}"
               ItemsSource="{x:Bind ClassDetailViewModel.ResourceViewModel.SingularResources, Mode=OneWay}"
               Header="Add Resources" PlaceholderText="Pick a resource type"
               Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right"
@@ -86,7 +88,7 @@
                             <ListBox ItemsSource="{Binding Resources,Mode=OneWay}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate x:DataType="vm:BaseResourceViewModel">
-                                        <Border BorderBrush="Black" BorderThickness="0.5" Padding="10" Width="850">
+                                        <Border BorderBrush="Black" BorderThickness="0.5" Padding="10" Width="830">
                                             <Grid >
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="9*" />
@@ -106,7 +108,10 @@
                                                         Background="Red" 
                                                         FontWeight="Bold"
                                                         HorizontalAlignment="Left"
-                                                        Command="{Binding DeleteCommand, Mode=OneWay}"/>
+                                                        Command="{Binding DeleteCommand, Mode=OneWay}"
+                                                        Visibility="{x:Bind IsTeacher, 
+                                                                    Mode=OneWay,
+                                                                    Converter={StaticResource BooleanToVisibilityConverter}}"/>      
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

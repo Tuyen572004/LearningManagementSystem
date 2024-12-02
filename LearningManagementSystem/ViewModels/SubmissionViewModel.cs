@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
@@ -39,16 +40,18 @@ namespace LearningManagementSystem.ViewModels
 
         public ICommand DeleteCommand { get; }
 
+        public ICommand GradeCommand { get; }
+
         public SubmissionViewModel()
         {
             _dao = new SqlDao();
             Submission = new Submission();
             Student = new Student();
             Assignment = new Assignment();
-
+            User = userService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
-            DeleteCommand = new RelayCommand(DeleteSubmission);
+            DeleteCommand = new RelayCommand(DeleteSubmission,CanDeleteSubmission);
         }
 
         public SubmissionViewModel(Submission submission, Assignment assignment)
@@ -57,15 +60,23 @@ namespace LearningManagementSystem.ViewModels
             Submission = submission;
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;
-
+            User = userService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
-            DeleteCommand = new RelayCommand(DeleteSubmission);
-
+            DeleteCommand = new RelayCommand(DeleteSubmission, CanDeleteSubmission);
+            GradeCommand = new RelayCommand(GradeSubmission, CanGradeSubmission);
 
         }
 
+        private bool CanGradeSubmission()
+        {
+            return User.Role == RoleEnum.GetStringValue(Role.Teacher);
+        }
 
+        private void GradeSubmission()
+        {
+            _dao.UpdateSubmission(Submission);
+        }
 
         public async Task UpdateSubmission()
         {
@@ -96,8 +107,7 @@ namespace LearningManagementSystem.ViewModels
 
         public async Task<bool> CanUpdateSubmission()
         {
-            User user = await userService.GetCurrentUser();
-            return user.Role == "Student" && DateTime.Now < Assignment.DueDate;
+            return User.Role == "Student" && DateTime.Now < Assignment.DueDate;
         }
 
         public async Task UpdateSubmissionDetails(StorageFile selectedFile)
@@ -136,13 +146,13 @@ namespace LearningManagementSystem.ViewModels
         public void DeleteSubmission()
         {
             // Send delete message
-            WeakReferenceMessenger.Default.Send(new DeleteMessage(Submission));
+            WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
         }
 
-        public async Task<bool> CanDeleteSubmission(SubmissionViewModel submissionViewModel)
+        public bool CanDeleteSubmission()
         {
-            var role = await userService.getCurrentUserRole();
-            return role == "Student" && DateTime.Now < submissionViewModel.Assignment.DueDate;
+            var role = userService.GetCurrentUser().Result.Role.ToString();
+            return role == "Student" && DateTime.Now < Assignment.DueDate;
         }
     }
 }
