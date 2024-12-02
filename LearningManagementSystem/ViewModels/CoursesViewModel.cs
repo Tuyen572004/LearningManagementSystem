@@ -3,6 +3,9 @@ using LearningManagementSystem.DataAccess;
 using System.Collections.ObjectModel;
 using System;
 using LearningManagementSystem.Helpers;
+using System.Collections.Generic;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -72,6 +75,6 @@ namespace LearningManagementSystem.ViewModels
             _dao.UpdateCourse(course);
         }
 
-        
-    }
+    };
+
 }
