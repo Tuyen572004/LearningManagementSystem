@@ -365,3 +365,5 @@ FodyWeavers.xsd
 # Visual Studio
 .vs
 /LearningManagementSystem/config.json
+
+./config.json
