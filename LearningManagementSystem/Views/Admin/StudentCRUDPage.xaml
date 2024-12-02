@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    xmlns:controls="using:LearningManagementSystem.Controls">
+    xmlns:controls="using:LearningManagementSystem.Controls"
+    NavigationCacheMode="Enabled">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Left">
         <Grid RowSpacing="20">
@@ -40,8 +41,9 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="10" RelativePanel.AlignRightWithPanel="True">
-                    <Button x:Name="EditAllButton" Height="40" Content="Edit all selected" Click="EditAllButton_Click"/>
-                    <Button x:Name="ImportButton" Height="40" Content="Import from file" Click="ImportButton_Click"/>
+                    <Button x:Name="EditAllButton" Height="40" Content="Edit all selected above" Click="EditAllButton_Click"/>
+                    <Button x:Name="RemoveAllButton" Height="40" Content="Remove all selected below" Click="RemoveAllButton_Click"/>
+                    <Button x:Name="ImportButton" Height="40" Content="Import from file" Click="ImportButton_Click" IsEnabled="False"/>
                 </StackPanel>
 
             </RelativePanel>

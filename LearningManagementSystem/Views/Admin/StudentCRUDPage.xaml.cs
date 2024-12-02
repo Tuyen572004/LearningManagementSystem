@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +15,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,6 +48,9 @@ namespace LearningManagementSystem.Views.Admin
 
             StudentReaderDisplayer.StudentTable.StudentDoubleTapped += _cudViewModel.StudentTransferHandler;
             StudentCUDDisplayer.StudentTable.IsEditable = true;
+
+            OnSelectedRemoving += _cudViewModel.StudentsRemoveHandler;
+            AllSelectedStudentsTransferred += _cudViewModel.StudentsTransferHandler;
         }
 
         private void Dispose(bool disposing)
@@ -55,6 +60,9 @@ namespace LearningManagementSystem.Views.Admin
                 if (disposing)
                 {
                     StudentReaderDisplayer.StudentTable.StudentDoubleTapped -= _cudViewModel.StudentTransferHandler;
+
+                    OnSelectedRemoving -= _cudViewModel.StudentsRemoveHandler;
+                    AllSelectedStudentsTransferred -= _cudViewModel.StudentsTransferHandler;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -82,24 +90,64 @@ namespace LearningManagementSystem.Views.Admin
 
         }
 
+        public event EventHandler<IList<StudentVer2>>? StudentsCreationInitiated;
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            if (selectedItems.Count != 0)
+            {
+                StudentsCreationInitiated?.Invoke(this, selectedItems);
+            }
         }
-
+        public event EventHandler<IList<StudentVer2>>? StudentsUpdateInitiated;
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            if (selectedItems.Count != 0)
+            {
+                StudentsUpdateInitiated?.Invoke(this, selectedItems);
+            }
         }
-
+        public event EventHandler<IList<StudentVer2>>? StudentsDeletionInitiated;
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            if (selectedItems.Count != 0)
+            {
+                StudentsDeletionInitiated?.Invoke(this, selectedItems);
+            }
         }
 
+        public event EventHandler<IList<StudentVer2>>? AllSelectedStudentsTransferred;
         private void EditAllButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var selectedItems = StudentReaderDisplayer.StudentTable.GetSelectedItems();
+            if (selectedItems.Count != 0)
+            {
+                AllSelectedStudentsTransferred?.Invoke(this, selectedItems);
+            }
         }
+
+        public event EventHandler<IList<StudentVer2>>? OnSelectedRemoving;
+        private void RemoveAllButton_Click(object _, RoutedEventArgs __)
+        {
+            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            if (selectedItems.Count != 0)
+            {
+                OnSelectedRemoving?.Invoke(this, selectedItems);
+            }
+        }
+        private void HandleStudentsChanged(object? sender, IList<StudentVer2> selectedItems)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            if (selectedItems.Count != 0)
+            {
+                OnSelectedRemoving?.Invoke(this, selectedItems);
+            }
+        }
+        public EventHandler<IList<StudentVer2>> StudentsChangedHandler => HandleStudentsChanged;
     }
 }

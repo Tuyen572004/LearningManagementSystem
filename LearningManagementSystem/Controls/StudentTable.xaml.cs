@@ -151,7 +151,7 @@ namespace LearningManagementSystem.Controls
             SortChanged?.Invoke(this, _sortList);
         }
 
-        
+
         public event EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEditted;
 
         // Don't delete this private variable
@@ -190,10 +190,29 @@ namespace LearningManagementSystem.Controls
             }
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+                // For some reasons, when the event in StudentEditted is called and would modify the TableView rows,
+                // (in this case, de-select the current editing cell's row), the Dg_CellEditEnded event raises an Exception.
+                
+                // Solution: Using DispatcherQueue
+                
+                // Ensures that the StudentEditted event is triggered
+                // after the behind-the-scenes code in Dg_CellEditEnded has finished.
+
+                var oldStudent = (StudentVer2)_originalStudent.Clone();
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
+                    
+                });
+                // StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
             }
             _isEdittingRow = false;
             _originalStudent = null;
+        }
+
+        public IList<StudentVer2> GetSelectedItems()
+        {
+            return Dg.SelectedItems.Cast<StudentVer2>().ToList();
         }
     }
 }

@@ -32,10 +32,31 @@ namespace LearningManagementSystem.Controls
 
             DataContextChanged += QueryableStudentDisplayer_DataContextChanged;
         }
-
+        private object _oldDataContext = null;
         private void QueryableStudentDisplayer_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             // Should manually unsubscribe previous DataContext events
+
+            // Unsubscribe from previous DataContext events
+            var OldValue = _oldDataContext;
+            if (OldValue is ISearchProvider oldSearchProvider)
+            {
+                SearchBar.SearchChanged -= oldSearchProvider.SearchChangedHandler;
+                ClearValue(SearchBar.ContextProviderProperty);
+                SearchBar.Visibility = Visibility.Collapsed;
+            }
+            if (OldValue is IStudentProvider oldStudentProvider)
+            {
+                StudentTable.SortChanged -= oldStudentProvider.SortChangedHandler;
+                StudentTable.StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
+                StudentTable.StudentEditted -= oldStudentProvider.StudentEdittedHandler;
+            }
+            if (OldValue is IPagingProvider)
+            {
+                ClearValue(PagingOptionsBar.ContextProviderProperty);
+                PagingOptionsBar.Visibility = Visibility.Collapsed;
+            }
+
 
             // Subscribe to new DataContext events
             if (args.NewValue is ISearchProvider newSearchProvider)
@@ -57,6 +78,8 @@ namespace LearningManagementSystem.Controls
                 SetBinding(PagingOptionsBar, PagingOptionsBar.ContextProviderProperty);
                 PagingOptionsBar.Visibility = Visibility.Visible;
             }
+
+            _oldDataContext = args.NewValue;
         }
 
         private void SetBinding(DependencyObject target, DependencyProperty property)

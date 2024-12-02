@@ -92,6 +92,12 @@ namespace LearningManagementSystem.ViewModels
             RaisePropertyChanged(nameof(ManagingStudents));
         }
 
+        public void RefreshItemCount()
+        {
+            ItemCount = AllStudents.Count;
+            RaisePropertyChanged(nameof(ItemCount));
+        }
+
         public void HandleSortChange(object? sender, List<SortCriteria>? e)
         {
             if (sender is null)
@@ -101,28 +107,41 @@ namespace LearningManagementSystem.ViewModels
             SortCriteria = e;
             RefreshManagingStudents();
         }
-        public EventHandler<List<SortCriteria>>? SortChangedHandler => HandleSortChange;
+        public EventHandler<List<SortCriteria>> SortChangedHandler => HandleSortChange;
 
-        public event EventHandler<StudentVer2>? InvalidTransferingStudentHandler;
+        public event EventHandler<IList<StudentVer2>>? InvalidTransferingStudentsHandler;
         public void HandleStudentTransfer(object? sender, StudentVer2 e)
+        {
+            HandleStudentsTransfer(sender, [e]);
+        }
+        public EventHandler<StudentVer2> StudentTransferHandler => HandleStudentTransfer;
+
+        public void HandleStudentsTransfer(object? sender, IList<StudentVer2> e)
         {
             if (sender is null)
             {
                 return;
             }
-            var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == e.Id, null);
-            if (existingStudent != null)
+            List<StudentVer2> invalidStudents = [];
+            foreach (var student in e)
             {
-                InvalidTransferingStudentHandler?.Invoke(this, e);
-                return;
+                var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == student.Id, null);
+                if (existingStudent != null)
+                {
+                    invalidStudents.Add(student);
+                    continue;
+                }
+                AllStudents.Add((StudentVer2)student.Clone());
             }
-            AllStudents.Add((StudentVer2)e.Clone());
-            ItemCount++;
-            RaisePropertyChanged(nameof(ItemCount));
-
+            RefreshItemCount();
             RefreshManagingStudents();
+            
+            if (invalidStudents.Count != 0)
+            {
+                InvalidTransferingStudentsHandler?.Invoke(this, invalidStudents);
+            }
         }
-        public EventHandler<StudentVer2> StudentTransferHandler => HandleStudentTransfer;
+        public EventHandler<IList<StudentVer2>> StudentsTransferHandler => HandleStudentsTransfer;
 
         public void HandleStudentEdit(object? sender, (StudentVer2 oldStudent, StudentVer2 newStudent) e)
         {
@@ -142,7 +161,27 @@ namespace LearningManagementSystem.ViewModels
             existingStudent.Copy(e.newStudent);
             RefreshManagingStudents();
         }
-        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => HandleStudentEdit;
+        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)> StudentEdittedHandler => HandleStudentEdit;
+
+        public void HandleStudentsRemoval(object? sender, IList<StudentVer2> e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            for (int i = AllStudents.Count - 1; i >= 0; i--)
+            {
+                var currentStudent = AllStudents[i];
+                if (e.Contains(currentStudent))
+                {
+                    AllStudents.RemoveAt(i);
+                }
+            }
+            RefreshItemCount();
+            RefreshManagingStudents();
+        }
+        
+        public EventHandler<IList<StudentVer2>> StudentsRemoveHandler => HandleStudentsRemoval;
     }
 }
 
