@@ -9,10 +9,10 @@ namespace LearningManagementSystem.Services
 {
     public class UserService
     {
-        // TODO : Implement the GetUserRoleAsync method
+        //// TODO : Implement the GetUserRoleAsync method
         public async Task<string> getCurrentUserRole()
         {
-            return await Task.FromResult("Student");
+            return await Task.FromResult("Teacher");
         }
 
         public async Task<User> GetCurrentUser()
@@ -23,7 +23,7 @@ namespace LearningManagementSystem.Services
                 Username = "S001",
                 PasswordHash = "YWRtaW5zdHVkZW50",
                 Email = "email",
-                Role = "student",
+                Role = "Student",
                 CreatedAt = DateTime.Parse("1000-01-01 00:00:00")
             });
         }

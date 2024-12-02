@@ -84,5 +84,12 @@ namespace LearningManagementSystem.DataAccess
         List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2);
         void UpdateSubmission(Submission submission);
         void DeleteSubmissionById(int id);
+
+        void SaveAssignment(Assignment assignment);
+
+        void UpdateAssignment(Assignment assignment);
+        void DeleteAttachmentByAssignmentId(int id);
+        void AddAssignment(Assignment assignment);
+        void DeleteAssignmentById(int id);
     }
 }

@@ -15,6 +15,12 @@
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+
+		<!--<PropertyChangedAnalyzerConfiguration>
+			<IsCodeGeneratorDisabled>false</IsCodeGeneratorDisabled>
+			<EventInvokerName>OnPropertyChanged</EventInvokerName>
+		</PropertyChangedAnalyzerConfiguration>-->
+
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\background.png" />
@@ -28,7 +34,6 @@
 	  <Content Remove="Assets\teacher.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="config.json" />
 	  <None Remove="Controls\StudentDisplayer.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
@@ -36,6 +41,7 @@
 	  <None Remove="LoginOfStudentPage.xaml" />
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
+	  <None Remove="Views\AddAssignment.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
 	  <None Remove="Views\AllStudentsPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
@@ -58,10 +64,10 @@
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
 		<Content Include="Assets\StoreLogo.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-		<Content Include="config.json" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CloudinaryDotNet" Version="1.26.2" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="EntityFramework" Version="6.5.1" />
@@ -73,6 +79,7 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
 		<PackageReference Include="MySql.Data" Version="9.1.0" />
+		<PackageReference Include="Npgsql" Version="9.0.1" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 		<PackageReference Include="WinUI.TableView" Version="1.2.2" />
 		<Manifest Include="$(ApplicationManifest)" />
@@ -114,6 +121,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\AddAssignment.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\AllStudentsPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 	  </Page>
