@@ -4,6 +4,7 @@ using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using Microsoft.Identity.Client;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -96,6 +97,10 @@ namespace LearningManagementSystem.ViewModels
         {
             ItemCount = AllStudents.Count;
             RaisePropertyChanged(nameof(ItemCount));
+            if (CurrentPage > PageCount)
+            {
+                NavigateToPage(PageCount);
+            }
         }
 
         public void HandleSortChange(object? sender, List<SortCriteria>? e)
@@ -182,6 +187,80 @@ namespace LearningManagementSystem.ViewModels
         }
         
         public EventHandler<IList<StudentVer2>> StudentsRemoveHandler => HandleStudentsRemoval;
+
+        public event EventHandler<IList<StudentVer2>>? StudentsSelectionChanged;
+        public void HandleStudentsCreation(object? sender, EventArgs e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            var emptyStudent = StudentVer2.Empty();
+            AllStudents.Add(emptyStudent);
+            RefreshItemCount();
+            RefreshManagingStudents();
+
+            var emptyStudentNewIndex = AllStudents
+                .Select((student, index) => new { student, index })
+                .First(x => ReferenceEquals(x.student, emptyStudent))
+                .index;
+            var emptyStudentPage = (emptyStudentNewIndex + 1) / RowsPerPage + (((emptyStudentNewIndex + 1) % RowsPerPage > 0) ? 1 : 0);
+            if (emptyStudentPage != CurrentPage)
+            {
+                NavigateToPage(emptyStudentPage);
+            }
+            StudentsSelectionChanged?.Invoke(this, [emptyStudent]);
+        }
+        public EventHandler StudentsCreationHandler => HandleStudentsCreation;
+
+        public event EventHandler<(
+            IList<StudentVer2> updatedStudents,
+            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            )>? OnStudentsUpdated;
+        public void HandleStudentsUpdate(object? sender, IList<StudentVer2> e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            List<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo = [];
+            List<StudentVer2> validAddingStudents = [];
+            List<StudentVer2> validUpdatingStudents = [];
+            foreach (StudentVer2 updatingStudent in e)
+            {
+                var (result, errors) = StudentVer2.FieldsCheck(updatingStudent);
+                if (!result)
+                {
+                    invalidStudentsInfo.Add((updatingStudent, errors));
+                    continue;
+                } 
+
+                if (updatingStudent.Id == -1)
+                {
+                    validAddingStudents.Add(updatingStudent);
+                }
+                else
+                {
+                    validUpdatingStudents.Add(updatingStudent);
+                }
+            }
+            var (addedStudents, addedCount, invalidAddingStudents) = _dao.AddStudents(validAddingStudents);
+            // var (updatedStudents, updatedCount) = _dao.UpdateStudents(validUpdatingStudents);
+
+            //invalidStudentsInfo.AddRange(
+            //    validAddingStudents
+            //        .Where(x => addedStudents.Where(a => a.Equals(x)).Any())
+            //        .Select(x => {
+            //            (StudentVer2 student, IEnumerable<String> errors) = (x, ["Added failed in database"]);
+            //            return (student, errors);
+            //            })
+            //    );
+            invalidStudentsInfo.AddRange(invalidAddingStudents);
+            var invalidStudents = invalidStudentsInfo.Select(x => x.student);
+            var updatedStudents = e.Where(x => !invalidStudents.Contains(x)).ToList() ?? [];
+            OnStudentsUpdated?.Invoke(this, (updatedStudents, invalidStudentsInfo));
+        }
+        public EventHandler<IList<StudentVer2>> StudentsUpdateHandler => HandleStudentsUpdate;
     }
 }
 

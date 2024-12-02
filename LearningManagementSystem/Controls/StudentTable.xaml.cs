@@ -146,11 +146,15 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
+        public void RefreshData()
         {
             SortChanged?.Invoke(this, _sortList);
         }
 
+        private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshData();
+        }
 
         public event EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEditted;
 
@@ -214,5 +218,21 @@ namespace LearningManagementSystem.Controls
         {
             return Dg.SelectedItems.Cast<StudentVer2>().ToList();
         }
+        private void HandleItemsReselection(object? sender, IList<StudentVer2> e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            Dg.SelectedItems.Clear();
+            foreach (var studentInTable in Dg.ItemsSource)
+            {
+                if (e.Any(observingStudent => ReferenceEquals(studentInTable, observingStudent)))
+                {
+                    Dg.SelectedItems.Add(studentInTable);
+                }
+            }
+        }
+        public EventHandler<IList<StudentVer2>> ItemsReselectionHandler => HandleItemsReselection;
     }
 }

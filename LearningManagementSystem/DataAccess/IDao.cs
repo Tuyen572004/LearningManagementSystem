@@ -69,6 +69,19 @@ namespace LearningManagementSystem.DataAccess
         {
             return (null, 0);
         }
+        public (
+            IList<StudentVer2> addStudents,
+            int addCount,
+            IList<(StudentVer2 student, IEnumerable<String> error)> invalidStudentsInfo
+            ) AddStudents(IEnumerable<StudentVer2> students);
+        public (ObservableCollection<StudentVer2>, int) UpdateStudents(
+            IEnumerable<StudentVer2> students
+            );
+
+        public (ObservableCollection<StudentVer2>, int) DeleteStudents(
+            IEnumerable<StudentVer2> students
+            );
+
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);

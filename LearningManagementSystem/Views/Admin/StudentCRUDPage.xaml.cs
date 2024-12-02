@@ -51,6 +51,11 @@ namespace LearningManagementSystem.Views.Admin
 
             OnSelectedRemoving += _cudViewModel.StudentsRemoveHandler;
             AllSelectedStudentsTransferred += _cudViewModel.StudentsTransferHandler;
+            StudentsCreationInitiated += _cudViewModel.StudentsCreationHandler;
+            StudentsUpdateInitiated += _cudViewModel.StudentsUpdateHandler;
+
+            _cudViewModel.StudentsSelectionChanged += StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
+            _cudViewModel.OnStudentsUpdated += OnStudentsUpdatedHandler;
         }
 
         private void Dispose(bool disposing)
@@ -63,6 +68,11 @@ namespace LearningManagementSystem.Views.Admin
 
                     OnSelectedRemoving -= _cudViewModel.StudentsRemoveHandler;
                     AllSelectedStudentsTransferred -= _cudViewModel.StudentsTransferHandler;
+                    StudentsCreationInitiated -= _cudViewModel.StudentsCreationHandler;
+                    StudentsUpdateInitiated -= _cudViewModel.StudentsUpdateHandler;
+
+                    _cudViewModel.StudentsSelectionChanged -= StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
+                    _cudViewModel.OnStudentsUpdated -= OnStudentsUpdatedHandler;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -90,14 +100,10 @@ namespace LearningManagementSystem.Views.Admin
 
         }
 
-        public event EventHandler<IList<StudentVer2>>? StudentsCreationInitiated;
+        public event EventHandler? StudentsCreationInitiated;
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
-            if (selectedItems.Count != 0)
-            {
-                StudentsCreationInitiated?.Invoke(this, selectedItems);
-            }
+            StudentsCreationInitiated?.Invoke(this, new EventArgs());
         }
         public event EventHandler<IList<StudentVer2>>? StudentsUpdateInitiated;
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
@@ -109,6 +115,29 @@ namespace LearningManagementSystem.Views.Admin
             }
         }
         public event EventHandler<IList<StudentVer2>>? StudentsDeletionInitiated;
+        public void HandleStudentsUpdated(object? sender, (
+            IList<StudentVer2> updatedStudents,
+            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            ) e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            //if (e.updatedStudents.Count > 0)
+            //{
+            //    StudentsDeletionInitiated?.Invoke(this, e.updatedStudents);
+            //}
+            //if (e.invalidStudentsInfo.Count > 0)
+            //{
+            //    // TODO
+            //}
+            StudentReaderDisplayer.StudentTable.RefreshData();
+        }
+        public EventHandler<(
+            IList<StudentVer2> updatedStudents,
+            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            )> OnStudentsUpdatedHandler => HandleStudentsUpdated;
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();

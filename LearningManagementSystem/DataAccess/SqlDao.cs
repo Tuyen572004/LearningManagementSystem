@@ -862,6 +862,75 @@ namespace LearningManagementSystem.DataAccess
             //}
             
         }
+        public (
+            IList<StudentVer2> addStudents,
+            int addCount,
+            IList<(StudentVer2 student, IEnumerable<String> error)> invalidStudentsInfo
+            ) AddStudents(IEnumerable<StudentVer2> students)
+        {
+            List<StudentVer2> addedStudents = [];
+            int addedCount = 0;
+            List<(StudentVer2 student, IEnumerable<String> error)> invalidStudents = [];
+
+            if (OpenConnection() == false)
+            {
+                CloseConnection();
+                return (
+                    addedStudents,
+                    addedCount,
+                    students.Select(s => (s, (new List<String> { "Can't connect to database"}).AsEnumerable() ?? [])).ToList()
+                    );
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                StudentVer2 currentStudent = student;
+                try
+                {
+                    var command = new MySqlCommand(
+                        """
+                        INSERT INTO Students (StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear)
+                        VALUES (@StudentCode, @StudentName, @Email, @BirthDate, @PhoneNo, @UserId, @EnrollmentYear, @GraduationYear)
+                        """, connection, transaction);
+
+                    command.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    command.Parameters.AddWithValue("@StudentName", student.StudentName);
+                    command.Parameters.AddWithValue("@Email", student.Email);
+                    command.Parameters.AddWithValue("@BirthDate", student.BirthDate);
+                    command.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
+                    command.Parameters.AddWithValue("@UserId", student.UserId);
+                    command.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
+                    command.Parameters.AddWithValue("@GraduationYear", student.GraduationYear);
+
+                    int queryResult = command.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        addedStudents.Add(student);
+                        addedCount++;
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((currentStudent, ["Exception raised when adding to database: " + ex.Message]));
+                }
+            }
+            transaction.Dispose();
+            CloseConnection();
+            return (addedStudents, addedCount, invalidStudents);
+        }
+    
+
+        public (ObservableCollection<StudentVer2>, int) UpdateStudents(IEnumerable<StudentVer2> students)
+        {
+            throw new NotImplementedException();
+        }
+
+        public (ObservableCollection<StudentVer2>, int) DeleteStudents(IEnumerable<StudentVer2> students)
+        {
+            throw new NotImplementedException();
+        }
 
         // --------------------------- RESOURCE --------------------------- //
         public List<ResourceCategory> findAllResourceCategories()
