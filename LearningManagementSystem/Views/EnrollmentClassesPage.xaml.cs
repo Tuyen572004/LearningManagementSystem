@@ -1,8 +1,6 @@
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-using System.Windows.Input;
 
 namespace LearningManagementSystem.Views
 {

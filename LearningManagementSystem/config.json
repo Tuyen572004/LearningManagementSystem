@@ -1,6 +1,0 @@
-{
-  "DB_SERVER": "localhost",
-  "DB_DATABASE": "lmsdb",
-  "DB_USERNAME": "root",
-  "DB_PASSWORD": "nopassword"
-}
