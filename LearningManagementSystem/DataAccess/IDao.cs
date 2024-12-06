@@ -37,6 +37,22 @@ namespace LearningManagementSystem.DataAccess
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
 
+        public void GetFullUser(User user);
+
+        Tuple<int, List<User>> GetAllUsers(
+            int page = 1,
+            int pageSize = 10,
+            string keyword = "",
+            bool nameAscending = false
+            );
+
+        int InsertUser(User user);
+        void UpdateUser(User user);
+        void RemoveUserByID(int userId);
+
+        int CountUser();
+
+
         int CountDepartments();
         int FindDepartmentID(Department department);
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
