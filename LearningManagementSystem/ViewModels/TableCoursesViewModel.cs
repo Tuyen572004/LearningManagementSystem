@@ -56,6 +56,8 @@ namespace LearningManagementSystem.ViewModels
 
         public int TotalPages { get; set; } = 0;
         public int TotalItems { get; set; } = 0;
+
+        public string[] TypeSort { get; set; } = { "Course Code", "Course Description" };
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
