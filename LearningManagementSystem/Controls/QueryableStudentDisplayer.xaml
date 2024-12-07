@@ -20,7 +20,8 @@
         <local:StudentTable x:Name="QSDStudentTable" Grid.Row="1" ContextProvider="{Binding}"/>-->
 
         <local:SearchBar x:Name="QSDSearchBar" Grid.Row="0" Visibility="Collapsed"/>
-        <local:StudentTable x:Name="QSDStudentTable" Grid.Row="1" ContextProvider="{Binding}"/>
+        <local:StudentTable x:Name="QSDStudentTable" Grid.Row="1"/>
+        <!--<local:StudentTable x:Name="QSDStudentTable" Grid.Row="1" ContextProvider="{Binding}"/>-->
         <local:PagingOptionsBar x:Name="QSDPagingOptionsBar" Grid.Row="2" Visibility="Collapsed" />
     </Grid>
 </UserControl>

@@ -1,5 +1,5 @@
 ﻿#nullable enable
-using CommunityToolkit.WinUI.UI.Controls;
+using CommunityToolkit.WinUI.UI.Controls; // DataGridSortDirection
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class StudentCUDViewModel(IDao dao): BaseViewModel, IStudentProvider, IPagingProvider
+    public partial class StudentCUDViewModel(IDao dao): BaseViewModel, IStudentProvider, IPagingProvider, IInfoProvider, IRowStatusDeterminer
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;
@@ -196,6 +196,8 @@ namespace LearningManagementSystem.ViewModels
                 return;
             }
             var emptyStudent = StudentVer2.Empty();
+            emptyStudent.ValidateAllProperties();
+
             AllStudents.Add(emptyStudent);
             RefreshItemCount();
             RefreshManagingStudents();
@@ -261,6 +263,42 @@ namespace LearningManagementSystem.ViewModels
             OnStudentsUpdated?.Invoke(this, (updatedStudents, invalidStudentsInfo));
         }
         public EventHandler<IList<StudentVer2>> StudentsUpdateHandler => HandleStudentsUpdate;
+
+        InfoBarMessage? IInfoProvider.GetMessageOf(object item)
+        {
+            if (item is StudentVer2 student)
+            {
+                if (student.HasErrors)
+                {
+                    var errors = student.GetErrors(null) as List<String> ?? [];
+                    var newMessage = String.Join("\n", errors);
+                    return new()
+                    {
+                        Title = "Student Error",
+                        Message = newMessage,
+                        Severity = InfoBarMessageSeverity.Error
+                    };
+                }
+            }
+            return null;
+        }
+
+        public RowStatus? GetRowStatus(object item)
+        {
+            if (item is StudentVer2 student)
+            {
+                if (student.HasErrors)
+                {
+                    return RowStatus.Error;
+                }
+                if (student.Id == -1)
+                {
+                    return RowStatus.New;
+                }
+                return RowStatus.Normal;
+            }
+            return null;
+        }
     }
 }
 

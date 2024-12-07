@@ -38,10 +38,10 @@ namespace LearningManagementSystem
 
             // Remember to navigate back
             // NavigateByTag("LearningManagementSystem.HomePage");
-            menu.SelectionChanged += menu_SelectionChanged;
+            Menu.SelectionChanged += Menu_SelectionChanged;
         }
 
-        private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private void Menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is NavigationViewItem item &&
                 item.Tag is string tag)
@@ -52,12 +52,12 @@ namespace LearningManagementSystem
 
         private void NavigateByTag(string tag)
         {
-            if (this.menu.MenuItems
+            if (this.Menu.MenuItems
                 .OfType<NavigationViewItem>()
                 .Where(x => x.Tag.Equals(tag) is true)
                 .FirstOrDefault() is NavigationViewItem item)
             {
-                this.menu.SelectedItem = item;
+                this.Menu.SelectedItem = item;
                 var navigatingType = Type.GetType($"{item.Tag}");
                 if (navigatingType is not null)
                 {

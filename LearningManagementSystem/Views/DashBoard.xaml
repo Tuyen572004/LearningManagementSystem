@@ -8,11 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <NavigationView x:Name="menu"
-                        IsBackButtonVisible="Collapsed"
-                        PaneDisplayMode="Left"
-                        SelectionChanged="menu_SelectionChanged"
-                        IsSettingsVisible="False">
+    <NavigationView 
+        x:Name="Menu"
+        IsBackButtonVisible="Collapsed"
+        PaneDisplayMode="Left"
+        IsSettingsVisible="False"
+        >
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Home" Tag="LearningManagementSystem.HomePage" Icon="Home" />
             <NavigationViewItem Content="Courses" Tag="LearningManagementSystem.CoursesPage" Icon="Library" />

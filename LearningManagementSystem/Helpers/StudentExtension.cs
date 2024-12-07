@@ -1,6 +1,8 @@
 ﻿using Mysqlx.Expr;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -10,12 +12,142 @@ using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace LearningManagementSystem.Models
 {
-    public partial class StudentVer2 : ICloneable
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+    public partial class StudentVer2 : ICloneable, INotifyDataErrorInfo, INotifyPropertyChanged
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         public static readonly int MAX_STUDENT_CODE_LENGTH = 10;
         public static readonly int MAX_STUDENT_NAME_LENGTH = 100;
         public static readonly int MAX_EMAIL_LENGTH = 100;
         public static readonly int MAX_PHONE_NO_LENGTH = 30;
+
+        private static readonly List<string> propertyNames = typeof(StudentVer2).GetProperties().Select(p => p.Name).ToList();
+        private readonly Dictionary<string, List<string>> _errors = [];
+        public bool HasErrors => _errors.Count > 0;
+
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        private void OnErrorsChanged(string propertyName)
+        {
+            if (!propertyNames.Contains(propertyName))
+            {
+                return;
+            }
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        }
+        public IEnumerable GetErrors(string propertyName)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                return _errors.Values.SelectMany(sublist => sublist).ToList();
+            }
+            return _errors.GetValueOrDefault(propertyName);
+        }
+        public void ValidateProperty(string propertyName)
+        {
+            _errors.Remove(propertyName);
+
+            switch (propertyName)
+            {
+                case nameof(Id):
+                    break;
+                case nameof(StudentCode):
+                    if (StudentCode.Length == 0)
+                    {
+                        _errors.Add(propertyName, ["Student code must not be empty."]);
+                    }
+                    if (StudentCode.Length > MAX_STUDENT_CODE_LENGTH)
+                    {
+                        _errors.Add(propertyName, [$"Student code must be less than {MAX_STUDENT_CODE_LENGTH} characters."]);
+                    }
+                    break;
+                case nameof(StudentName):
+                    if (StudentName.Length == 0)
+                    {
+                        _errors.Add(propertyName, ["Student name must not be empty."]);
+                    }
+                    if (StudentName.Length > MAX_STUDENT_NAME_LENGTH)
+                    {
+                        _errors.Add(propertyName, [$"Student name must be less than {MAX_STUDENT_NAME_LENGTH} characters."]);
+                    }
+                    break;
+                case nameof(Email):
+                    if (Email.Length == 0)
+                    {
+                        _errors.Add(propertyName, ["Email must not be empty."]);
+                    }
+                    else
+                    {
+                        if (!EmailRegex().IsMatch(Email))
+                        {
+                            _errors.Add(propertyName, ["Email is not in a valid format."]);
+                        }
+                    }
+                    if (Email.Length > MAX_EMAIL_LENGTH)
+                    {
+                        _errors.Add(propertyName, [$"Email must be less than {MAX_EMAIL_LENGTH} characters."]);
+                    }
+                    break;
+                case nameof(BirthDate):
+                    if (BirthDate > DateTime.Now)
+                    {
+                        _errors.Add(propertyName, ["Birth date must be less than current date."]);
+                    }
+                    break;
+                case nameof(PhoneNo):
+                    if (PhoneNo.Length == 0)
+                    {
+                        _errors.Add(propertyName, ["Phone number must not be empty."]);
+                    }
+                    else
+                    {
+                        if (!PhoneRegex().IsMatch(PhoneNo))
+                        {
+                            _errors.Add(propertyName, ["Phone number is not in a valid format."]);
+                        }
+                    }
+                    if (PhoneNo.Length > MAX_PHONE_NO_LENGTH)
+                    {
+                        _errors.Add(propertyName, [$"Phone number must be less than {MAX_PHONE_NO_LENGTH} characters."]);
+                    }
+                    break;
+                case nameof(UserId):
+                    break;
+                case nameof(EnrollmentYear):
+                    if (EnrollmentYear < 1900 || EnrollmentYear > DateTime.Now.Year)
+                    {
+                        _errors.Add(propertyName, ["Enrollment year must be between 1900 and current year."]);
+                    }
+                    break;
+                case nameof(GraduationYear):
+                    if (GraduationYear != null && (GraduationYear < 1900 || GraduationYear > DateTime.Now.Year))
+                    {
+                        _errors.Add(propertyName, ["Graduation year must be between 1900 and current year."]);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            OnErrorsChanged(propertyName);
+        }
+        public void ValidateAllProperties()
+        {
+            // ValidateProperty(nameof(Id));
+            ValidateProperty(nameof(StudentCode));
+            ValidateProperty(nameof(StudentName));
+            ValidateProperty(nameof(Email));
+            ValidateProperty(nameof(BirthDate));
+            ValidateProperty(nameof(PhoneNo));
+            // ValidateProperty(nameof(UserId));
+            ValidateProperty(nameof(EnrollmentYear));
+            ValidateProperty(nameof(GraduationYear));
+        }
+        public void ChangeErrors(string propertyName, List<string> errors)
+        {
+            _errors[propertyName] = errors;
+            OnErrorsChanged(propertyName);
+        }
+
+
         public object Clone()
         {
             return new StudentVer2

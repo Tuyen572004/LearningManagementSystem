@@ -26,6 +26,6 @@
 
         <local:PagingOptionsBar Grid.Row="1" ContextProvider="{x:Bind ViewModel}" />
 
-        <local:StudentTable Grid.Row="2" ContextProvider="{x:Bind ViewModel}"/>
+        <local:StudentTable Grid.Row="2" DataContext="{x:Bind ViewModel}"/>
     </Grid>
 </Page>

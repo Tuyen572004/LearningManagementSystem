@@ -25,6 +25,27 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
+    internal class GeneratedColumnDetail
+    {
+        required public string Name { get; set; }
+        required public DataGridColumn Column { get; set; }
+    }
+    public enum InfoBarMessageSeverity
+    {
+        Info,
+        Warning,
+        Error
+    }
+    public class InfoBarMessage
+    {
+        public InfoBarMessageSeverity Severity { get; set; }
+        required public string Title { get; set; }
+        required public string Message { get; set; }
+    }
+    public interface IInfoProvider
+    {
+        public InfoBarMessage? GetMessageOf(object item);
+    }
     public class SortCriteria
     {
         required public string ColumnTag { get; set; }
@@ -36,6 +57,9 @@ namespace LearningManagementSystem.Controls
         public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
         public EventHandler<StudentVer2>? StudentDoubleTappedHandler => null;
         public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => null;
+
+        public IEnumerable<String> IgnoringColumns => ["HasErrors"];
+        public IEnumerable<String> ColumnOrder => ["Id", "UserId"];
     }
     public partial class UnassignedStudentProvider : IStudentProvider
     {
@@ -68,7 +92,28 @@ namespace LearningManagementSystem.Controls
         public StudentTable()
         {
             this.InitializeComponent();
+
+            // DataContextChanged += StudentTable_DataContextChanged;
         }
+        //private object? _oldDataContext = null;
+        //private void StudentTable_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        //{
+        //    var OldValue = _oldDataContext;
+        //    if (OldValue is IStudentProvider oldStudentProvider)
+        //    {
+        //        SortChanged -= oldStudentProvider.SortChangedHandler;
+        //        StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
+        //        StudentEditted -= oldStudentProvider.StudentEdittedHandler;
+        //    }
+
+        //    if (args.NewValue is IStudentProvider newStudentProvider)
+        //    {
+        //        SortChanged += newStudentProvider.SortChangedHandler;
+        //        StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
+        //        StudentEditted += newStudentProvider.StudentEdittedHandler;
+        //    }
+        //    _oldDataContext = args.NewValue;
+        //}
 
         public event EventHandler<List<SortCriteria>>? SortChanged;
         private readonly List<SortCriteria> _sortList = [];
@@ -206,7 +251,8 @@ namespace LearningManagementSystem.Controls
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
-                    
+                    // TODO - Technical Debt: Ugly validation logic here, not generic friendly
+                    ((StudentVer2)e.Row.DataContext)?.ValidateProperty(e.Column.Tag.ToString());
                 });
                 // StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
             }
@@ -234,5 +280,78 @@ namespace LearningManagementSystem.Controls
             }
         }
         public EventHandler<IList<StudentVer2>> ItemsReselectionHandler => HandleItemsReselection;
+
+        private void SeeItemInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            if (ContextProvider is IInfoProvider infoProvider && Dg.SelectedItem is not null)
+            // if (DataContext is IInfoProvider infoProvider && Dg.SelectedItem is not null)
+            {
+                var message = infoProvider.GetMessageOf(Dg.SelectedItem);
+                if (message is not null)
+                {
+                    Dg_InfoBar.Title = message.Title;
+                    Dg_InfoBar.Message = message.Message;
+                    Dg_InfoBar.Severity = message.Severity switch
+                    {
+                        InfoBarMessageSeverity.Info => InfoBarSeverity.Informational,
+                        InfoBarMessageSeverity.Warning => InfoBarSeverity.Warning,
+                        InfoBarMessageSeverity.Error => InfoBarSeverity.Error,
+                        _ => InfoBarSeverity.Informational
+                    };
+                    Dg_InfoBar.IsOpen = true;
+                }
+            }
+            else
+            {
+                Dg_InfoBar.IsOpen = false;
+            }
+        }
+
+        private List<GeneratedColumnDetail> _generatedColumnsDetail = [];
+        private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+
+            if (ContextProvider is IStudentProvider provider)
+            {
+                var ignoringColumns = provider.IgnoringColumns.ToList();
+                if (ignoringColumns.Contains(e.PropertyName))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            _generatedColumnsDetail.Add(new() { Column = e.Column, Name = e.PropertyName });
+        }
+
+        private void Dg_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (ContextProvider is IStudentProvider provider)
+            {
+                Dictionary<DataGridColumn, int> columnDisplayIndex = [];
+                int columnIndexCounter = 0;
+                foreach (String columnName in provider.ColumnOrder)
+                {
+                    GeneratedColumnDetail? foundColumn = _generatedColumnsDetail.Find(columnDetail => columnDetail.Name == columnName);
+                    if (foundColumn != null)
+                    {
+                        columnDisplayIndex.Add(foundColumn.Column, columnIndexCounter++);
+                    }
+                }
+                foreach (GeneratedColumnDetail column in _generatedColumnsDetail)
+                {
+                    if (columnDisplayIndex.TryGetValue(column.Column, out int value))
+                    {
+                        column.Column.DisplayIndex = value;
+                    } else
+                    {
+                        column.Column.DisplayIndex = columnIndexCounter++;
+                    }
+                }
+            }
+        }
     }
 }

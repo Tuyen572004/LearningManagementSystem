@@ -24,7 +24,7 @@
         </StackPanel>
 
         <local:SearchBar x:Name="SearchBar" Grid.Row="1" ContextProvider="{x:Bind ViewModel}" />
-        <local:StudentTable x:Name="StudentDisplayer" Grid.Row="2" ContextProvider="{x:Bind ViewModel}"/>
+        <local:StudentTable x:Name="StudentDisplayer" Grid.Row="2" DataContext="{x:Bind ViewModel}"/>
         <local:PagingOptionsBar x:Name="PagingOptionsBar" Grid.Row="3" ContextProvider="{x:Bind ViewModel}" />
     </Grid>
 </Page>

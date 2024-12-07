@@ -70,7 +70,7 @@ namespace LearningManagementSystem.Controls
                 StudentTable.SortChanged += newStudentProvider.SortChangedHandler;
                 StudentTable.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
                 StudentTable.StudentEditted += newStudentProvider.StudentEdittedHandler;
-
+                SetBinding(StudentTable, StudentTable.ContextProviderProperty);
 
             }
             if (args.NewValue is IPagingProvider)
@@ -87,8 +87,8 @@ namespace LearningManagementSystem.Controls
             // Create a new Binding
             var binding = new Binding
             {
-                Path = new PropertyPath(string.Empty),  // Bind to the current DataContext
-                Source = DataContext,         // Set the binding source
+                Path = new PropertyPath("DataContext"),  // Bind to the current DataContext
+                Source = this,         // Set the binding source
                 Mode = BindingMode.OneWay     // Use OneWay binding mode
             };
 
