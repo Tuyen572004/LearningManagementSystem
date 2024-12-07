@@ -48,16 +48,13 @@
                         Grid.Row="3" Grid.ColumnSpan="1" Grid.Column="4" />
 
 
-        <StackPanel x:Name="sortPanel" Grid.Row="3" Margin="0,10,0,0" Grid.Column="1" Orientation="Horizontal">
-            <ComboBox x:Name="sortByComboBox" >
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="">
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
+        <StackPanel x:Name="sortPanel" Grid.Row="3" Margin="0,10,0,0" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+            <TextBlock VerticalAlignment="Center">Sort by:</TextBlock>
+            <ComboBox x:Name="sortByComboBox" ItemsSource="{x:Bind sortByOptions}" SelectedIndex="0" SelectionChanged="sortByComboBox_SelectionChanged">
+
             </ComboBox>
-            <RepeatButton x:Name="sortOrder" Content="Click and hold" Click="sortOrder_Click" />
+            <TextBlock VerticalAlignment="Center">Sort order:</TextBlock>
+            <RepeatButton x:Name="sortOrder" Content="ASC" Click="sortOrder_Click" />
         </StackPanel>
 
         <StackPanel x:Name="pagingNavi" Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="2" Orientation="Horizontal" Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">

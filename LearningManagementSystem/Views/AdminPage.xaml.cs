@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.Models;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,16 +31,26 @@ namespace LearningManagementSystem.Views
 
         public UserViewModel UsrViewModel { get; set; }
 
-
+        public ObservableCollection<string> sortByOptions { get; set; }
         public AdminPage()
         {
             this.InitializeComponent();
             ViewModel = new TableUsersViewModel();
             UsrViewModel = new UserViewModel();
+            sortByOptions = new ObservableCollection<string>
+            {
+                "Default",
+                "ID",
+                "Username",
+                "Email",
+                "Role",
+                "Created At"
+            };
 
             pagingNavi.Visibility = Visibility.Collapsed;
             sortPanel.Visibility = Visibility.Collapsed;
             searchBar.Visibility = Visibility.Collapsed;
+            myUsersTable.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
 
@@ -57,6 +68,7 @@ namespace LearningManagementSystem.Views
             pagingNavi.Visibility = Visibility.Visible;
             sortPanel.Visibility = Visibility.Visible;
             searchBar.Visibility = Visibility.Visible;
+            myUsersTable.Visibility = Visibility.Visible;
             ViewModel.GetAllUser();
             UpdatePagingInfo_bootstrap();
         }
@@ -146,12 +158,6 @@ namespace LearningManagementSystem.Views
         {
             Frame.Navigate(typeof(AddAccount));
         }
-
-        private void sortOrder_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void previousBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -200,17 +206,79 @@ namespace LearningManagementSystem.Views
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-
+            var searchText = args.QueryText;
+            ViewModel.Keyword = searchText;
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
 
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-
+            var searchText = args.SelectedItem.ToString();
+            ViewModel.Keyword = searchText;
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var suitableItems = new List<string>();
+                var splitText = sender.Text.ToLower().Split(" ");
+                if (ViewModel.Suggestion != null)
+                {
+                    foreach (var keyword in ViewModel.Suggestion)
+                    {
+                        var found = splitText.All((key) =>
+                        {
+                            return keyword.ToLower().Contains(key);
+                        });
+                        if (found)
+                        {
+                            suitableItems.Add(keyword);
+                        }
+                    }
+                    if (suitableItems.Count == 0)
+                    {
+                        suitableItems.Add("No results found");
+                    }
+                    sender.ItemsSource = suitableItems;
+                }
+            }
+        }
 
+        private void sortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SortBy = sortByOptions[sortByComboBox.SelectedIndex].Replace(" ", "");
+            if (ViewModel.SortBy == "Default")
+                ViewModel.SortBy = "Id";
+
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
+        }
+
+        private void sortOrder_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.countRepeatButton++;
+            var modi = ViewModel.countRepeatButton % 3;
+
+            if (modi == 0)
+                sortOrder.Content = "ASC";
+            else if (modi == 1)
+                sortOrder.Content = "DESC";
+            else
+                sortOrder.Content = "Default";
+
+            if (sortOrder.Content.ToString() == "Default")
+            {
+                ViewModel.SortOrder = "ASC";
+            }
+            else
+                ViewModel.SortOrder = sortOrder.Content.ToString();
+
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
     }
 }

@@ -1,4 +1,5 @@
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
@@ -86,17 +87,26 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        public string GetFullCommandText(NpgsqlCommand command)
+        {
+            string commandText = command.CommandText;
+            foreach (NpgsqlParameter param in command.Parameters)
+            {
+                commandText = commandText.Replace(param.ParameterName, param.Value.ToString());
+            }
+            return commandText;
+        }
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<Course>();
 
             if (this.OpenConnection())
             {
-                var sql = """
+                var sql = $"""
                     SELECT COUNT(*) OVER() AS TotalItems, Id, CourseCode, CourseDescription, DepartmentId
                     FROM Courses
-                    WHERE CourseCode LIKE @Keyword
-                    ORDER BY Id ASC
+                    WHERE CourseDescription LIKE @Keyword
+                    ORDER BY {sortBy} {sortOrder}
                     LIMIT @Take OFFSET @Skip
                     """;
 
@@ -109,6 +119,8 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
 
                 var reader = command.ExecuteReader();
+
+                // var fullCommand = GetFullCommandText(command);
 
                 int totalItems = -1;
                 while (reader.Read())
@@ -1549,17 +1561,17 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
-        public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<User>();
 
             if (this.OpenConnection())
             {
-                var sql = """
+                var sql = $"""
                     SELECT COUNT(*) OVER() AS TotalItems, id, username , passwordhash , email, role, createdat
                     FROM Users
                     WHERE username LIKE @Keyword
-                    ORDER BY Id ASC
+                    ORDER BY {sortBy} {sortOrder}
                     LIMIT @Take OFFSET @Skip
                     """;
 
@@ -1665,6 +1677,76 @@ namespace LearningManagementSystem.DataAccess
         public int CountUser()
         {
             throw new NotImplementedException();
+        }
+
+        public List<string> GetAllCourseDecriptions()
+        {
+            var result = new List<string>();
+            try
+            {
+                if (this.OpenConnection())
+                {
+                    var sql = "SELECT Coursedescription FROM Courses";
+                    var command = new NpgsqlCommand(sql, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(reader.GetOrdinal("coursedescription")));
+                    }
+                    if (result.Count > 0)
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    this.CloseConnection();
+                }
+            }
+            return result;
+        }
+
+        public List<string> GetAllUsernames()
+        {
+            var result = new List<string>();
+            try
+            {
+                if (this.OpenConnection())
+                {
+                    var sql = "SELECT Username FROM Users";
+                    var command = new NpgsqlCommand(sql, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(reader.GetOrdinal("username")));
+                    }
+                    if (result.Count > 0)
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    this.CloseConnection();
+                }
+            }
+            return result;
         }
     }
 }

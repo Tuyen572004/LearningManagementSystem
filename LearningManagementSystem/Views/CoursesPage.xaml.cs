@@ -30,14 +30,26 @@ namespace LearningManagementSystem
 
         public CourseViewModel CrsViewModel { get; set; }
 
+        public ObservableCollection<string> sortByOptions { get; set; }
+
         public CoursesPage()
         {
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
             CrsViewModel = new CourseViewModel();
+            sortByOptions = new ObservableCollection<string>
+            {
+                "Default",
+                "ID",
+                "Course Code",
+                "Course Description",
+                "Department ID",
 
+            };
             myCoursesTable.Visibility = Visibility.Collapsed;
             pagingNavi.Visibility = Visibility.Collapsed;
+            SearchBar.Visibility = Visibility.Collapsed;
+            SortPanel.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
 
@@ -54,6 +66,8 @@ namespace LearningManagementSystem
             }
             myCoursesTable.Visibility = Visibility.Visible;
             pagingNavi.Visibility = Visibility.Visible;
+            SearchBar.Visibility = Visibility.Visible;
+            SortPanel.Visibility = Visibility.Visible;
             ViewModel.GetAllCourse();
             UpdatePagingInfo_bootstrap();
         }
@@ -88,12 +102,8 @@ namespace LearningManagementSystem
                         CourseDescription = selectedCourse.CourseDecription,
                         DepartmentId = selectedCourse.DepartmentID
                     });
-                    myCoursesTable.SelectedItem = null; // Clear the selection after deletion
-
+                    myCoursesTable.SelectedItem = null;
                     ViewModel.TableCourses.Remove(selectedCourse);
-
-
-                    // Feedback
                     await new ContentDialog()
                     {
                         XamlRoot = this.XamlRoot,
@@ -133,8 +143,6 @@ namespace LearningManagementSystem
             if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
             {
                 ViewModel.SelectedCourse = selectedCourse.Clone() as TableCoursesView;
-
-
                 Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
             }
         }
@@ -164,17 +172,7 @@ namespace LearningManagementSystem
 
             pagesComboBox.ItemsSource = infoList;
             pagesComboBox.SelectedIndex = 0;
-
-
-
         }
-
-        private void searchButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Load(1);
-            UpdatePagingInfo_bootstrap();
-        }
-
         private void previousBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -183,40 +181,31 @@ namespace LearningManagementSystem
                 pagesComboBox.SelectedIndex -= 1;
             }
         }
-
-        // List of cats
-        private List<string> Cats = new List<string>()
-        {
-            "Abyssinian",
-            "Aegean",
-            "American Bobtail"
-        };
-
-        // Handle text change and present suitable items
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            // Since selecting an item will also change the text,
-            // only listen to changes caused by user entering text.
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var suitableItems = new List<string>();
                 var splitText = sender.Text.ToLower().Split(" ");
-                foreach (var cat in Cats)
+                if (ViewModel.Suggestion != null)
                 {
-                    var found = splitText.All((key) =>
+                    foreach (var keyword in ViewModel.Suggestion)
                     {
-                        return cat.ToLower().Contains(key);
-                    });
-                    if (found)
-                    {
-                        suitableItems.Add(cat);
+                        var found = splitText.All((key) =>
+                        {
+                            return keyword.ToLower().Contains(key);
+                        });
+                        if (found)
+                        {
+                            suitableItems.Add(keyword);
+                        }
                     }
+                    if (suitableItems.Count == 0)
+                    {
+                        suitableItems.Add("No results found");
+                    }
+                    sender.ItemsSource = suitableItems;
                 }
-                if (suitableItems.Count == 0)
-                {
-                    suitableItems.Add("No results found");
-                }
-                sender.ItemsSource = suitableItems;
             }
         }
 
@@ -232,17 +221,52 @@ namespace LearningManagementSystem
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-
+            var searchText = args.QueryText;
+            ViewModel.Keyword = searchText;
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
 
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-
+            var searchText = args.SelectedItem.ToString();
+            ViewModel.Keyword = searchText;
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
 
         private void sortOrder_Click(object sender, RoutedEventArgs e)
         {
+            ViewModel.countRepeatButton++;
+            var modi = ViewModel.countRepeatButton % 3;
 
+            if (modi == 0)
+                sortOrder.Content = "ASC";
+            else if (modi == 1)
+                sortOrder.Content = "DESC";
+            else
+                sortOrder.Content = "Default";
+
+            if (sortOrder.Content.ToString() == "Default")
+            {
+                ViewModel.SortOrder = "ASC";
+            }
+            else
+                ViewModel.SortOrder = sortOrder.Content.ToString();
+
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
+
+        }
+
+        private void sortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SortBy = sortByOptions[sortByComboBox.SelectedIndex].Replace(" ", "");
+            if (ViewModel.SortBy == "Default")
+                ViewModel.SortBy = "Id";
+
+            ViewModel.Load();
+            UpdatePagingInfo_bootstrap();
         }
     }
 }

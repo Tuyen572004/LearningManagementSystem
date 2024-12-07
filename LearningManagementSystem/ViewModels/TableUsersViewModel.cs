@@ -39,24 +39,25 @@ namespace LearningManagementSystem.ViewModels
         public FullObservableCollection<TableUsersView> TableUsers { get; set; }
 
         public string Keyword { get; set; } = "";
-        public bool NameAcending { get; set; } = false;
+        public string SortBy { get; set; } = "Id";
+        public string SortOrder { get; set; } = "ASC";
         public int CurrentPage { get; set; } = 1;
         public int RowsPerPage { get; set; } = 10;
-
+        public List<string> Suggestion { get; set; }
         public int TotalPages { get; set; } = 0;
         public int TotalItems { get; set; } = 0;
 
-        public string[] TypeSort { get; set; } = { "Course Code", "Course Description" };
+        public int countRepeatButton { get; set; } = 0;
         public TableUsersViewModel()
         {
             TableUsers = new FullObservableCollection<TableUsersView>();
             _dao = new SqlDao();
             SelectedUser = new TableUsersView();
-
+            Suggestion = _dao.GetAllUsernames();
         }
-        public void GetAllUser(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        public void GetAllUser()
         {
-            var (totalItems, users) = _dao.GetAllUsers(page, pageSize, keyword, nameAscending);
+            var (totalItems, users) = _dao.GetAllUsers(CurrentPage, RowsPerPage, Keyword, SortBy, SortOrder);
             if (users != null)
             {
                 TableUsers.Clear();
@@ -91,10 +92,10 @@ namespace LearningManagementSystem.ViewModels
             return count;
         }
 
-        public void Load(int page)
+        public void Load(int page = 1)
         {
             CurrentPage = page;
-            GetAllUser(CurrentPage, RowsPerPage);
+            GetAllUser();
         }
 
         public void RemoveUser(User user)
