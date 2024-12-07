@@ -40,6 +40,7 @@
 
             <TextBlock Name="passwordTB" FontWeight="ExtraBold" FontSize="25">Password</TextBlock>
             <TextBox Name="inputPassword" Width="Auto"></TextBox>
+            <InfoBar Name="InfoBar" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" IsOpen="False" Severity="Error" Title="Oops"/>
         </StackPanel>
 
         <StackPanel Spacing="20" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="20,50,0,0">

@@ -14,7 +14,7 @@
     <Page.Resources>
         <helper:DepartmentConverter x:Key="DepartmentViewModel"/>
     </Page.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -40,6 +40,7 @@
         <Button x:Name="save" Grid.Row="2" Grid.Column="4" Click="save_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Save</Button>
 
 
+
         <StackPanel Name="inputPanel" Spacing="20" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="20,50,0,0">
             <TextBlock Name="CoursesCodeTB" FontWeight="ExtraBold" FontSize="25">Course Code</TextBlock>
             <TextBox Name="inputCourseCode" Width="Auto"></TextBox>
@@ -58,9 +59,12 @@
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                
-                
+
+
             </ComboBox>
+
+            <InfoBar Name="InfoBar" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" IsOpen="False" Severity="Error" Title="Oops"/>
+
         </StackPanel>
 
         <Border BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="30,50,0,0" Padding="20,20,20,20">

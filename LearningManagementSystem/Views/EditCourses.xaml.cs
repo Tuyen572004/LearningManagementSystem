@@ -42,7 +42,7 @@ namespace LearningManagementSystem.Views
 
             var oldCourse = new Course
             {
-                Id= oldTableCourse.ID,
+                Id = oldTableCourse.ID,
                 CourseCode = oldTableCourse.CourseCode,
                 CourseDescription = oldTableCourse.CourseDecription,
                 DepartmentId = oldTableCourse.DepartmentID
@@ -85,34 +85,53 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog
+            if (RvDepartment.Text != "" && inputCourseCode.Text != "")
             {
-                XamlRoot = this.XamlRoot,
-                Title = "Course",
-                Content = "Are you sure you want to save changes?",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No"
-            };
 
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                var newCourse = new Course
+                var dialog = new ContentDialog
                 {
-                    Id=ViewModel.SelectedCourse.Id,
-                    CourseCode = inputCourseCode.Text,
-                    CourseDescription = inputCourseDescription.Text,
-                    DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = "Are you sure you want to save changes?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
                 };
 
-                ViewModel.SelectedCourse = newCourse.Clone() as Course;
-                ViewModel.UpdateCourse(ViewModel.SelectedCourse);
-                Frame.Navigate(typeof(CoursesPage), ViewModel.SelectedCourse);
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    var newCourse = new Course
+                    {
+                        Id = ViewModel.SelectedCourse.Id,
+                        CourseCode = inputCourseCode.Text,
+                        CourseDescription = inputCourseDescription.Text,
+                        DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
+                    };
+
+                    ViewModel.SelectedCourse = newCourse.Clone() as Course;
+                    ViewModel.UpdateCourse(ViewModel.SelectedCourse);
+                    Frame.Navigate(typeof(CoursesPage), ViewModel.SelectedCourse);
+                }
+                else
+                {
+                    dialog.Hide();
+                }
             }
             else
             {
-                dialog.Hide();
+                if (RvDepartment.Text == "")
+                {
+                    InfoBar.Message = "Please choose a department.";
+                }
+                else if (inputCourseCode.Text == "")
+                {
+                    InfoBar.Message = "Please fill Cources Code.";
+                }
+
+                InfoBar.IsOpen = true;
+                await System.Threading.Tasks.Task.Delay(10000);
+                InfoBar.IsOpen = false;
             }
         }
 

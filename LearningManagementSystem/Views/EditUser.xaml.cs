@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
+using LearningManagementSystem.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +29,8 @@ namespace LearningManagementSystem.Views
     {
         public EditUserViewModel ViewModel { get; set; }
         public ObservableCollection<string> Roles { get; set; }
+
+        public UserService MyUserService { get; set; }
         public EditUser()
         {
             this.InitializeComponent();
@@ -38,6 +41,7 @@ namespace LearningManagementSystem.Views
                 "teacher"
             };
             ViewModel = new EditUserViewModel();
+            MyUserService = new UserService();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -90,35 +94,61 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog
+            if (inputUsername.Text != "" && inputPassword.Text != "" && roleComboBox.SelectedValue.ToString() != "" && inputEmail.Text != "")
             {
-                XamlRoot = this.XamlRoot,
-                Title = "User",
-                Content = "Are you sure you want to save changes?",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No"
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                var newUser = new User
+                var dialog = new ContentDialog
                 {
-                    Username = inputUsername.Text,
-                    PasswordHash = inputPassword.Text,
-                    Email = inputEmail.Text,
-                    Role = roleComboBox.SelectedValue.ToString(),
-                    Id = ViewModel.SelectedUser.Id,
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Are you sure you want to save changes?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
                 };
 
-                ViewModel.SelectedUser = newUser.Clone() as User;
-                ViewModel.UpdateUser(ViewModel.SelectedUser);
-                Frame.Navigate(typeof(AdminPage), ViewModel.SelectedUser);
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    var rawPassword = inputPassword.Text;
+                    var newUser = new User
+                    {
+                        Username = inputUsername.Text,
+                        PasswordHash = MyUserService.EncryptPassword(rawPassword),
+                        Email = inputEmail.Text,
+                        Role = roleComboBox.SelectedValue.ToString(),
+                        Id = ViewModel.SelectedUser.Id,
+                    };
+
+                    ViewModel.SelectedUser = newUser.Clone() as User;
+                    ViewModel.UpdateUser(ViewModel.SelectedUser);
+                    Frame.Navigate(typeof(AdminPage), ViewModel.SelectedUser);
+                }
+                else
+                {
+                    dialog.Hide();
+                }
             }
             else
             {
-                dialog.Hide();
+                if (inputUsername.Text == "")
+                {
+                    InfoBar.Message = "Username is required.";
+                }
+                else if (inputPassword.Text == "")
+                {
+                    InfoBar.Message = "Password is required.";
+                }
+                else if (roleComboBox.SelectedValue.ToString() == "")
+                {
+                    InfoBar.Message = "Role is required.";
+                }
+                else if (inputEmail.Text == "")
+                {
+                    InfoBar.Message = "Email is required.";
+                }
+                InfoBar.IsOpen = true;
+                await System.Threading.Tasks.Task.Delay(10000);
+                InfoBar.IsOpen = false;
             }
         }
     }

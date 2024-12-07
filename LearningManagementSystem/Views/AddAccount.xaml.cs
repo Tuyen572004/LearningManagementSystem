@@ -43,6 +43,7 @@ namespace LearningManagementSystem.Views
                 "student",
                 "teacher"
             };
+            MyUserService = new UserService();
         }
 
         private async void cancel_Click(object sender, RoutedEventArgs e)
@@ -71,28 +72,53 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            var rawPassword = inputPassword.Text;
-
-            var user = new User
+            if (inputUsername.Text != "" && inputPassword.Text != "" && roleComboBox.SelectedValue.ToString() != "" && inputEmail.Text != "")
             {
-                Username = inputUsername.Text,
-                PasswordHash = MyUserService.EncryptPassword(rawPassword),
-                Email = inputEmail.Text,
-                Role = roleComboBox.SelectedValue.ToString(),
-                CreatedAt = DateTime.Now
-            };
+                var rawPassword = inputPassword.Text;
 
-            int count = ViewModel.InsertUser(user);
+                var user = new User
+                {
+                    Username = inputUsername.Text,
+                    PasswordHash = MyUserService.EncryptPassword(rawPassword),
+                    Email = inputEmail.Text,
+                    Role = roleComboBox.SelectedValue.ToString(),
+                    CreatedAt = DateTime.Now
+                };
 
-            await new ContentDialog
+                int count = ViewModel.InsertUser(user);
+
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = count == 1 ? "User added successfully" : "Failed to add user",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+
+                Frame.GoBack();
+            }
+            else
             {
-                XamlRoot = this.XamlRoot,
-                Title = "User",
-                Content = count == 1 ? "User added successfully" : "Failed to add user",
-                CloseButtonText = "Ok"
-            }.ShowAsync();
-
-            Frame.GoBack();
+                if (inputUsername.Text == "")
+                {
+                    InfoBar.Message = "Username is required.";
+                }
+                else if (inputPassword.Text == "")
+                {
+                    InfoBar.Message = "Password is required.";
+                }
+                else if (roleComboBox.SelectedValue.ToString() == "")
+                {
+                    InfoBar.Message = "Role is required.";
+                }
+                else if (inputEmail.Text == "")
+                {
+                    InfoBar.Message = "Email is required.";
+                }
+                InfoBar.IsOpen = true;
+                await System.Threading.Tasks.Task.Delay(10000);
+                InfoBar.IsOpen = false;
+            }
         }
     }
 }

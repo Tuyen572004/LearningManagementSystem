@@ -30,7 +30,7 @@ namespace LearningManagementSystem.Views
         {
             var ctDialog = new ContentDialog
             {
-                XamlRoot= this.XamlRoot,
+                XamlRoot = this.XamlRoot,
                 Title = "Course",
                 Content = "Are you sure you want to cancel?",
                 PrimaryButtonText = "Yes",
@@ -52,24 +52,44 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            var course = new Course
+            if (RvDepartment.Text != "" && inputCourseCode.Text != "")
             {
-                CourseCode = inputCourseCode.Text,
-                CourseDescription = inputCourseDescription.Text,
-                DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
-            };
+                var course = new Course
+                {
+                    CourseCode = inputCourseCode.Text,
+                    CourseDescription = inputCourseDescription.Text,
+                    DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
+                };
 
-            int count=ViewModel.InsertCourse(course);
+                int count = ViewModel.InsertCourse(course);
 
-            await new ContentDialog
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = count == 1 ? "Course added successfully" : "Failed to add course",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+
+                Frame.GoBack();
+            }
+
+            else
             {
-                XamlRoot = this.XamlRoot,
-                Title = "Course",
-                Content = count == 1 ? "Course added successfully" : "Failed to add course",
-                CloseButtonText = "Ok"
-            }.ShowAsync();
+                if (RvDepartment.Text == "")
+                {
+                    InfoBar.Message = "Please choose a department.";
+                }
+                else if (inputCourseCode.Text == "")
+                {
+                    InfoBar.Message = "Please fill Cources Code.";
+                }
 
-            Frame.GoBack();
+                InfoBar.IsOpen = true;
+                await System.Threading.Tasks.Task.Delay(10000);
+                InfoBar.IsOpen = false;
+            }
+
         }
     }
 }
