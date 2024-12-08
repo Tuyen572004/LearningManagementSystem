@@ -147,6 +147,7 @@
 	  </Page>
 	  <Page Update="Views\Admin\StudentCRUDPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
+      </Page>
 	  <Page Update="Views\AddAssignment.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
