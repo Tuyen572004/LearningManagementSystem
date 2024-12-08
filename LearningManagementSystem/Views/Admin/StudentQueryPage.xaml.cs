@@ -32,7 +32,7 @@ namespace LearningManagementSystem.Views.Admin
 
             _viewModel = new StudentReaderViewModel(new SqlDao())
             {
-                RowsPerPage = 2
+                RowsPerPage = 5
             };
             _viewModel.GetStudents();
         }

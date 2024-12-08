@@ -39,7 +39,7 @@ namespace LearningManagementSystem.Controls
         public string? Pattern { get; set; }
         // public bool IsCaseSensitive { get; set; }
     }
-    public sealed partial class SearchBar : UserControl
+    public sealed partial class SearchBar : UserControl, IDisposable
     {
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.Register(
@@ -51,7 +51,17 @@ namespace LearningManagementSystem.Controls
 
         private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            
+            if (d is SearchBar control)
+            {
+                if (e.OldValue is ISearchProvider oldSearchProvider)
+                {
+                    control.SearchChanged -= oldSearchProvider.SearchChangedHandler;
+                }
+                if (e.NewValue is ISearchProvider newSearchProvider)
+                {
+                    control.SearchChanged += newSearchProvider.SearchChangedHandler;
+                }
+            }
         }
 
         public ISearchProvider ContextProvider
@@ -72,6 +82,7 @@ namespace LearningManagementSystem.Controls
             { "Is not null", "is not null" },
             { "Is null", "is null" }
         };
+        private bool disposedValue;
 
         public List<string> SearchOptions { get; } 
 
@@ -154,6 +165,25 @@ namespace LearningManagementSystem.Controls
         {
             TextBox_Keyword.Text = string.Empty;
             SearchChanged?.Invoke(this, null);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    SearchChanged -= ContextProvider.SearchChangedHandler;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

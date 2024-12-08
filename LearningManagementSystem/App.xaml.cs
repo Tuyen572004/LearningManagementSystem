@@ -25,9 +25,9 @@ namespace LearningManagementSystem
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
 
-            MainWindow = new LoginWindow();
+            // MainWindow = new LoginWindow();
 
-            // m_window = new DashBoard();
+            MainWindow = new DashBoard();
             MainWindow.Activate();
         }
 

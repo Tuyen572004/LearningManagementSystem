@@ -663,20 +663,24 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-        public (ObservableCollection<StudentVer2>, int) AddStudents(IEnumerable<StudentVer2> students)
+        public (
+            IList<StudentVer2> updateStudents,
+            int updatedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) UpdateStudents(IEnumerable<StudentVer2> students)
         {
             throw new NotImplementedException();
         }
 
-        public (ObservableCollection<StudentVer2>, int) UpdateStudents(IEnumerable<StudentVer2> students)
+        public (
+            IList<StudentVer2> deleteStudents,
+            int deletedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) DeleteStudents(IEnumerable<StudentVer2> students)
         {
             throw new NotImplementedException();
         }
 
-        public (ObservableCollection<StudentVer2>, int) DeleteStudents(IEnumerable<StudentVer2> students)
-        {
-            throw new NotImplementedException();
-        }
         (IList<StudentVer2> addStudents, int addCount, IList<(StudentVer2 student, IEnumerable<String> error)> invalidStudentsInfo) IDao.AddStudents(IEnumerable<StudentVer2> students)
         {
             throw new NotImplementedException();

@@ -1,4 +1,5 @@
-﻿using Mysqlx.Expr;
+﻿#nullable enable
+using LearningManagementSystem.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,13 +9,10 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace LearningManagementSystem.Models
 {
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-    public partial class StudentVer2 : ICloneable, INotifyDataErrorInfo, INotifyPropertyChanged
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+    public partial class StudentVer2 : ICloneable, INotifyDataErrorInfo, INotifyPropertyChanged, IValidatableItem
     {
         public static readonly int MAX_STUDENT_CODE_LENGTH = 10;
         public static readonly int MAX_STUDENT_NAME_LENGTH = 100;
@@ -25,7 +23,7 @@ namespace LearningManagementSystem.Models
         private readonly Dictionary<string, List<string>> _errors = [];
         public bool HasErrors => _errors.Count > 0;
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
         private void OnErrorsChanged(string propertyName)
         {
             if (!propertyNames.Contains(propertyName))
@@ -34,16 +32,20 @@ namespace LearningManagementSystem.Models
             }
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
-        public IEnumerable GetErrors(string propertyName)
+        public IEnumerable GetErrors(string? propertyName)
         {
             if (string.IsNullOrEmpty(propertyName))
             {
                 return _errors.Values.SelectMany(sublist => sublist).ToList();
             }
-            return _errors.GetValueOrDefault(propertyName);
+            return _errors.GetValueOrDefault(propertyName) ?? [];
         }
-        public void ValidateProperty(string propertyName)
+        public void ValidateProperty(string? propertyName)
         {
+            if (propertyName == null)
+            {
+                return;
+            }
             _errors.Remove(propertyName);
 
             switch (propertyName)
@@ -123,14 +125,19 @@ namespace LearningManagementSystem.Models
                     {
                         _errors.Add(propertyName, ["Graduation year must be between 1900 and current year."]);
                     }
+                    if (GraduationYear != null && GraduationYear < EnrollmentYear)
+                    {
+                        _errors.Add(propertyName, ["Graduation year must be greater than or equal to enrollment year."]);
+                    }
                     break;
                 default:
                     break;
             }
             OnErrorsChanged(propertyName);
         }
-        public void ValidateAllProperties()
+        public void RevalidateAllProperties()
         {
+            _errors.Clear();
             // ValidateProperty(nameof(Id));
             ValidateProperty(nameof(StudentCode));
             ValidateProperty(nameof(StudentName));
@@ -177,7 +184,7 @@ namespace LearningManagementSystem.Models
             return this;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType())
             {
@@ -198,15 +205,18 @@ namespace LearningManagementSystem.Models
             return false;
         }
 
-        public StudentVer2 AsEditified()
+        public override int GetHashCode()
         {
-            StudentCode ??= "";
-            StudentName ??= "";
-            Email ??= "";
-            PhoneNo ??= "";
-            UserId ??= 0;
-            GraduationYear ??= 0;
-            return this;
+            return HashCode.Combine(
+                StudentCode,
+                StudentName,
+                Email,
+                BirthDate,
+                PhoneNo,
+                UserId,
+                EnrollmentYear,
+                GraduationYear
+            );
         }
 
         static public StudentVer2 Empty()
@@ -225,68 +235,68 @@ namespace LearningManagementSystem.Models
             };
         }
 
-        static public (bool result, IEnumerable<String> errors) FieldsCheck(StudentVer2 student)
-        {
-            List<String> errors = [];
-            if (student.StudentCode.Length == 0)
-            {
-                errors.Add("Student code must not be empty.");
-            }
-            if (student.StudentName.Length == 0)
-            {
-                errors.Add("Student name must not be empty.");
-            }
-            if (student.Email.Length == 0)
-            {
-                errors.Add("Email must not be empty.");
-            }
-            else
-            {
-                if (!EmailRegex().IsMatch(student.Email))
-                {
-                    errors.Add("Email is not in a valid format.");
-                }
-            }
+        //static public (bool result, IEnumerable<String> errors) FieldsCheck(StudentVer2 student)
+        //{
+        //    List<String> errors = [];
+        //    if (student.StudentCode.Length == 0)
+        //    {
+        //        errors.Add("Student code must not be empty.");
+        //    }
+        //    if (student.StudentName.Length == 0)
+        //    {
+        //        errors.Add("Student name must not be empty.");
+        //    }
+        //    if (student.Email.Length == 0)
+        //    {
+        //        errors.Add("Email must not be empty.");
+        //    }
+        //    else
+        //    {
+        //        if (!EmailRegex().IsMatch(student.Email))
+        //        {
+        //            errors.Add("Email is not in a valid format.");
+        //        }
+        //    }
 
-            if (student.PhoneNo.Length == 0)
-            {
-                errors.Add("Phone number must not be empty.");
-            }
-            else
-            {
-                if (!PhoneRegex().IsMatch(student.PhoneNo))
-                {
-                    errors.Add("Phone number is not in a valid format.");
-                }
-            }
+        //    if (student.PhoneNo.Length == 0)
+        //    {
+        //        errors.Add("Phone number must not be empty.");
+        //    }
+        //    else
+        //    {
+        //        if (!PhoneRegex().IsMatch(student.PhoneNo))
+        //        {
+        //            errors.Add("Phone number is not in a valid format.");
+        //        }
+        //    }
 
-            if (student.StudentCode.Length > StudentVer2.MAX_STUDENT_CODE_LENGTH)
-            {
-                errors.Add($"Student code must be less than {StudentVer2.MAX_STUDENT_CODE_LENGTH} characters.");
-            }
-            if (student.StudentName.Length > StudentVer2.MAX_STUDENT_NAME_LENGTH)
-            {
-                errors.Add($"Student name must be less than {StudentVer2.MAX_STUDENT_NAME_LENGTH} characters.");
-            }
-            if (student.Email.Length > StudentVer2.MAX_EMAIL_LENGTH)
-            {
-                errors.Add($"Email must be less than {StudentVer2.MAX_EMAIL_LENGTH} characters.");
-            }
-            if (student.PhoneNo.Length > StudentVer2.MAX_PHONE_NO_LENGTH)
-            {
-                errors.Add($"Phone number must be less than {StudentVer2.MAX_PHONE_NO_LENGTH} characters.");
-            }
+        //    if (student.StudentCode.Length > StudentVer2.MAX_STUDENT_CODE_LENGTH)
+        //    {
+        //        errors.Add($"Student code must be less than {StudentVer2.MAX_STUDENT_CODE_LENGTH} characters.");
+        //    }
+        //    if (student.StudentName.Length > StudentVer2.MAX_STUDENT_NAME_LENGTH)
+        //    {
+        //        errors.Add($"Student name must be less than {StudentVer2.MAX_STUDENT_NAME_LENGTH} characters.");
+        //    }
+        //    if (student.Email.Length > StudentVer2.MAX_EMAIL_LENGTH)
+        //    {
+        //        errors.Add($"Email must be less than {StudentVer2.MAX_EMAIL_LENGTH} characters.");
+        //    }
+        //    if (student.PhoneNo.Length > StudentVer2.MAX_PHONE_NO_LENGTH)
+        //    {
+        //        errors.Add($"Phone number must be less than {StudentVer2.MAX_PHONE_NO_LENGTH} characters.");
+        //    }
 
-            if (student.EnrollmentYear < 1900 || student.EnrollmentYear > DateTime.Now.Year)
-            {
-                errors.Add("Enrollment year must be between 1900 and current year.");
-            }
-            if (student.GraduationYear != null && (student.GraduationYear < 1900 || student.GraduationYear > DateTime.Now.Year))
-            {
-                errors.Add("Graduation year must be between 1900 and current year.");
-            }
-            return (errors.Count == 0, errors);
-        }
+        //    if (student.EnrollmentYear < 1900 || student.EnrollmentYear > DateTime.Now.Year)
+        //    {
+        //        errors.Add("Enrollment year must be between 1900 and current year.");
+        //    }
+        //    if (student.GraduationYear != null && (student.GraduationYear < 1900 || student.GraduationYear > DateTime.Now.Year))
+        //    {
+        //        errors.Add("Graduation year must be between 1900 and current year.");
+        //    }
+        //    return (errors.Count == 0, errors);
+        //}
 
         [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
         private static partial Regex EmailRegex();

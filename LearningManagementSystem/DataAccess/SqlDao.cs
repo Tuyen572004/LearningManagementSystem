@@ -500,8 +500,8 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.Add("@username", MySqlDbType.String).Value = user.Username;
                 command.Parameters.Add("@passwordhash", MySqlDbType.String).Value = user.PasswordHash;
 
-                //String commandtext = command.CommandText;
-                //foreach (MySql.Data.MySqlClient.MySqlParameter p in command.Parameters)
+                //String commandtext = deletingStudentCommand.CommandText;
+                //foreach (MySql.Data.MySqlClient.MySqlParameter p in deletingStudentCommand.Parameters)
                 //{
                 //    commandtext = commandtext.Replace("@username", user.Username);
                 //    commandtext = commandtext.Replace("@passwordhash", '%'+user.PasswordHash);
@@ -885,25 +885,37 @@ namespace LearningManagementSystem.DataAccess
             using var transaction = connection.BeginTransaction();
             foreach (var student in students)
             {
-                StudentVer2 currentStudent = student;
                 try
                 {
-                    var command = new MySqlCommand(
+                    var checkStudentIdCommand = new MySqlCommand(
+                        """
+                        SELECT COUNT(*) FROM Students
+                        WHERE StudentCode = @StudentCode
+                        """, connection, transaction);
+                    checkStudentIdCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    int existsCount = Convert.ToInt32(checkStudentIdCommand.ExecuteScalar() ?? 0);
+                    if (existsCount > 0)
+                    {
+                        invalidStudents.Add((student, ["Student with StudentCode " + student.StudentCode + " already exists"]));
+                        continue;
+                    }
+
+                    var insertCommand = new MySqlCommand(
                         """
                         INSERT INTO Students (StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear)
                         VALUES (@StudentCode, @StudentName, @Email, @BirthDate, @PhoneNo, @UserId, @EnrollmentYear, @GraduationYear)
                         """, connection, transaction);
 
-                    command.Parameters.AddWithValue("@StudentCode", student.StudentCode);
-                    command.Parameters.AddWithValue("@StudentName", student.StudentName);
-                    command.Parameters.AddWithValue("@Email", student.Email);
-                    command.Parameters.AddWithValue("@BirthDate", student.BirthDate);
-                    command.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
-                    command.Parameters.AddWithValue("@UserId", student.UserId);
-                    command.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
-                    command.Parameters.AddWithValue("@GraduationYear", student.GraduationYear);
+                    insertCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    insertCommand.Parameters.AddWithValue("@StudentName", student.StudentName);
+                    insertCommand.Parameters.AddWithValue("@Email", student.Email);
+                    insertCommand.Parameters.AddWithValue("@BirthDate", student.BirthDate);
+                    insertCommand.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
+                    insertCommand.Parameters.AddWithValue("@UserId", student.UserId);
+                    insertCommand.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
+                    insertCommand.Parameters.AddWithValue("@GraduationYear", student.GraduationYear);
 
-                    int queryResult = command.ExecuteNonQuery();
+                    int queryResult = insertCommand.ExecuteNonQuery();
                     if (queryResult > 0)
                     {
                         addedStudents.Add(student);
@@ -913,7 +925,7 @@ namespace LearningManagementSystem.DataAccess
                 }
                 catch (Exception ex)
                 {
-                    invalidStudents.Add((currentStudent, ["Exception raised when adding to database: " + ex.Message]));
+                    invalidStudents.Add((student, ["Exception raised when adding to database: " + ex.Message]));
                 }
             }
             transaction.Dispose();
@@ -922,14 +934,207 @@ namespace LearningManagementSystem.DataAccess
         }
     
 
-        public (ObservableCollection<StudentVer2>, int) UpdateStudents(IEnumerable<StudentVer2> students)
+        public (
+            IList<StudentVer2> updateStudents,
+            int updatedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) UpdateStudents(IEnumerable<StudentVer2> students)
         {
-            throw new NotImplementedException();
+            List<StudentVer2> updatedStudents = [];
+            int updatedCount = 0;
+            List<(StudentVer2 student, IEnumerable<string> error)> invalidStudents = [];
+
+            if (!OpenConnection())
+            {
+                CloseConnection();
+                return (updatedStudents, updatedCount, invalidStudents);
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                try
+                {
+                    var checkExistenceCommand = new MySqlCommand(
+                        """
+                        SELECT COUNT(*) FROM Students
+                        WHERE Id = @Id
+                        """, connection, transaction);
+                    checkExistenceCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var existsCount = Convert.ToInt32(checkExistenceCommand.ExecuteScalar() ?? 0);
+                    if (existsCount == 0)
+                    {
+                        invalidStudents.Add((student, [$"Student with Id {student.Id} not found"]));
+                        continue;
+                    }
+
+                    if (student.UserId is not null)
+                    {
+                        var checkUserIdCommand = new MySqlCommand(
+                        """
+                        SELECT COUNT(*) FROM Users
+                        WHERE Id = @UserId
+                        """, connection, transaction);
+                        checkUserIdCommand.Parameters.AddWithValue("@UserId", student.UserId);
+
+                        var userIdExistsCount = Convert.ToInt32(checkUserIdCommand.ExecuteScalar() ?? 0);
+                        if (userIdExistsCount == 0)
+                        {
+                            invalidStudents.Add((student, [$"User with Id {student.UserId} not found"]));
+                            continue;
+                        }
+                    }
+
+                    var checkNewCodeCommand = new MySqlCommand(
+                        """
+                        SELECT COUNT(*) FROM Students
+                        WHERE StudentCode = @StudentCode AND Id != @Id
+                        """, connection, transaction);
+                    checkNewCodeCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    checkNewCodeCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var newCodeExistsCount = Convert.ToInt32(checkNewCodeCommand.ExecuteScalar() ?? 0);
+                    if (newCodeExistsCount > 0)
+                    {
+                        invalidStudents.Add((student, [$"Student with StudentCode {student.StudentCode} already exists"]));
+                        continue;
+                    }
+
+
+                    var updateCommand = new MySqlCommand(
+                        """
+                        UPDATE Students
+                        SET StudentCode = @StudentCode, StudentName = @StudentName, Email = @Email, BirthDate = @BirthDate, PhoneNo = @PhoneNo, UserId = @UserId, EnrollmentYear = @EnrollmentYear, GraduationYear = @GraduationYear
+                        WHERE Id = @Id
+                        """, connection, transaction);
+                    updateCommand.Parameters.AddWithValue("@Id", student.Id);
+                    updateCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    updateCommand.Parameters.AddWithValue("@StudentName", student.StudentName);
+                    updateCommand.Parameters.AddWithValue("@Email", student.Email);
+                    updateCommand.Parameters.AddWithValue("@BirthDate", student.BirthDate);
+                    updateCommand.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
+                    updateCommand.Parameters.AddWithValue("@UserId", student.UserId);
+                    updateCommand.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
+                    updateCommand.Parameters.AddWithValue("@GraduationYear", student.GraduationYear);
+
+                    int queryResult = updateCommand.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        updatedStudents.Add(student);
+                        updatedCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((student, new[] { "Exception raised when updating to database: " + ex.Message }));
+                }
+            }
+            transaction.Commit();
+            transaction.Dispose();
+
+            CloseConnection();
+            return (updatedStudents, updatedCount, invalidStudents);
         }
 
-        public (ObservableCollection<StudentVer2>, int) DeleteStudents(IEnumerable<StudentVer2> students)
+        public (
+            IList<StudentVer2> deleteStudents,
+            int deletedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) DeleteStudents(IEnumerable<StudentVer2> students)
         {
-            throw new NotImplementedException();
+            List<StudentVer2> deletedStudents = [];
+            int deletedCount = 0;
+            List<(StudentVer2 student, IEnumerable<string> error)> invalidStudents = [];
+
+            if (!OpenConnection())
+            {
+                CloseConnection();
+                return (deletedStudents, deletedCount, invalidStudents);
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                try
+                {
+                    if (student.Id == -1)
+                    {
+                        invalidStudents.Add((student, [$"Newly created student can't be deleted"]));
+                        continue;
+                    }
+
+                    var checkExistenceCommand = new MySqlCommand(
+                        """
+                        SELECT COUNT(*) FROM Students
+                        WHERE Id = @Id
+                        """, connection, transaction);
+                    checkExistenceCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var existsCount = Convert.ToInt32(checkExistenceCommand.ExecuteScalar() ?? 0);
+                    if (existsCount == 0)
+                    {
+                        invalidStudents.Add((student, [ $"Student with Id {student.Id} not found" ]));
+                        continue;
+                    }
+
+                    var checkReferenceCommand = new MySqlCommand(
+                        """
+                        SELECT 
+                            (SELECT COUNT(*) FROM Enrollments WHERE StudentId = @StudentId) 
+                        AS TotalReferences
+                        """, connection, transaction);
+                    // (SELECT COUNT(*) FROM Submissions WHERE StudentId = @StudentId) +
+                    checkReferenceCommand.Parameters.AddWithValue("@StudentId", student.Id);
+
+                    var referenceCount = Convert.ToInt32(checkReferenceCommand.ExecuteScalar() ?? 0);
+                    if (referenceCount > 0)
+                    {
+                        invalidStudents.Add((student, [$"Student with Id {student.Id} has {referenceCount} references"]));
+                        continue;
+                    }
+
+                    if (student.UserId is not null)
+                    {
+                        var deletingUserCommand = new MySqlCommand(
+                            """
+                            DELETE FROM Users 
+                            WHERE Id = @UserId
+                            """, connection, transaction);
+                        deletingUserCommand.Parameters.AddWithValue("@UserId", student.UserId);
+
+                        int userQueryResult = deletingUserCommand.ExecuteNonQuery();
+                        if (userQueryResult == 0)
+                        {
+                            invalidStudents.Add((student, [$"User with Id {student.UserId} referenced by this student not found"]));
+                            continue;
+                        }
+                    }
+
+                    var deletingStudentCommand = new MySqlCommand(
+                        """
+                        DELETE FROM Students 
+                        WHERE Id = @Id
+                        """, connection, transaction);
+                    deletingStudentCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    int queryResult = deletingStudentCommand.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        deletedStudents.Add(student);
+                        deletedCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((student, new[] { "Exception raised when deleting from database: " + ex.Message }));
+                }
+            }
+            transaction.Commit();
+            transaction.Dispose();
+
+            CloseConnection();
+            return (deletedStudents, deletedCount, invalidStudents);
         }
 
         // --------------------------- RESOURCE --------------------------- //

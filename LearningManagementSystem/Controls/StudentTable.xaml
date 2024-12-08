@@ -21,7 +21,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" MinHeight="240"/>
         </Grid.RowDefinitions>
 
         <InfoBar
@@ -68,11 +68,11 @@
                 <Style TargetType="controls:DataGridRow">
                     <Setter Property="Background">
                         <Setter.Value>
-                            <Binding Path="."
-                                     RelativeSource="{RelativeSource Mode=TemplatedParent}"
-                                     Converter="{StaticResource RowColorConverter}"
-                                     ConverterParameter="{x:Bind ContextProvider}"
-                                     />
+                            <Binding
+                                RelativeSource="{RelativeSource Mode=TemplatedParent}"
+                                Converter="{StaticResource RowColorConverter}"
+                                ConverterParameter="{Binding ContextProvider, Mode=OneWay}"
+                                />
                         </Setter.Value>
                     </Setter>
                 </Style>
@@ -80,8 +80,9 @@
 
             <controls:DataGrid.ContextFlyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem x:Name="RefreshMenuLayout" Text="Refresh data" Click="RefreshMenuLayout_Click"/>
-                    <MenuFlyoutItem x:Name="SeeItemInfo" Text="See selected item's additional info" Click="SeeItemInfo_Click"/>
+                    <MenuFlyoutItem x:Name="RefreshMenuFlyout" Text="Refresh data" Click="RefreshMenuLayout_Click"/>
+                    <MenuFlyoutItem x:Name="SelectedAllFlyout" Text="Selected all items in page" Click="SelectedAllFlyout_Click" />
+                    <MenuFlyoutItem x:Name="SeeItemInfoFlyout" Text="See selected item's info" Click="SeeItemInfo_Click"/>
                 </MenuFlyout>
             </controls:DataGrid.ContextFlyout>
         </controls:DataGrid>

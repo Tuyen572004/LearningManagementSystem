@@ -4,6 +4,7 @@ using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -38,6 +39,10 @@ namespace LearningManagementSystem.Controls
         required public string Title { get; set; }
         required public string Message { get; set; }
     }
+    public interface IValidatableItem
+    {
+        void ValidateProperty(string? propertyName);
+    }
     public interface IInfoProvider
     {
         public InfoBarMessage? GetMessageOf(object item);
@@ -65,7 +70,7 @@ namespace LearningManagementSystem.Controls
 
         public event PropertyChangedEventHandler? PropertyChanged;
     }
-    public sealed partial class StudentTable : UserControl
+    public sealed partial class StudentTable : UserControl, IDisposable
     {
         // private readonly IStudentProvider _dataContext = null;
         public static readonly DependencyProperty ContextProviderProperty =
@@ -85,93 +90,79 @@ namespace LearningManagementSystem.Controls
         private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Do nothing currently
+            if (d is StudentTable control)
+            {
+                if (e.NewValue is IInfoProvider)
+                {
+                    control.SeeItemInfoFlyout.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    control.SeeItemInfoFlyout.Visibility = Visibility.Collapsed;
+                }
+
+                if (e.OldValue is IStudentProvider oldStudentProvider)
+                {
+                    control.SortChanged -= oldStudentProvider.SortChangedHandler;
+                    control.StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
+                    control.StudentEditted -= oldStudentProvider.StudentEdittedHandler;
+                }
+                if (e.NewValue is IStudentProvider newStudentProvider)
+                {
+                    control.SortChanged += newStudentProvider.SortChangedHandler;
+                    control.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
+                    control.StudentEditted += newStudentProvider.StudentEdittedHandler;
+                }
+            }
         }
 
         public StudentTable()
         {
             this.InitializeComponent();
-
-            // DataContextChanged += StudentTable_DataContextChanged;
         }
-        //private object? _oldDataContext = null;
-        //private void StudentTable_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        //{
-        //    var OldValue = _oldDataContext;
-        //    if (OldValue is IStudentProvider oldStudentProvider)
-        //    {
-        //        SortChanged -= oldStudentProvider.SortChangedHandler;
-        //        StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
-        //        StudentEditted -= oldStudentProvider.StudentEdittedHandler;
-        //    }
-
-        //    if (args.NewValue is IStudentProvider newStudentProvider)
-        //    {
-        //        SortChanged += newStudentProvider.SortChangedHandler;
-        //        StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
-        //        StudentEditted += newStudentProvider.StudentEdittedHandler;
-        //    }
-        //    _oldDataContext = args.NewValue;
-        //}
 
         public event EventHandler<List<SortCriteria>>? SortChanged;
         private readonly List<SortCriteria> _sortList = [];
-
+        private readonly Dictionary<String, DataGridSortDirection?> _sortDirectionMapper = [];
         private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
         {
+            var columnTag = e.Column.Tag?.ToString();
+            if (columnTag is null)
+            {
+                return;
+            }
+
             if (e.Column.SortDirection == null)
             {
-                e.Column.SortDirection = DataGridSortDirection.Ascending;
+                _sortDirectionMapper[columnTag] = DataGridSortDirection.Ascending;
             }
             else if (e.Column.SortDirection == DataGridSortDirection.Ascending)
             {
-                e.Column.SortDirection = DataGridSortDirection.Descending;
+                _sortDirectionMapper[columnTag] = DataGridSortDirection.Descending;
             }
             else
             {
-                _sortList.RemoveAll(s => s.ColumnTag == e.Column.Tag.ToString());
-                e.Column.SortDirection = null;
+                _sortDirectionMapper[columnTag] = null;
+                _sortList.RemoveAll(s => s.ColumnTag == columnTag);
                 SortChanged?.Invoke(this, _sortList);
                 return;
             }
 
-            var oldItem = _sortList.FirstOrDefault(s => s?.ColumnTag == e.Column.Tag.ToString(), null);
+            var oldItem = _sortList.FirstOrDefault(s => s?.ColumnTag == columnTag, null);
             if (oldItem is not null)
             {
-                oldItem.SortDirection = e.Column.SortDirection;
+                oldItem.SortDirection = _sortDirectionMapper[columnTag];
             }
-#pragma warning disable CS8601 // Possible null reference assignment.
-            _sortList.Add(new SortCriteria
+            else
             {
-                ColumnTag = e.Column.Tag.ToString(),
-                SortDirection = e.Column.SortDirection
-            });
-#pragma warning restore CS8601 // Possible null reference assignment.
-
-            //SortChanged?.Invoke(this, new SortCriteria
-            //{
-            //    ColumnTag = e.Column.Tag.ToString(),
-            //    SortDirection = e.Column.SortDirection
-            //});
+                _sortList.Add(new SortCriteria
+                {
+                    ColumnTag = columnTag,
+                    SortDirection = _sortDirectionMapper[columnTag]
+                });
+            }
 
             SortChanged?.Invoke(this, _sortList);
-        }
-
-        public void SkipColumns(params string[] columnTags)
-        {
-            foreach (var tag in columnTags)
-            {
-                Dg.Columns.First(c => c.Tag.ToString() == tag).Visibility = Visibility.Collapsed;
-
-            }
-        }
-
-        public void EnableColumns(params string[] columnTags)
-        {
-            foreach (var tag in columnTags)
-            {
-                Dg.Columns.First(c => c.Tag.ToString() == tag).Visibility = Visibility.Visible;
-
-            }
         }
 
         public bool IsEditable
@@ -249,11 +240,11 @@ namespace LearningManagementSystem.Controls
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
-                    // TODO - Technical Debt: Ugly validation logic here, not generic friendly
-                    ((StudentVer2)e.Row.DataContext)?.ValidateProperty(e.Column.Tag.ToString());
-                    
-                    if (Dg_InfoBar.IsOpen)
+                    if (e.Row.DataContext is IValidatableItem validatable)
                     {
+                        validatable.ValidateProperty(e.Column.Tag?.ToString());
+
+                        _lastSeenItem = e.Row.DataContext;
                         ResetItemInfo(forcedOpen: true);
                     }
                 });
@@ -325,9 +316,46 @@ namespace LearningManagementSystem.Controls
             _lastSeenItem = (Dg_InfoBar.IsOpen) ? _lastSeenItem : null;
         }
 
+        public void ShowInfoBar(InfoBarMessage message)
+        {
+            Dg_InfoBar.Title = message.Title;
+            Dg_InfoBar.Message = message.Message;
+            Dg_InfoBar.Severity = message.Severity switch
+            {
+                InfoBarMessageSeverity.Info => InfoBarSeverity.Informational,
+                InfoBarMessageSeverity.Warning => InfoBarSeverity.Warning,
+                InfoBarMessageSeverity.Error => InfoBarSeverity.Error,
+                _ => InfoBarSeverity.Informational
+            };
+            Dg_InfoBar.IsOpen = true;
+        }
+
         private Dictionary<string, IValueConverter>? _converterMapper = null;
         private Dictionary<string, int> _displayIndexMapper = [];
         private int _columnIndexCounter = 0;
+        private bool disposedValue;
+
+        // This hurt performance so bad
+
+        //private bool _reorderingColumns = false;
+        //private readonly List<DataGridColumn> _generatedColumns = [];
+        //private void FixReorderColumn()
+        //{
+        //    foreach (var column in _generatedColumns)
+        //    {
+        //        string columnName = column.Tag?.ToString() ?? "";
+        //        // Should never happen
+        //        if (columnName.IsNullOrEmpty())
+        //        {
+        //            continue;
+        //        }
+        //        if (column.DisplayIndex != _displayIndexMapper[columnName])
+        //        {
+        //            column.DisplayIndex = _displayIndexMapper[columnName];
+        //        }
+        //    }
+        //    _reorderingColumns = false;
+        //}
         private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
 
@@ -347,6 +375,7 @@ namespace LearningManagementSystem.Controls
             }
             e.Column.Tag = e.PropertyName;
 
+            // Set up column order for this colomn
             if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
             {
                 e.Column.DisplayIndex = value;
@@ -357,6 +386,7 @@ namespace LearningManagementSystem.Controls
                 _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
             }
 
+            // Set up converter for this column value
             if (_converterMapper is not null && _converterMapper.TryGetValue(e.PropertyName, out IValueConverter? converter))
             {
                 if (converter is null)
@@ -369,6 +399,17 @@ namespace LearningManagementSystem.Controls
                     convertedColumn.Binding.Converter = converter;
                 }
             }
+
+            // Set up the sort status of this column
+            e.Column.SortDirection = _sortDirectionMapper.GetValueOrDefault(e.PropertyName, null);
+
+            //if (!_reorderingColumns)
+            //{
+            //    _generatedColumns.Clear();
+            //    DispatcherQueue.TryEnqueue(FixReorderColumn);
+            //    _reorderingColumns = true;
+            //}
+            //_generatedColumns.Add(e.Column);
         }
 
         private void Dg_Loaded(object sender, RoutedEventArgs e)
@@ -397,8 +438,43 @@ namespace LearningManagementSystem.Controls
                 {
                     columnDisplayIndex["null"] = column.DisplayIndex; // To suppress the warning
                     column.DisplayIndex = columnDisplayIndex[column.Tag.ToString() ?? "null"];
+                    columnDisplayIndex.Remove("null");
                 }
             }
+        }
+
+        private void SelectedAllFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            Dg.SelectedItems.Clear();
+            foreach (var item in Dg.ItemsSource)
+            {
+                Dg.SelectedItems.Add(item);
+            }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    SortChanged -= ContextProvider.SortChangedHandler;
+                    StudentDoubleTapped -= ContextProvider.StudentDoubleTappedHandler;
+                    StudentEditted -= ContextProvider.StudentEdittedHandler;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

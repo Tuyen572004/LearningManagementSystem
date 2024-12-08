@@ -16,6 +16,7 @@ using Microsoft.UI.Xaml.Navigation;
 using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,9 +54,13 @@ namespace LearningManagementSystem.Views.Admin
             AllSelectedStudentsTransferred += _cudViewModel.StudentsTransferHandler;
             StudentsCreationInitiated += _cudViewModel.StudentsCreationHandler;
             StudentsUpdateInitiated += _cudViewModel.StudentsUpdateHandler;
+            StudentsDeletionInitiated += _cudViewModel.StudentsDeleteHandler;
+            OnStudentsErrorsAdded += _cudViewModel.StudentsErrorsAddedHandler;
 
             _cudViewModel.StudentsSelectionChanged += StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
             _cudViewModel.OnStudentsUpdated += OnStudentsUpdatedHandler;
+            _cudViewModel.OnInvalidStudentsTranferred += InvalidStudentsTransferredHandler;
+
         }
 
         private void Dispose(bool disposing)
@@ -70,9 +75,12 @@ namespace LearningManagementSystem.Views.Admin
                     AllSelectedStudentsTransferred -= _cudViewModel.StudentsTransferHandler;
                     StudentsCreationInitiated -= _cudViewModel.StudentsCreationHandler;
                     StudentsUpdateInitiated -= _cudViewModel.StudentsUpdateHandler;
+                    StudentsDeletionInitiated -= _cudViewModel.StudentsRemoveHandler;
+                    OnStudentsErrorsAdded -= _cudViewModel.StudentsErrorsAddedHandler;
 
                     _cudViewModel.StudentsSelectionChanged -= StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
                     _cudViewModel.OnStudentsUpdated -= OnStudentsUpdatedHandler;
+                    _cudViewModel.OnInvalidStudentsTranferred -= InvalidStudentsTransferredHandler;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -124,16 +132,43 @@ namespace LearningManagementSystem.Views.Admin
             {
                 return;
             }
-            //if (e.updatedStudents.Count > 0)
-            //{
-            //    StudentsDeletionInitiated?.Invoke(this, e.updatedStudents);
-            //}
-            //if (e.invalidStudentsInfo.Count > 0)
-            //{
-            //    // TODO
-            //}
+            if (e.updatedStudents.Count > 0)
+            {
+                OnSelectedRemoving?.Invoke(this, e.updatedStudents);
+            }
+            if (e.invalidStudentsInfo.Count > 0)
+            {
+                OnStudentsErrorsAdded?.Invoke(this, e.invalidStudentsInfo);
+                
+            }
+            StudentCUDDisplayer.StudentTable.ItemsReselectionHandler?.Invoke(
+                this,
+                e.invalidStudentsInfo.Select(info => info.student).ToList()
+                );
+
+            var displayTitle = "Student(s) Updated";
+            if (e.updatedStudents.Count == 0)
+            {
+                displayTitle += "?!";
+            }
+            if (e.invalidStudentsInfo.Count > 0)
+            {
+                displayTitle += " with failure(s)";
+            }
+
+            var displayMessage = e.invalidStudentsInfo.Count > 0
+                ? $"{e.updatedStudents.Count} students have been modified successfully. \n{e.invalidStudentsInfo.Count} students have errors."
+                : $"{e.updatedStudents.Count} students have been modified successfully.";
+            StudentCUDDisplayer.StudentTable.ShowInfoBar(new()
+            {
+                Title = displayTitle,
+                Message = displayMessage,
+                Severity = InfoBarMessageSeverity.Info
+            });
+
             StudentReaderDisplayer.StudentTable.RefreshData();
         }
+        public event EventHandler<IList<(StudentVer2 student, IEnumerable<String> errors)>>? OnStudentsErrorsAdded; 
         public EventHandler<(
             IList<StudentVer2> updatedStudents,
             IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
@@ -148,6 +183,27 @@ namespace LearningManagementSystem.Views.Admin
         }
 
         public event EventHandler<IList<StudentVer2>>? AllSelectedStudentsTransferred;
+
+        public void HandleInvalidStudentsTransfered(object? sender, IList<StudentVer2> invalidStudents)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            var invalidIds = invalidStudents.Select(student => student.Id).ToList();
+            var displayTitle = "Student Transfering Warning";
+            var displayMessage = $"""
+                Ignoring {invalidStudents.Count} student(s) with the following Id(s): {String.Join(", ", invalidIds)}.
+                They have already existed in the transferred table.
+                """;
+            StudentReaderDisplayer.StudentTable.ShowInfoBar(new()
+            {
+                Title = displayTitle,
+                Message = displayMessage,
+                Severity = InfoBarMessageSeverity.Warning
+            });
+        }
+        public EventHandler<IList<StudentVer2>> InvalidStudentsTransferredHandler => HandleInvalidStudentsTransfered;
         private void EditAllButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedItems = StudentReaderDisplayer.StudentTable.GetSelectedItems();

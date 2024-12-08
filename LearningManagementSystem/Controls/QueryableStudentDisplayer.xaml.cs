@@ -19,10 +19,8 @@ using Windows.Foundation.Collections;
 namespace LearningManagementSystem.Controls
 {
     // public interface IQueryableProvider: IStudentProvider, ISearchProvider, IPagingProvider;
-    public sealed partial class QueryableStudentDisplayer : UserControl, IDisposable
+    public sealed partial class QueryableStudentDisplayer : UserControl
     {
-        private bool disposedValue;
-
         public SearchBar SearchBar => QSDSearchBar;
         public PagingOptionsBar PagingOptionsBar => QSDPagingOptionsBar;
         public StudentTable StudentTable => QSDStudentTable;
@@ -39,17 +37,10 @@ namespace LearningManagementSystem.Controls
 
             // Unsubscribe from previous DataContext events
             var OldValue = _oldDataContext;
-            if (OldValue is ISearchProvider oldSearchProvider)
+            if (OldValue is ISearchProvider)
             {
-                SearchBar.SearchChanged -= oldSearchProvider.SearchChangedHandler;
                 ClearValue(SearchBar.ContextProviderProperty);
                 SearchBar.Visibility = Visibility.Collapsed;
-            }
-            if (OldValue is IStudentProvider oldStudentProvider)
-            {
-                StudentTable.SortChanged -= oldStudentProvider.SortChangedHandler;
-                StudentTable.StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
-                StudentTable.StudentEditted -= oldStudentProvider.StudentEdittedHandler;
             }
             if (OldValue is IPagingProvider)
             {
@@ -59,19 +50,14 @@ namespace LearningManagementSystem.Controls
 
 
             // Subscribe to new DataContext events
-            if (args.NewValue is ISearchProvider newSearchProvider)
+            if (args.NewValue is ISearchProvider)
             {
-                SearchBar.SearchChanged += newSearchProvider.SearchChangedHandler;
                 SetBinding(SearchBar, SearchBar.ContextProviderProperty);
                 SearchBar.Visibility = Visibility.Visible;
             }
-            if (args.NewValue is IStudentProvider newStudentProvider)
+            if (args.NewValue is IStudentProvider)
             {
-                StudentTable.SortChanged += newStudentProvider.SortChangedHandler;
-                StudentTable.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
-                StudentTable.StudentEditted += newStudentProvider.StudentEdittedHandler;
                 SetBinding(StudentTable, StudentTable.ContextProviderProperty);
-
             }
             if (args.NewValue is IPagingProvider)
             {
@@ -94,39 +80,6 @@ namespace LearningManagementSystem.Controls
 
             // Apply the binding to the target property
             BindingOperations.SetBinding(target, property, binding);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // Recommendations: dispose managed state (managed objects)
-
-                    // Unsubscribe from DataContext events
-                    if (DataContext is ISearchProvider searchProvider)
-                    {
-                        SearchBar.SearchChanged -= searchProvider.SearchChangedHandler;
-                    }
-                    if (DataContext is IStudentProvider studentProvider)
-                    {
-                        StudentTable.SortChanged -= studentProvider.SortChangedHandler;
-                        StudentTable.StudentDoubleTapped -= studentProvider.StudentDoubleTappedHandler;
-                        StudentTable.StudentEditted -= studentProvider.StudentEdittedHandler;
-                    }
-                }
-
-                // Recommendations: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        void IDisposable.Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace LearningManagementSystem.ViewModels
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
         public IEnumerable<string> IgnoringColumns => ["HasErrors"];
-        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("BirthDate", new DateTimeToStringConverter()),
             ];
@@ -102,17 +102,37 @@ namespace LearningManagementSystem.ViewModels
             //    chosenIds: ids
             //    );
 
-            var (resultList, queryCount) = _dao.GetStudents(
+            bool pageChanged = false;
+            do
+            {
+                var (resultList, queryCount) = _dao.GetStudents(
                 ignoringCount: (CurrentPage - 1) * RowsPerPage,
                 fetchingCount: RowsPerPage,
                 chosenIds: ManagingIds,
                 sortCriteria: SortCriteria,
                 searchCriteria: SearchCriteria
                 );
-            ItemCount = queryCount;
-            ManagingStudents = resultList;
+                ItemCount = queryCount;
+                ManagingStudents = resultList;
+                // Why the do loop and this check:
+                // If the current page is empty, "queryCount" would always be zero, regardless of the actual number of items in the database.
+                if (ItemCount == 0 && CurrentPage > 1)
+                {
+                    CurrentPage--;
+                    pageChanged = true;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            while (true);
 
             // You must "roar" by yourself :'))
+            if (pageChanged)
+            {
+                RaisePropertyChanged(nameof(CurrentPage));
+            }
             RaisePropertyChanged(nameof(ManagingStudents));
             RaisePropertyChanged(nameof(ItemCount));
         }

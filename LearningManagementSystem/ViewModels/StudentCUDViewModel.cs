@@ -46,13 +46,13 @@ namespace LearningManagementSystem.ViewModels
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
         public IEnumerable<string> IgnoringColumns => [];
-        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "HasErrors", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "HasErrors", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
             ("GraduationYear", new NullableIntToStringConverter()),
             ("BirthDate", new DateTimeToStringConverter()),
             ];
-        public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId"];
+        public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "HasErrors"];
         public ObservableCollection<StudentVer2> AllStudents { get; private set; } = [];
         public List<SortCriteria>? SortCriteria { get; private set; } = null;
 
@@ -123,7 +123,7 @@ namespace LearningManagementSystem.ViewModels
         }
         public EventHandler<List<SortCriteria>> SortChangedHandler => HandleSortChange;
 
-        public event EventHandler<IList<StudentVer2>>? InvalidTransferingStudentsHandler;
+        public event EventHandler<IList<StudentVer2>>? OnInvalidStudentsTranferred;
         public void HandleStudentTransfer(object? sender, StudentVer2 e)
         {
             HandleStudentsTransfer(sender, [e]);
@@ -137,6 +137,7 @@ namespace LearningManagementSystem.ViewModels
                 return;
             }
             List<StudentVer2> invalidStudents = [];
+            List<StudentVer2> cloningStudents = [];
             foreach (var student in e)
             {
                 var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == student.Id, null);
@@ -145,14 +146,17 @@ namespace LearningManagementSystem.ViewModels
                     invalidStudents.Add(student);
                     continue;
                 }
-                AllStudents.Add((StudentVer2)student.Clone());
+                StudentVer2 cloningStudent = (StudentVer2)student.Clone();
+                AllStudents.Add(cloningStudent);
+                cloningStudents.Add(cloningStudent);
             }
             RefreshItemCount();
             RefreshManagingStudents();
-            
+            StudentsSelectionChanged?.Invoke(this, cloningStudents);
+
             if (invalidStudents.Count != 0)
             {
-                InvalidTransferingStudentsHandler?.Invoke(this, invalidStudents);
+                OnInvalidStudentsTranferred?.Invoke(this, invalidStudents);
             }
         }
         public EventHandler<IList<StudentVer2>> StudentsTransferHandler => HandleStudentsTransfer;
@@ -205,7 +209,7 @@ namespace LearningManagementSystem.ViewModels
                 return;
             }
             var emptyStudent = StudentVer2.Empty();
-            emptyStudent.ValidateAllProperties();
+            emptyStudent.RevalidateAllProperties();
 
             AllStudents.Add(emptyStudent);
             RefreshItemCount();
@@ -239,13 +243,12 @@ namespace LearningManagementSystem.ViewModels
             List<StudentVer2> validUpdatingStudents = [];
             foreach (StudentVer2 updatingStudent in e)
             {
-                var (result, errors) = StudentVer2.FieldsCheck(updatingStudent);
-                if (!result)
+                updatingStudent.RevalidateAllProperties();
+                if (updatingStudent.HasErrors)
                 {
-                    invalidStudentsInfo.Add((updatingStudent, errors));
+                    invalidStudentsInfo.Add((updatingStudent, []));
                     continue;
-                } 
-
+                }
                 if (updatingStudent.Id == -1)
                 {
                     validAddingStudents.Add(updatingStudent);
@@ -256,7 +259,7 @@ namespace LearningManagementSystem.ViewModels
                 }
             }
             var (addedStudents, addedCount, invalidAddingStudents) = _dao.AddStudents(validAddingStudents);
-            // var (updatedStudents, updatedCount) = _dao.UpdateStudents(validUpdatingStudents);
+            var (updatedStudents, updatedCount, invalidUpdatingStudents) = _dao.UpdateStudents(validUpdatingStudents);
 
             //invalidStudentsInfo.AddRange(
             //    validAddingStudents
@@ -267,11 +270,49 @@ namespace LearningManagementSystem.ViewModels
             //            })
             //    );
             invalidStudentsInfo.AddRange(invalidAddingStudents);
+            invalidStudentsInfo.AddRange(invalidUpdatingStudents);
+
             var invalidStudents = invalidStudentsInfo.Select(x => x.student);
-            var updatedStudents = e.Where(x => !invalidStudents.Contains(x)).ToList() ?? [];
-            OnStudentsUpdated?.Invoke(this, (updatedStudents, invalidStudentsInfo));
+            var modifiedStudents = e.Where(x => !invalidStudents.Contains(x)).ToList() ?? [];
+            OnStudentsUpdated?.Invoke(this, (modifiedStudents, invalidStudentsInfo));
         }
         public EventHandler<IList<StudentVer2>> StudentsUpdateHandler => HandleStudentsUpdate;
+
+        public void HandleStudentsDelete(object? sender, IList<StudentVer2> e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            var (deletedStudents, deletedCount, invalidStudentsInfo) = _dao.DeleteStudents(e);
+            //for (int i = AllStudents.Count - 1; i >= 0; i--)
+            //{
+            //    var currentStudent = AllStudents[i];
+            //    if (deletedStudents.Contains(currentStudent))
+            //    {
+            //        AllStudents.RemoveAt(i);
+            //    }
+            //}
+            //RefreshItemCount();
+            //RefreshManagingStudents();
+            OnStudentsUpdated?.Invoke(this, (deletedStudents, invalidStudentsInfo));
+        }
+        public EventHandler<IList<StudentVer2>> StudentsDeleteHandler => HandleStudentsDelete;
+
+        public void HandleStudentsErrorsAdded(object? sender, IList<(StudentVer2 student, IEnumerable<String> errors)> e)
+        {
+            if (sender is null)
+            {
+                return;
+            }
+            foreach (var (student, errors) in e)
+            {
+                var foundReference = AllStudents.FirstOrDefault(s => ReferenceEquals(student, s), null);
+                foundReference?.ChangeErrors("database", errors.ToList() ?? []);
+            }
+            RefreshManagingStudents();
+        }
+        public EventHandler<IList<(StudentVer2 student, IEnumerable<String> errors)>> StudentsErrorsAddedHandler => HandleStudentsErrorsAdded;
 
         InfoBarMessage? IInfoProvider.GetMessageOf(object item)
         {
