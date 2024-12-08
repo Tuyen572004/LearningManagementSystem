@@ -37,6 +37,7 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
             ViewModel = new UserViewModel();
+            MyUserService = new UserService();
             Roles = new ObservableCollection<string>
             {
                 "admin",

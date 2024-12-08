@@ -28,7 +28,7 @@
         <Rectangle Fill="Green" Width="Auto" Height="Auto" Grid.Column="1" Grid.Row="0"/>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="0">
             <Image Source="/Assets/group.png" Height="100" Width="100" Margin="0,0,0,10"/>
-            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5" FontWeight="ExtraBold">Oops, what are you ?</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,5" FontWeight="ExtraBold">Oops, who are you ?</TextBlock>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Image Source="/Assets/key.png" Width="75" Height="25"/>
