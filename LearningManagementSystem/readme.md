@@ -1,10 +1,9 @@
 ﻿# Project 1 - Milestone 1 - Learning Management System
 
 ## Team members: 
-22120363 - Phan Hồng Thức
-22120364 - Nguyễn Hoài Thương
-22120416 - Huỳnh Thị Kim Tuyền
-
+22120363 - Phan Hồng Thức <br>
+22120364 - Nguyễn Hoài Thương <br>
+22120416 - Huỳnh Thị Kim Tuyền 
 ## How to run the project
 - Build the project using Visual Studio 2022 
 - Run the project
