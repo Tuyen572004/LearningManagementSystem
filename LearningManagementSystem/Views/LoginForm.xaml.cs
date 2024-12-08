@@ -1,4 +1,5 @@
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Services;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -25,39 +27,36 @@ namespace LearningManagementSystem
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginOfTeacherPage : Page
+    public sealed partial class LoginForm : Page
     {
         public LoginWindowViewModel ViewModel { get; set; }
-        public LoginOfTeacherPage()
+
+        public UserService MyUserService { get; set; }
+        public LoginForm()
         {
             this.InitializeComponent();
+            MyUserService = new UserService();
             ViewModel = new LoginWindowViewModel();
         }
 
-        private string EncryptPassword(string password)
-        {
-            var passwordRaw = password;
-            var passwordInBytes = Encoding.UTF8.GetBytes(passwordRaw);
 
-            var encryptedPasswordBase64 = Convert.ToBase64String(passwordInBytes);
-
-            return encryptedPasswordBase64;
-        }
         private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
+
             var username = inputUsername.Text;
             var password = inputPassword.Password;
 
-            var passwordhash = EncryptPassword(password);
+            var passwordhash = MyUserService.EncryptPassword(password);
             ViewModel.UserLogin = new User
             {
                 Username = username,
                 PasswordHash = passwordhash.Length > 4096 ? passwordhash[..4096] : passwordhash,
-                Role = "teacher"
             };
 
             if (ViewModel.CheckUserInfo())
             {
+                ViewModel.GetUser();
+                UserService.SaveUserConfig(ViewModel.UserLogin);
                 var screen = new DashBoard();
                 screen.Activate();
             }
@@ -71,10 +70,7 @@ namespace LearningManagementSystem
 
                     CloseButtonText = "Try Again"
                 };
-
-
                 var result = await ctDialog.ShowAsync();
-
             }
 
         }
@@ -88,6 +84,5 @@ namespace LearningManagementSystem
         {
             inputPassword.PasswordRevealMode = PasswordRevealMode.Hidden;
         }
-
     }
 }

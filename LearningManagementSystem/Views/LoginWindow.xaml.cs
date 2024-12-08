@@ -26,36 +26,7 @@ namespace LearningManagementSystem
         public LoginWindow()
         {
             this.InitializeComponent();
-            nv.ItemInvoked += NavView_ItemInvoked;
-        }
-
-        // Existing code...
-
-        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-        {
-            FrameNavigationOptions navOptions = new()
-            {
-                TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
-            };
-            if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
-            {
-                navOptions.IsNavigationStackEnabled = false;
-            }
-
-            Type pageType = null;
-
-            if (args.InvokedItem is string invokedItemString)
-            {
-                if (invokedItemString == "Teacher")
-                {
-                    pageType = typeof(LoginOfTeacherPage);
-                }
-                else
-                {
-                    pageType = typeof(LoginOfStudentPage);
-                }
-                ContentFrame.NavigateToType(pageType, null, navOptions);
-            }
+            ContentFrame.NavigateToType(typeof(LoginForm), null, null);
         }
     }
 }

@@ -26,14 +26,6 @@
                     <ColumnDefinition Width="500"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <NavigationView x:Name="nv" PaneDisplayMode="Top"
-                    SelectionFollowsFocus="Enabled" IsBackButtonVisible="Collapsed"
-                    Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <NavigationView.MenuItems>
-                        <NavigationViewItem FontSize="20" FontWeight="ExtraBold"  Content="Teacher" x:Name="LoginOfTeacher" />
-                        <NavigationViewItem FontSize="20" FontWeight="ExtraBold" Content="Student" x:Name="LoginOfStudent" />
-                    </NavigationView.MenuItems>
-                </NavigationView>
 
                 <Frame x:Name="ContentFrame" Grid.Column="1" Grid.Row="3"/>
             </Grid>

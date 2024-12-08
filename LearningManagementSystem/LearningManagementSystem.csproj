@@ -44,12 +44,14 @@
 	  <None Remove="LoginOfStudentPage.xaml" />
 	  <None Remove="LoginOfTeacherPage.xaml" />
 	  <None Remove="LoginWindow.xaml" />
+	  <None Remove="Views\AddAccount.xaml" />
 	  <None Remove="Views\AddAssignment.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
 	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
 	  <None Remove="Views\Admin\StudentCRUDPage.xaml" />
 	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
 	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
+	  <None Remove="Views\AdminPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
@@ -69,6 +71,9 @@
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
 		<Content Include="Assets\StoreLogo.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+		<Content Include="config.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -128,6 +133,18 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
+        <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\EditUser.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\AddAccount.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\AdminPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\AddAssignment.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Controls\SearchBar.xaml">

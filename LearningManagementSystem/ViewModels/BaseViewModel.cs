@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler PropertyChanged;
