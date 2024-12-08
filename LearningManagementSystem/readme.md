@@ -56,6 +56,3 @@
 - Phan Hồng Thức: 10
 - Nguyễn Hoài Thương: 10
 - Huỳnh Thị Kim Tuyền: 10
-
-## Video demo link
-    
