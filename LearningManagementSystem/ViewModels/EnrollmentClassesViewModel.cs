@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using LearningManagementSystem.DataAccess;
+﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Views;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.ViewModels
 {
-   
+
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance

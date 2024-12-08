@@ -35,11 +35,11 @@ namespace LearningManagementSystem
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
             CrsViewModel = new CourseViewModel();
+
             myCoursesTable.Visibility = Visibility.Collapsed;
+            pagingNavi.Visibility = Visibility.Collapsed;
             StartRingProcess();
         }
-
-       
 
         private async void StartRingProcess()
         {
@@ -53,7 +53,9 @@ namespace LearningManagementSystem
                 }
             }
             myCoursesTable.Visibility = Visibility.Visible;
+            pagingNavi.Visibility = Visibility.Visible;
             ViewModel.GetAllCourse();
+            UpdatePagingInfo_bootstrap();
         }
 
 
@@ -66,7 +68,7 @@ namespace LearningManagementSystem
         {
             if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
             {
-                var dialog=new ContentDialog()
+                var dialog = new ContentDialog()
                 {
                     XamlRoot = this.XamlRoot,
                     Title = "Delete Course",
@@ -109,7 +111,7 @@ namespace LearningManagementSystem
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter!=null)
+            if (e.Parameter != null)
             {
                 var _oldData = e.Parameter as Course;
                 var oldCourse = new TableCoursesView
@@ -135,6 +137,112 @@ namespace LearningManagementSystem
 
                 Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
             }
+        }
+
+        private void pagesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            dynamic item = pagesComboBox.SelectedItem;
+
+            if (item != null)
+            {
+                ViewModel.Load(item.Page);
+            }
+        }
+
+
+        public void UpdatePagingInfo_bootstrap()
+        {
+            var infoList = new List<object>();
+            for (int i = 1; i <= ViewModel.TotalPages; i++)
+            {
+                infoList.Add(new
+                {
+                    Page = i,
+                    Total = ViewModel.TotalPages
+                });
+            };
+
+            pagesComboBox.ItemsSource = infoList;
+            pagesComboBox.SelectedIndex = 0;
+
+
+
+        }
+
+        private void searchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Load(1);
+            UpdatePagingInfo_bootstrap();
+        }
+
+        private void previousBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int i = pagesComboBox.SelectedIndex;
+            if (i > 0)
+            {
+                pagesComboBox.SelectedIndex -= 1;
+            }
+        }
+
+        // List of cats
+        private List<string> Cats = new List<string>()
+        {
+            "Abyssinian",
+            "Aegean",
+            "American Bobtail"
+        };
+
+        // Handle text change and present suitable items
+        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            // Since selecting an item will also change the text,
+            // only listen to changes caused by user entering text.
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var suitableItems = new List<string>();
+                var splitText = sender.Text.ToLower().Split(" ");
+                foreach (var cat in Cats)
+                {
+                    var found = splitText.All((key) =>
+                    {
+                        return cat.ToLower().Contains(key);
+                    });
+                    if (found)
+                    {
+                        suitableItems.Add(cat);
+                    }
+                }
+                if (suitableItems.Count == 0)
+                {
+                    suitableItems.Add("No results found");
+                }
+                sender.ItemsSource = suitableItems;
+            }
+        }
+
+
+        private void nextBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int i = pagesComboBox.SelectedIndex;
+            if (i < pagesComboBox.Items.Count - 1)
+            {
+                pagesComboBox.SelectedIndex += 1;
+            }
+        }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+
+        }
+
+        private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+
+        }
+
+        private void sortOrder_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

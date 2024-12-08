@@ -1,27 +1,24 @@
 ﻿
+using CloudinaryDotNet.Actions;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
-using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics.Tracing;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Resources;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class ResourceViewModel : BaseViewModel
     {
-        public ListResource ListResource { get; set; }
+        public FullObservableCollection<SingularResourceViewModel> SingularResources { get; set; }
 
         private IDao _dao;
 
         public ResourceViewModel()
         {
             _dao = new SqlDao();
-            ListResource = new ListResource();
+            SingularResources = new FullObservableCollection<SingularResourceViewModel>();
             LoadResourceTitles();
         }
 
@@ -30,28 +27,37 @@ namespace LearningManagementSystem.ViewModels
             var categories = _dao.findAllResourceCategories();
             foreach (var category in categories)
             {
-                ListResource.SingularResources.Add(new SingularResourceViewModel(category));
+                SingularResources.Add(new SingularResourceViewModel(category));
             }
         }
 
-        public void LoadMoreItems(ResourceCategory category, int classId)
+        public void LoadMoreItems(int classId)
         {
-            int categoryId = category.Id;
-            if (categoryId == 1)
+            var resources = new FullObservableCollection<BaseResource>();
+            FullObservableCollection<BaseResourceViewModel> resourcesViewModel;
+
+            resources = _dao.findAssignmentsByClassId(classId);
+            resourcesViewModel = convertToViewModels(resources);
+            SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Assignment).Resources = resourcesViewModel;
+
+            resources = _dao.findNotificationsByClassId(classId);
+            resourcesViewModel = convertToViewModels(resources);
+            SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources = resourcesViewModel;
+
+            resources = _dao.findDocumentsByClassId(classId);
+            resourcesViewModel = convertToViewModels(resources);
+            SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Document).Resources = resourcesViewModel;
+        }
+
+
+        private FullObservableCollection<BaseResourceViewModel> convertToViewModels(FullObservableCollection<BaseResource> baseResources)
+        {
+            var baseResourceViewModels = new FullObservableCollection<BaseResourceViewModel>();
+            foreach (var resource in baseResources)
             {
-                var assignments = _dao.findAssignmentsByClassId(classId);
-                ListResource.SingularResources.First(x => x.ResourceCategory.Id == categoryId).Resources = assignments;
+                baseResourceViewModels.Add(new BaseResourceViewModel(resource));
             }
-            else if (categoryId == 2)
-            {
-                var notifications = _dao.findNotificationsByClassId(classId);
-                ListResource.SingularResources.First(x => x.ResourceCategory.Id == categoryId).Resources = notifications;
-            }
-            else if (categoryId == 3)
-            {
-                var resources = _dao.findDocumentsByClassId(classId);
-                ListResource.SingularResources.First(x => x.ResourceCategory.Id == categoryId).Resources = resources;
-            }
+            return baseResourceViewModels;
         }
     }
 }

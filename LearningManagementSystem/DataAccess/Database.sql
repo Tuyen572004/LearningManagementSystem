@@ -92,7 +92,8 @@ CREATE TABLE TeachersPerClass (
     ClassId INT NOT NULL,              -- Foreign key to Courses table
     TeacherId INT NOT NULL,             -- Foreign key to Teachers table
     
-    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id)
+    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id),
+    FOREIGN KEY (ClassId) REFERENCES Classes(Id)
 );
 
 
@@ -111,7 +112,10 @@ CREATE TABLE Assignments (
     ResourceCategoryId INT,             -- Foreign key to ResourceCategory table
     Title VARCHAR(100) NOT NULL,
     Description TEXT,
-    DueDate DATE NOT NULL,
+    DueDate DATETIME NOT NULL,
+    FilePath VARCHAR(255),
+    FileName NVARCHAR(255),
+    FileType NVARCHAR(50),
     FOREIGN KEY (ClassId) REFERENCES Classes(Id),
     FOREIGN KEY (TeacherId) REFERENCES Teachers(Id),
     FOREIGN KEY (ResourceCategoryId) REFERENCES ResourceCategories(Id)
@@ -135,8 +139,9 @@ CREATE TABLE Documents (
     ClassId INT NOT NULL,               -- Foreign key to Classes table
     ResourceCategoryId INT,             -- Foreign key to ResourceCategory table
     Title VARCHAR(100) NOT NULL,
-    DocumentName VARCHAR(100) NOT NULL,
-    DocumentPath VARCHAR(255) NOT NULL,
+    FilePath VARCHAR(255),
+    FileName NVARCHAR(255),
+    FileType NVARCHAR(50),
     UploadDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ClassId) REFERENCES Classes(Id),
     FOREIGN KEY (ResourceCategoryId) REFERENCES ResourceCategories(Id)
@@ -150,6 +155,7 @@ CREATE TABLE Submissions (
     FilePath VARCHAR(255) NOT NULL,
     FileName NVARCHAR(255) NOT NULL,
     FileType NVARCHAR(50),
+    Grade DOUBLE DEFAULT NULL,
     FOREIGN KEY (AssignmentId) REFERENCES Assignments(Id),
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 
@@ -224,12 +230,97 @@ INSERT INTO Notifications (Id, ClassId, ResourceCategoryId, NotificationText,Tit
 
 -- INSERT INTO Assignments
 INSERT INTO Assignments (Id, ClassId, TeacherId, ResourceCategoryId, Title, Description, DueDate) VALUES
-(1, 1, 1, 1, 'Homework 1', 'Complete the exercises in chapter 1.', '2023-11-01'),
-(2, 1, 1, 1, 'Homework 2', 'Complete the exercises in chapter 2.', '2023-11-08'),
-(3, 2, 1, 3, 'Midterm Exam', 'Study chapters 1-5.', '2023-12-01');
+(1, 1, 1, 1, 'Homework 1', 'Complete the exercises in chapter 1.', '2023-11-01 23:59:59'),
+(2, 1, 1, 1, 'Homework 2', 'Complete the exercises in chapter 2.', '2023-11-08 23:59:59'),
+(3, 2, 1, 1, 'Midterm Exam', 'Study chapters 1-5.', '2023-12-01 23:59:59');
 
 -- INSERT INTO Documents
-INSERT INTO Documents (Id, ClassId, ResourceCategoryId,Title, DocumentName, DocumentPath) VALUES
-(1, 1, 2,'Week 1 Lecture Notes','Intro To DSA', '/path/to/lecture1.pdf'),
-(2, 1, 2, 'Week 2 Lecture Notes','300 Bai Code Thieu Nhi', '/path/to/lecture2.pdf'),
-(3, 2, 2, 'Midterm Exam Study Guide','Cach de ban 1 ty goi me', '/path/to/studyguide.pdf');
+INSERT INTO Documents (Id, ClassId, ResourceCategoryId,Title, FileName,FilePath,FileType) VALUES
+(1, 1, 2,'Week 1 Lecture Notes','Intro To DSA', '/path/to/lecture1.pdf','pdf'),
+(2, 1, 2, 'Week 2 Lecture Notes','300 Bai Code Thieu Nhi', '/path/to/lecture2.pdf','pdf'),
+(3, 2, 2, 'Midterm Exam Study Guide','Cach de ban 1 ty goi me', '/path/to/studyguide.pdf','pdf');
+
+
+DO $$
+BEGIN
+    -- Reset sequence for Users table
+    PERFORM setval('users_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Users));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Students table
+    PERFORM setval('students_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Students));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Departments table
+    PERFORM setval('departments_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Departments));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Courses table
+    PERFORM setval('courses_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Courses));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Cycles table
+    PERFORM setval('cycles_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Cycles));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Classes table
+    PERFORM setval('classes_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Classes));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Enrollments table
+    PERFORM setval('enrollments_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Enrollments));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Teachers table
+    PERFORM setval('teachers_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Teachers));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for TeachersPerClass table
+    PERFORM setval('teachersperclass_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.TeachersPerClass));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for ResourceCategories table
+    PERFORM setval('resourcecategories_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.ResourceCategories));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Assignments table
+    PERFORM setval('assignments_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Assignments));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Notifications table
+    PERFORM setval('notifications_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Notifications));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Documents table
+    PERFORM setval('documents_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Documents));
+END $$;
+
+DO $$
+BEGIN
+    -- Reset sequence for Submissions table
+    PERFORM setval('submissions_id_seq', (SELECT COALESCE(MAX(Id), 1) FROM public.Submissions));
+END $$;

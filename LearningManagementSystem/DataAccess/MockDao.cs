@@ -671,6 +671,10 @@ namespace LearningManagementSystem.DataAccess
         {
             throw new NotImplementedException();
         }
+        public void SaveAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
 
         public (
             IList<StudentVer2> deleteStudents,
@@ -680,8 +684,26 @@ namespace LearningManagementSystem.DataAccess
         {
             throw new NotImplementedException();
         }
+        public void UpdateAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
 
         (IList<StudentVer2> addStudents, int addCount, IList<(StudentVer2 student, IEnumerable<String> error)> invalidStudentsInfo) IDao.AddStudents(IEnumerable<StudentVer2> students)
+        {
+            throw new NotImplementedException();
+        }
+        public void DeleteAttachmentByAssignmentId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddAssignment(Assignment assignment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAssignmentById(int id)
         {
             throw new NotImplementedException();
         }

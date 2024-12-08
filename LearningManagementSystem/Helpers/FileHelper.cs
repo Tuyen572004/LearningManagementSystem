@@ -73,34 +73,6 @@ namespace LearningManagementSystem.Helpers
             }
         }
 
-
-        // PURPOSE : Get the file from the custom folder --> NOT USED ????
-
-        public async Task<StorageFile> GetFile(string fileName)
-        {
-            try
-            {
-                string customFolderPath = "D:\\Files\\Submissions";
-                // Get the custom folder
-                var customFolder = await StorageFolder.GetFolderFromPathAsync(customFolderPath);
-
-                // Ensure the folder exists
-                if (customFolder == null)
-                {
-                    throw new DirectoryNotFoundException($"The folder at path '{customFolderPath}' does not exist.");
-                }
-
-                // Get the file
-                var file = await customFolder.GetFileAsync(fileName);
-                return file;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return null;
-            }
-        }
-
         public async Task<StorageFolder> ChooseFolder()
         {
             // Open folder picker to select a directory
