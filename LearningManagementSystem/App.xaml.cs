@@ -26,6 +26,7 @@ namespace LearningManagementSystem
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
 
+            // MainWindow = new LoginWindow();
             //var Host = "dpg-ct3vdm52ng1s73a13mr0-a"; // Extracted hostname
             //var Username = "posgre";
             //var Password = "sOL87JmxSGdTuGCwXDNNc8ehNbyctMVH"; 
@@ -50,13 +51,9 @@ namespace LearningManagementSystem
             //Console.WriteLine("Connected to the database!");
 
 
-
-
-
-
             MainWindow = new LoginWindow();
 
-            // m_window = new DashBoard();
+            // MainWindow = new DashBoard();
             MainWindow.Activate();
         }
 

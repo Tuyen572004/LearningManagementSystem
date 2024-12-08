@@ -34,8 +34,10 @@
 	  <Content Remove="Assets\teacher.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="config.json" />
-	  <None Remove="Controls\StudentDisplayer.xaml" />
+	  <None Remove="Controls\PagingOptionsBar.xaml" />
+	  <None Remove="Controls\QueryableStudentDisplayer.xaml" />
+	  <None Remove="Controls\SearchBar.xaml" />
+	  <None Remove="Controls\StudentTable.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
@@ -45,8 +47,11 @@
 	  <None Remove="Views\AddAccount.xaml" />
 	  <None Remove="Views\AddAssignment.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
+	  <None Remove="Views\Admin\StudentCRUDPage.xaml" />
+	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
+	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
 	  <None Remove="Views\AdminPage.xaml" />
-	  <None Remove="Views\AllStudentsPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
@@ -56,7 +61,6 @@
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
 		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
-		<None Remove="Views\StudentDisplayerPage.xaml" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -75,6 +79,7 @@
 	<ItemGroup>
 		<PackageReference Include="CloudinaryDotNet" Version="1.26.2" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="EntityFramework" Version="6.5.1" />
 		<PackageReference Include="Fody" Version="6.9.1">
@@ -127,6 +132,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
+        <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\EditUser.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -139,8 +147,26 @@
 	  <Page Update="Views\AddAssignment.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Views\AllStudentsPage.xaml">
-		  <Generator>MSBuild:Compile</Generator>
+	  <Page Update="Controls\SearchBar.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\PagingOptionsBar.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\ClassPreviewPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentToClassAssignPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentQueryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\StudentCRUDPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+      </Page>
+	  <Page Update="Views\AddAssignment.xaml">
+	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\NotificationPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
@@ -164,11 +190,6 @@
 	  <Page Update="Views\AddCourse.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Views\StudentDisplayerPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="CoursesPage.xaml">
@@ -206,7 +227,7 @@
 		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\StudentDisplayer.xaml">
+	  <Page Update="Controls\StudentTable.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

@@ -2,6 +2,7 @@
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -245,7 +246,7 @@ namespace LearningManagementSystem.ViewModels
         }
     }
 
-    public partial class StudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider
+    public partial class StudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider, IPagingProvider
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;
@@ -264,6 +265,7 @@ namespace LearningManagementSystem.ViewModels
                 _rowsPerPage = value;
             }
         }
+        [AlsoNotifyFor(nameof(PageCount))]
         public int ItemCount { get; private set; } = 0;
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
 
@@ -289,8 +291,9 @@ namespace LearningManagementSystem.ViewModels
                 getAll,
                 (CurrentPage - 1) * RowsPerPage,
                 RowsPerPage,
-                SortCriteria,
-                SearchKeyword,
+                null,
+                null,
+                null,
                 FilterCriteria
                 );
             ItemCount = queryCount;
@@ -298,18 +301,18 @@ namespace LearningManagementSystem.ViewModels
 
             // You must "roar" by yourself :'))
             RaisePropertyChanged(nameof(ManagingStudents));
+            RaisePropertyChanged(nameof(PageCount));
         }
 
-        public StudentsViewModel NavigateToPage(int pageNumber)
+        public void NavigateToPage(int pageNumber)
         {
             if (pageNumber < 1 || pageNumber > PageCount)
             {
-                return this;
+                return;
                 // throw new ArgumentException("Invalid page number");
             }
             CurrentPage = pageNumber;
             GetStudents();
-            return this;
         }
     }
 
