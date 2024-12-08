@@ -29,19 +29,20 @@
     - Update a user
     - Delete a user
     - Paging, Sort, Filter
-8. Class management - 3.5 hours
+8. Class management - 2.5 hours
     - Read list of classes and 1 class detail screen
-    - Create a new class
-    - Update a class
-    - Delete a class
-    - Paging, Sort, Filter
-9. Student management - 3.5 hours
+9. Assignment management - 3.5 hours
+    - Read list of assignments and 1 assignment detail screen
+    - Create a new assignment
+    - Update an assignment
+    - Delete an assignment
+10. Student management - 3.5 hours
     - Read list of students and 1 student detail screen
     - Create a new student
     - Update a student
     - Delete a student
     - Paging, Sort, Filter
-10. Authorization - 2.5 hours
+11. Authorization - 2.5 hours
     - Only admin can access the user management page
     - Only teacher can create, update, delete class/assignment
     - Only admin/teacher can create, update, delete student
