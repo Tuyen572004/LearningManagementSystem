@@ -51,9 +51,9 @@ namespace LearningManagementSystem
             //Console.WriteLine("Connected to the database!");
 
 
-            // MainWindow = new LoginWindow();
+            MainWindow = new LoginWindow();
 
-            MainWindow = new DashBoard();
+            // MainWindow = new DashBoard();
             MainWindow.Activate();
         }
 

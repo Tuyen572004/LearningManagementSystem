@@ -37,7 +37,7 @@ namespace LearningManagementSystem
             HWND = WinRT.Interop.WindowNative.GetWindowHandle(this);
             NavigateByTag("LearningManagementSystem.HomePage");
 
-            menu.SelectionChanged += menu_SelectionChanged;
+            Menu.SelectionChanged += menu_SelectionChanged;
         }
 
         private async void InitializeAsync()
@@ -45,7 +45,7 @@ namespace LearningManagementSystem
             var userRole = await UserService.GetCurrentUserRole();
             if (userRole == "admin")
             {
-                var adminItem = menu.FooterMenuItems
+                var adminItem = Menu.FooterMenuItems
                     .OfType<NavigationViewItem>()
                     .FirstOrDefault(item => item.Tag.ToString() == "LearningManagementSystem.Views.AdminPage");
                 if (adminItem != null)
@@ -55,7 +55,7 @@ namespace LearningManagementSystem
             }
             else
             {
-                var adminItem = menu.FooterMenuItems
+                var adminItem = Menu.FooterMenuItems
                     .OfType<NavigationViewItem>()
                     .FirstOrDefault(item => item.Tag.ToString() == "LearningManagementSystem.Views.AdminPage");
                 if (adminItem != null)
@@ -77,10 +77,10 @@ namespace LearningManagementSystem
 
         private void NavigateByTag(string tag)
         {
-            var item = this.menu.MenuItems
+            var item = this.Menu.MenuItems
                 .OfType<NavigationViewItem>()
                 .FirstOrDefault(x => x.Tag.Equals(tag))
-                ?? this.menu.FooterMenuItems
+                ?? this.Menu.FooterMenuItems
                 .OfType<NavigationViewItem>()
                 .FirstOrDefault(x => x.Tag.Equals(tag));
 
