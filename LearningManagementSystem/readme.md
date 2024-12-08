@@ -24,31 +24,33 @@
     - When you enter the class, you will see the list of resources of the class: Assignments, Lectures, Documents
     - When you select 1 resource you will enter the resource detail page and see information of the resource. 
     - You can move back and forth between pages by using the back button
-7. Users management - 3 hours
+7. Users management - 3.5 hours
     - Read list of users and 1 user detail screen
     - Create a new user
     - Update a user
     - Delete a user
     - Paging, Sort, Filter
-8. Class management - 3 hours
+8. Class management - 3.5 hours
     - Read list of classes and 1 class detail screen
     - Create a new class
     - Update a class
     - Delete a class
     - Paging, Sort, Filter
-9. Student management - 3 hours
+9. Student management - 3.5 hours
     - Read list of students and 1 student detail screen
     - Create a new student
     - Update a student
     - Delete a student
     - Paging, Sort, Filter
+10. Authorization - 2 hours
+    - Only admin can access the user management page
+    - Only teacher can create, update, delete class/assignment
+    - Only admin/teacher can create, update, delete student
 ## What have not been completed
-1. CRUD for resources
-2. Comment, send notifications to students
-3. View student's grades
-4. Make Quiz, Exam
-5. Local storing when offline
-6. Technical debts: RelayCommand, Error handling, Exception handling, Navigation service, divide IDao to multiple interfaces for each entity.
+1. Notification
+2. Dependency injection for Idao and Services.
+3. Input handling, error handling
+4. Generate full data.
 
 ## Self-assessment grades:
 - Phan Hồng Thức: 10
