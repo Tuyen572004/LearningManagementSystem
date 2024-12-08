@@ -39,33 +39,34 @@ namespace LearningManagementSystem
 
             Menu.SelectionChanged += menu_SelectionChanged;
         }
-
         private async void InitializeAsync()
         {
             var userRole = await UserService.GetCurrentUserRole();
-            if (userRole == "admin")
+            SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole == "admin");
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole == "admin" || userRole == "teacher");
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole == "admin" || userRole == "teacher");
+        }
+        private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
+        {
+            var menuItem = Menu.FooterMenuItems
+                .OfType<NavigationViewItem>()
+                .FirstOrDefault(item => item.Tag.ToString() == tag);
+            if (menuItem != null)
             {
-                var adminItem = Menu.FooterMenuItems
-                    .OfType<NavigationViewItem>()
-                    .FirstOrDefault(item => item.Tag.ToString() == "LearningManagementSystem.Views.AdminPage");
-                if (adminItem != null)
-                {
-                    adminItem.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                var adminItem = Menu.FooterMenuItems
-                    .OfType<NavigationViewItem>()
-                    .FirstOrDefault(item => item.Tag.ToString() == "LearningManagementSystem.Views.AdminPage");
-                if (adminItem != null)
-                {
-                    adminItem.Visibility = Visibility.Collapsed;
-                }
+                menuItem.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
-
+        private void SetMenuItemVisibility(string tag, bool isVisible)
+        {
+            var menuItem = Menu.MenuItems
+                .OfType<NavigationViewItem>()
+                .FirstOrDefault(item => item.Tag.ToString() == tag);
+            if (menuItem != null)
+            {
+                menuItem.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
         private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is NavigationViewItem item &&

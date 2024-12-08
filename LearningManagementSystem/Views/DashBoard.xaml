@@ -19,8 +19,8 @@
             <NavigationViewItem Content="Courses" Tag="LearningManagementSystem.CoursesPage" Icon="Library" />
             <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.Views.EnrollmentClassesPage" Icon="Folder" />
             <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
-            <NavigationViewItem Content="Admin: Read Students" Tag="LearningManagementSystem.Views.Admin.StudentQueryPage" Icon="ContactPresence" />
-            <NavigationViewItem Content="Admin: CRUD Students" Tag="LearningManagementSystem.Views.Admin.StudentCRUDPage" Icon="ContactPresence" />
+            <NavigationViewItem Content="Read Students" Tag="LearningManagementSystem.Views.Admin.StudentQueryPage" Icon="ContactPresence" />
+            <NavigationViewItem Content="CRUD Students" Tag="LearningManagementSystem.Views.Admin.StudentCRUDPage" Icon="ContactPresence" />
             <!--NavigationViewItem Content="See Students In Classes" Tag="LearningManagementSystem.Views.ClassPreviewPage" Icon="People" /-->
         </NavigationView.MenuItems>
 
