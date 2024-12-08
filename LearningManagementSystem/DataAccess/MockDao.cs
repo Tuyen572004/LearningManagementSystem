@@ -687,5 +687,65 @@ namespace LearningManagementSystem.DataAccess
         {
             throw new NotImplementedException();
         }
+
+        public void GetFullUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetAllUsers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int InsertUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveUserByID(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CountUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] GetAllCourseDecriptions()
+        {
+            throw new NotImplementedException();
+        }
+
+        List<string> IDao.GetAllCourseDecriptions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllUsernames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

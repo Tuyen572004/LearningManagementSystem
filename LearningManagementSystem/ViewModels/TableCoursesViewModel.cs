@@ -48,26 +48,27 @@ namespace LearningManagementSystem.ViewModels
 
         public TableCoursesView SelectedCourse { get; set; }
         public FullObservableCollection<TableCoursesView> TableCourses { get; set; }
-
+        public List<string> Suggestion { get; set; }
         public string Keyword { get; set; } = "";
-        public bool NameAcending { get; set; } = false;
+        public string SortBy { get; set; } = "Id";
+        public string SortOrder { get; set; } = "ASC";
         public int CurrentPage { get; set; } = 1;
         public int RowsPerPage { get; set; } = 10;
-
         public int TotalPages { get; set; } = 0;
         public int TotalItems { get; set; } = 0;
 
-        public string[] TypeSort { get; set; } = { "Course Code", "Course Description" };
+        public int countRepeatButton { get; set; } = 0;
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
             _dao = new SqlDao();
+            countRepeatButton = 0;
             SelectedCourse = new TableCoursesView();
-
+            Suggestion = _dao.GetAllCourseDecriptions();
         }
-        public void GetAllCourse(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        public void GetAllCourse()
         {
-            var (totalItems, courses) = _dao.GetAllCourses(page, pageSize, keyword, nameAscending);
+            var (totalItems, courses) = _dao.GetAllCourses(CurrentPage, RowsPerPage, Keyword, SortBy, SortOrder);
             if (courses != null)
             {
                 TableCourses.Clear();
@@ -102,10 +103,11 @@ namespace LearningManagementSystem.ViewModels
             return count;
         }
 
-        public void Load(int page)
+
+        public void Load(int page = 1)
         {
             CurrentPage = page;
-            GetAllCourse(CurrentPage, RowsPerPage);
+            GetAllCourse();
         }
 
         public void RemoveCourse(Course course)

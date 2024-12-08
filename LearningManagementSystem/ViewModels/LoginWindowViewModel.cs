@@ -13,6 +13,8 @@ namespace LearningManagementSystem.ViewModels
         public SqlDao _dao { get; set; }
         public User UserLogin { get; set; }
 
+        public bool IsAdmin => UserLogin?.Role == "admin";
+
         public LoginWindowViewModel()
         {
             _dao = new SqlDao();
@@ -21,8 +23,13 @@ namespace LearningManagementSystem.ViewModels
 
         public bool CheckUserInfo()
         {
-            //return _dao.CheckUserInfo(UserLogin);
-            return true;
+            return _dao.CheckUserInfo(UserLogin);
+            //return true;
+        }
+
+        public void GetUser()
+        {
+            _dao.GetFullUser(UserLogin);
         }
 
         public bool IsExistsUsername()

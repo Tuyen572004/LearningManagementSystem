@@ -13,13 +13,9 @@ namespace LearningManagementSystem.DataAccess
 {
     public interface IDao
     {
-        Tuple<int, List<Course>> GetAllCourses(
-            int page = 1,
-            int pageSize = 10,
-            string keyword = "",
-            bool nameAscending = false
-            );
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
 
+        List<string> GetAllCourseDecriptions();
         int InsertCourse(Course course);
         void UpdateCourse(Course course);
         void RemoveCourseByID(int courseId);
@@ -36,6 +32,18 @@ namespace LearningManagementSystem.DataAccess
         int InsertDepartment(Department department);
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
+
+        public void GetFullUser(User user);
+
+        Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
+
+        List<string> GetAllUsernames();
+        int InsertUser(User user);
+        void UpdateUser(User user);
+        void RemoveUserByID(int userId);
+
+        int CountUser();
+
 
         int CountDepartments();
         int FindDepartmentID(Department department);
