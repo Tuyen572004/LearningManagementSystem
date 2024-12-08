@@ -2,7 +2,9 @@
 using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using Microsoft.UI.Xaml.Data;
 using Org.BouncyCastle.Tls;
 using PropertyChanged;
 using System;
@@ -43,6 +45,11 @@ namespace LearningManagementSystem.ViewModels
         public int ItemCount { get; private set; } = 0;
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
+        public IEnumerable<string> IgnoringColumns => ["HasErrors"];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
+            ("BirthDate", new DateTimeToStringConverter()),
+            ];
         public List<int>? ManagingIds { get; private set; } = null;
         public List<SortCriteria>? SortCriteria { get; private set; } = null;
         public List<string> SearchFields {

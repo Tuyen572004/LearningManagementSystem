@@ -1,6 +1,7 @@
 #nullable enable
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using CommunityToolkit.WinUI.UI.Controls;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
@@ -25,11 +26,6 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    internal class GeneratedColumnDetail
-    {
-        required public string Name { get; set; }
-        required public DataGridColumn Column { get; set; }
-    }
     public enum InfoBarMessageSeverity
     {
         Info,
@@ -58,8 +54,10 @@ namespace LearningManagementSystem.Controls
         public EventHandler<StudentVer2>? StudentDoubleTappedHandler => null;
         public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => null;
 
-        public IEnumerable<String> IgnoringColumns => ["HasErrors"];
-        public IEnumerable<String> ColumnOrder => ["Id", "UserId"];
+        public IEnumerable<string> IgnoringColumns => [];
+        public IEnumerable<string> ColumnOrder => [];
+        public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
+        public IEnumerable<string> ReadOnlyColumns => [];
     }
     public partial class UnassignedStudentProvider : IStudentProvider
     {
@@ -253,6 +251,11 @@ namespace LearningManagementSystem.Controls
                     StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
                     // TODO - Technical Debt: Ugly validation logic here, not generic friendly
                     ((StudentVer2)e.Row.DataContext)?.ValidateProperty(e.Column.Tag.ToString());
+                    
+                    if (Dg_InfoBar.IsOpen)
+                    {
+                        ResetItemInfo(forcedOpen: true);
+                    }
                 });
                 // StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
             }
@@ -281,16 +284,25 @@ namespace LearningManagementSystem.Controls
         }
         public EventHandler<IList<StudentVer2>> ItemsReselectionHandler => HandleItemsReselection;
 
+        private object? _lastSeenItem = null;
         private void SeeItemInfo_Click(object sender, RoutedEventArgs e)
         {
             if (sender is null)
             {
                 return;
             }
-            if (ContextProvider is IInfoProvider infoProvider && Dg.SelectedItem is not null)
+            if (Dg.SelectedItem is not null)
+            {
+                _lastSeenItem = Dg.SelectedItem;
+            }
+            ResetItemInfo();
+        }
+        private void ResetItemInfo(bool forcedOpen = false)
+        {
+            if (ContextProvider is IInfoProvider infoProvider && _lastSeenItem is not null)
             // if (DataContext is IInfoProvider infoProvider && Dg.SelectedItem is not null)
             {
-                var message = infoProvider.GetMessageOf(Dg.SelectedItem);
+                var message = infoProvider.GetMessageOf(_lastSeenItem);
                 if (message is not null)
                 {
                     Dg_InfoBar.Title = message.Title;
@@ -303,15 +315,19 @@ namespace LearningManagementSystem.Controls
                         _ => InfoBarSeverity.Informational
                     };
                     Dg_InfoBar.IsOpen = true;
+                    return;
                 }
+                // The message is null, so close the InfoBar, regardless of the forcedOpen flag
+                forcedOpen = false;
             }
-            else
-            {
-                Dg_InfoBar.IsOpen = false;
-            }
+
+            Dg_InfoBar.IsOpen = forcedOpen || false;
+            _lastSeenItem = (Dg_InfoBar.IsOpen) ? _lastSeenItem : null;
         }
 
-        private List<GeneratedColumnDetail> _generatedColumnsDetail = [];
+        private Dictionary<string, IValueConverter>? _converterMapper = null;
+        private Dictionary<string, int> _displayIndexMapper = [];
+        private int _columnIndexCounter = 0;
         private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
 
@@ -323,33 +339,64 @@ namespace LearningManagementSystem.Controls
                     e.Cancel = true;
                     return;
                 }
+                if (provider.ReadOnlyColumns.Contains(e.PropertyName))
+                {
+                    e.Column.IsReadOnly = true;
+                }
+                _converterMapper ??= provider.ColumnConverters.ToDictionary(c => c.ColumnName, c => c.Converter);
             }
-            _generatedColumnsDetail.Add(new() { Column = e.Column, Name = e.PropertyName });
+            e.Column.Tag = e.PropertyName;
+
+            if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
+            {
+                e.Column.DisplayIndex = value;
+            }
+            else
+            {
+                e.Column.DisplayIndex = _columnIndexCounter++;
+                _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
+            }
+
+            if (_converterMapper is not null && _converterMapper.TryGetValue(e.PropertyName, out IValueConverter? converter))
+            {
+                if (converter is null)
+                {
+                    return;
+                }
+                var convertedColumn = e.Column as DataGridTextColumn;
+                if (convertedColumn is not null)
+                {
+                    convertedColumn.Binding.Converter = converter;
+                }
+            }
         }
 
         private void Dg_Loaded(object sender, RoutedEventArgs e)
         {
             if (ContextProvider is IStudentProvider provider)
             {
-                Dictionary<DataGridColumn, int> columnDisplayIndex = [];
+                Dictionary<string, int> columnDisplayIndex = [];
                 int columnIndexCounter = 0;
-                foreach (String columnName in provider.ColumnOrder)
+                List<string> existingColumnNames = [.. _displayIndexMapper.Keys];
+                foreach (string columnName in provider.ColumnOrder)
                 {
-                    GeneratedColumnDetail? foundColumn = _generatedColumnsDetail.Find(columnDetail => columnDetail.Name == columnName);
-                    if (foundColumn != null)
+                    if (existingColumnNames.Contains(columnName))
                     {
-                        columnDisplayIndex.Add(foundColumn.Column, columnIndexCounter++);
+                        columnDisplayIndex.Add(columnName, columnIndexCounter++);
                     }
                 }
-                foreach (GeneratedColumnDetail column in _generatedColumnsDetail)
+                foreach (string existingColumn in existingColumnNames)
                 {
-                    if (columnDisplayIndex.TryGetValue(column.Column, out int value))
+                    if (!columnDisplayIndex.ContainsKey(existingColumn))
                     {
-                        column.Column.DisplayIndex = value;
-                    } else
-                    {
-                        column.Column.DisplayIndex = columnIndexCounter++;
+                        columnDisplayIndex.Add(existingColumn, columnIndexCounter++);
                     }
+                }
+                _displayIndexMapper = columnDisplayIndex;
+                foreach (DataGridColumn column in Dg.Columns)
+                {
+                    columnDisplayIndex["null"] = column.DisplayIndex; // To suppress the warning
+                    column.DisplayIndex = columnDisplayIndex[column.Tag.ToString() ?? "null"];
                 }
             }
         }

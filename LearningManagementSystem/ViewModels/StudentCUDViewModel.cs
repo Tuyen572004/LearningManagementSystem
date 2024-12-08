@@ -5,6 +5,7 @@ using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using Microsoft.Identity.Client;
+using Microsoft.UI.Xaml.Data;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,14 @@ namespace LearningManagementSystem.ViewModels
         public int ItemCount { get; private set; } = 0;
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
+        public IEnumerable<string> IgnoringColumns => [];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "HasErrors", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
+            ("Id", new NegativeIntToNewMarkerConverter()),
+            ("GraduationYear", new NullableIntToStringConverter()),
+            ("BirthDate", new DateTimeToStringConverter()),
+            ];
+        public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId"];
         public ObservableCollection<StudentVer2> AllStudents { get; private set; } = [];
         public List<SortCriteria>? SortCriteria { get; private set; } = null;
 
@@ -274,7 +283,7 @@ namespace LearningManagementSystem.ViewModels
                     var newMessage = String.Join("\n", errors);
                     return new()
                     {
-                        Title = "Student Error",
+                        Title = (student.Id > 0) ? $"Error with student Id {student.Id}" : $"Error with the newly created student",
                         Message = newMessage,
                         Severity = InfoBarMessageSeverity.Error
                     };

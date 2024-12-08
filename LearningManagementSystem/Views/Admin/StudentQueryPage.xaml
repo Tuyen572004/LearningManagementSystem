@@ -10,7 +10,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     xmlns:controls="using:LearningManagementSystem.Controls">
 
-    <Grid>
+    <Grid Margin="8, 8, 8, 8" RowSpacing="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
