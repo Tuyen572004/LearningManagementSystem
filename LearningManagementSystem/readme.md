@@ -42,7 +42,7 @@
     - Update a student
     - Delete a student
     - Paging, Sort, Filter
-10. Authorization - 2 hours
+10. Authorization - 2.5 hours
     - Only admin can access the user management page
     - Only teacher can create, update, delete class/assignment
     - Only admin/teacher can create, update, delete student
