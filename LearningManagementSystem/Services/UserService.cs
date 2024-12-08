@@ -10,10 +10,6 @@ namespace LearningManagementSystem.Services
     public class UserService
     {
         //// TODO : Implement the GetUserRoleAsync method
-        public async Task<string> getCurrentUserRole()
-        {
-            return await Task.FromResult("Teacher");
-        }
 
         public async Task<User> GetCurrentUser()
         {

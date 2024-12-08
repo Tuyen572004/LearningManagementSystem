@@ -34,6 +34,7 @@
 	  <Content Remove="Assets\teacher.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="config.json" />
 	  <None Remove="Controls\StudentDisplayer.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
@@ -64,6 +65,9 @@
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
 		<Content Include="Assets\StoreLogo.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+		<Content Include="config.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
