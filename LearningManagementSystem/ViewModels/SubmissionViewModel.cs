@@ -48,7 +48,7 @@ namespace LearningManagementSystem.ViewModels
             Submission = new Submission();
             Student = new Student();
             Assignment = new Assignment();
-            User = userService.GetCurrentUser().Result;
+            User = UserService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
             DeleteCommand = new RelayCommand(DeleteSubmission,CanDeleteSubmission);
@@ -60,7 +60,7 @@ namespace LearningManagementSystem.ViewModels
             Submission = submission;
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;
-            User = userService.GetCurrentUser().Result;
+            User = UserService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
             DownloadCommand = new RelayCommand(DownloadSubmission);
             DeleteCommand = new RelayCommand(DeleteSubmission, CanDeleteSubmission);
@@ -107,7 +107,7 @@ namespace LearningManagementSystem.ViewModels
 
         public async Task<bool> CanUpdateSubmission()
         {
-            return User.Role == "Student" && DateTime.Now < Assignment.DueDate;
+            return User.Role == "student" && DateTime.Now < Assignment.DueDate;
         }
 
         public async Task UpdateSubmissionDetails(StorageFile selectedFile)
@@ -151,8 +151,8 @@ namespace LearningManagementSystem.ViewModels
 
         public bool CanDeleteSubmission()
         {
-            var role = userService.GetCurrentUser().Result.Role.ToString();
-            return role == "Student" && DateTime.Now < Assignment.DueDate;
+            var role = UserService.GetCurrentUser().Result.Role.ToString();
+            return role == "student" && DateTime.Now < Assignment.DueDate;
         }
     }
 }

@@ -8,29 +8,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <NavigationView x:Name="menu"
-                        IsBackButtonVisible="Collapsed"
-                        PaneDisplayMode="Left"
-                        SelectionChanged="menu_SelectionChanged"
-                        IsSettingsVisible="False">
+    <NavigationView 
+        x:Name="Menu"
+        IsBackButtonVisible="Collapsed"
+        PaneDisplayMode="Left"
+        IsSettingsVisible="False"
+        >
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Home" Tag="LearningManagementSystem.HomePage" Icon="Home" />
             <NavigationViewItem Content="Courses" Tag="LearningManagementSystem.CoursesPage" Icon="Library" />
-            <NavigationViewItem Content="Students" Tag="LearningManagementSystem.Views.AllStudentsPage" Icon="ContactPresence"/>
             <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.Views.EnrollmentClassesPage" Icon="Folder" />
-            <NavigationViewItem Content="Faculities" Tag="faculities" Icon="Tag" />
-            <NavigationViewItem Content="Assign Subject" Tag="assignSubject" Icon="Tag" />
-            <NavigationViewItem Content="Enter Mark" Tag="enterMark" Icon="NewWindow" />
-            <NavigationViewItem Content="Marksheet Report" Tag="marksheetReport" Icon="ReportHacked" />
-            <NavigationViewItem Content="Mark Attendance" Tag="markAttendance" Icon="People" />
-            <NavigationViewItem Content="Chat" Tag="chat" Icon="Message" />
             <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
-            <NavigationViewItem Content="See All Students (Mock)" Tag="LearningManagementSystem.Views.StudentDisplayerPage" Icon="ContactPresence"/>
+            <NavigationViewItem Content="Read Students" Tag="LearningManagementSystem.Views.Admin.StudentQueryPage" Icon="ContactPresence" />
+            <NavigationViewItem Content="CRUD Students" Tag="LearningManagementSystem.Views.Admin.StudentCRUDPage" Icon="ContactPresence" />
             <!--NavigationViewItem Content="See Students In Classes" Tag="LearningManagementSystem.Views.ClassPreviewPage" Icon="People" /-->
         </NavigationView.MenuItems>
+
         <NavigationView.FooterMenuItems>
             <NavigationViewItem Content="User" Tag="userProfile" Icon="OtherUser" />
-            <NavigationViewItem Content="Admin Profile" Tag="adminProfile" Icon="Admin" />
+            <NavigationViewItem Content="Admin" Tag="LearningManagementSystem.Views.AdminPage" Icon="Admin"/>
             <NavigationViewItem Content="Logout" Tag="logout" Icon="Permissions" />
             <NavigationViewItem Content="Exit" Tag="exit" Icon="ClosePane" />
         </NavigationView.FooterMenuItems>

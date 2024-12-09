@@ -23,14 +23,14 @@ namespace LearningManagementSystem.ViewModels
         {
             BaseResource = new BaseResource();
             DeleteCommand = new RelayCommand(Delete,CanDelete);
-            IsTeacher = _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
         }
 
         public BaseResourceViewModel(BaseResource x)
         {
             BaseResource = x;
             DeleteCommand = new RelayCommand(Delete, CanDelete);
-            IsTeacher = _userService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
         }
 
         private bool CanDelete()

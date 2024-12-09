@@ -3,13 +3,17 @@ using LearningManagementSystem.DataAccess;
 using System.Collections.ObjectModel;
 using System;
 using LearningManagementSystem.Helpers;
+using System.Collections.Generic;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class CourseViewModel : BaseViewModel
     {
         public string Keyword { get; set; } = "";
-        public bool NameAscending { get; set; } = false;
+        public string SortOrder { get; set; } = "ASC";
+        public string SortBy { get; set; } = "Id";
         public int CurrentPage { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public int TotalPages { get; set; } = 0;
@@ -30,7 +34,7 @@ namespace LearningManagementSystem.ViewModels
 
         public void GetAllCourse()
         {
-            var (totalItems, courses) = _dao.GetAllCourses(CurrentPage, PageSize, Keyword, NameAscending);
+            var (totalItems, courses) = _dao.GetAllCourses(CurrentPage, PageSize, Keyword, SortBy, SortOrder);
             if (totalItems >= 0)
             {
                 Courses = new FullObservableCollection<Course>(courses);
@@ -72,6 +76,6 @@ namespace LearningManagementSystem.ViewModels
             _dao.UpdateCourse(course);
         }
 
-        
-    }
+    };
+
 }

@@ -52,9 +52,10 @@ namespace LearningManagementSystem.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnNavigatedFrom(e);
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
+            base.OnNavigatedFrom(e);
         }
+
 
 
 

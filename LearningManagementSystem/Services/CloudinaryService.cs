@@ -1,7 +1,5 @@
-﻿using Azure;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using MySqlX.XDevAPI;
 using System;
 using System.IO;
 using System.Net.Http;

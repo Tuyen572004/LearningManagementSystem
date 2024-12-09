@@ -16,11 +16,11 @@ namespace LearningManagementSystem.Enums
             switch (role)
             {
                 case Role.Student:
-                    return "Student";
+                    return "student";
                 case Role.Teacher:
-                    return "Teacher";
+                    return "teacher";
                 case Role.Admin:
-                    return "Admin";
+                    return "admin";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

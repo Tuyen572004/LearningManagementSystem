@@ -235,9 +235,9 @@ namespace LearningManagementSystem.ViewModels
 
         public async void checkRole()
         {
-            User = await _userService.GetCurrentUser();
+            User = await UserService.GetCurrentUser();
             var role = User.Role;
-            IsTeacher = role == "Teacher";
+            IsTeacher = role == "teacher";
         }
 
         public void LoadSubmissions()

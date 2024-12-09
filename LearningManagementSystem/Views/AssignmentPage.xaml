@@ -8,7 +8,7 @@
     xmlns:h="using:LearningManagementSystem.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:table="using:WinUI.TableView" d:DataContext="{d:DesignInstance Type=vm:SubmissionViewModel}"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=vm:AssignmentViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -16,6 +16,7 @@
         <h:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <h:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
         <h:DateTimeToTimeSpanConverter x:Key="DateTimeToTimeSpanConverter"/>
+        <h:NumberToTextConverter x:Key="NumberToTextConverter"/>
     </Page.Resources>
 
     <ScrollView ScrollViewer.HorizontalScrollBarVisibility="Visible">
@@ -118,6 +119,7 @@
             <Run Text="{x:Bind AssignmentViewModel.DueStatus, Mode=OneWay}" />
             </TextBlock>
 
+
             <StackPanel x:Name="teacherView" 
             Visibility="{x:Bind AssignmentViewModel.IsTeacher, 
                            Mode=OneWay,
@@ -126,44 +128,37 @@
                 <TextBlock Text="Showing all submissions:" FontWeight="Bold" 
                        Foreground="Gray" FontStyle="Italic" Margin="10,0,0,0"/>
 
-                <table:TableView x:Name="tableTeacherView"
-                                         Margin="16"
-                                         ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
-                 
-                                         ShowExportOptions="True"
-                                         HeaderRowHeight="{StaticResource HubHeaderThemeFontSize}"
-                                         HeaderTemplate="{StaticResource DefaultCompactErrorIconTemplate}"
-                                         AutoGenerateColumns="False">
-
-                    <table:TableView.Columns>
-                        <table:TableViewTextColumn Header="Id" 
-                                   Binding="{Binding Student.StudentCode, Mode=OneWay}" >
-                        </table:TableViewTextColumn>
-                        <table:TableViewTextColumn Header="Student Name"
-                                       Binding="{Binding Student.StudentName, Mode=OneWay}"/>
-                        <table:TableViewTextColumn Header="Submission Date"
-                                   Binding="{Binding Submission.SubmissionDate, Mode=OneWay}" />
-                        <table:TableViewTextColumn Header="File Name"
-                                   Binding="{Binding Submission.FileName, Mode=OneWay}" />
-                        
-                        
-
-                        <table:TableViewNumberColumn Header="Grade" Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <table:TableViewTemplateColumn Header="Actions">
-                            <table:TableViewTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="vm:SubmissionViewModel">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
-                                        <Button Content="Grade" Command="{Binding GradeCommand}" Foreground="White" Background="Green"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </table:TableViewTemplateColumn.CellTemplate>
-                        </table:TableViewTemplateColumn>
+                <Grid>
+                    <controls:DataGrid x:Name="dataGridTeacherView"
+                           Margin="16"
+                           AutoGenerateColumns="False"
+                           ItemsSource="{x:Bind AssignmentViewModel.Submissions}">
+                        <controls:DataGrid.Columns>
+                            <controls:DataGridTextColumn Header="Id"
+                                             Binding="{Binding Student.StudentCode}" />
+                            <controls:DataGridTextColumn Header="Student Name"
+                                             Binding="{Binding Student.StudentName}" />
+                            <controls:DataGridTextColumn Header="Submission Date"
+                                             Binding="{Binding Submission.SubmissionDate}" />
+                            <controls:DataGridTextColumn Header="File Name"
+                                             Binding="{Binding Submission.FileName}" />
+                            <controls:DataGridTextColumn Header="Grade"
+                                             Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=LostFocus, Converter={StaticResource NumberToTextConverter}}"/>
+                            <controls:DataGridTemplateColumn Header="Actions">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="vm:SubmissionViewModel">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
+                                            <Button Content="Grade" Command="{Binding GradeCommand}" Foreground="White" Background="Green" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>
+                </Grid>
 
 
-                    </table:TableView.Columns>
-
-                </table:TableView>
             </StackPanel>
 
             <!-- Student View -->
@@ -178,45 +173,48 @@
                                     Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="Submit your assignment:" FontWeight="Bold" Foreground="Gray" FontStyle="Italic" Margin="10,0,30,20"/>
                     <Button Content="Submit" Command="{x:Bind AssignmentViewModel.SubmitCommand}" 
-                        Foreground="Black" BorderBrush="Black" Background="Orange" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,30,20" Padding="10,5,10,5"/>
+                        BorderBrush="Black" Background="Orange" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,30,20" Padding="10,5,10,5"/>
                 </StackPanel>
 
-                <table:TableView x:Name="tableView"
-                         Margin="16"
-                         ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
-                         Background="Black"
-                         ShowExportOptions="True"
-                         HeaderRowHeight="{StaticResource HubHeaderThemeFontSize}"
-                         HeaderTemplate="{StaticResource DefaultCompactErrorIconTemplate}"
-                         AutoGenerateColumns="False">
+                <Grid>
+                    <controls:DataGrid x:Name="dataGrid"
+                           Margin="16"
+                           ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
+                           Background="Black"
+                           AutoGenerateColumns="False"
+                           HeadersVisibility="Column">
+                        <controls:DataGrid.Columns>
+             
+                            <controls:DataGridTextColumn Header="Id"
+                                             Binding="{Binding Student.StudentCode}" />
 
-                    <table:TableView.Columns>
-                        <table:TableViewTextColumn Header="Id" 
-                                           Binding="{Binding Student.StudentCode, Mode=OneWay}" >
-                        </table:TableViewTextColumn>
-                        <table:TableViewTextColumn Header="Student Name"
-                                               Binding="{Binding Student.StudentName, Mode=OneWay}"/>
-                        <table:TableViewTextColumn Header="Submission Date"
-                                           Binding="{Binding Submission.SubmissionDate, Mode=OneWay}" />
-                        <table:TableViewTextColumn Header="File Name"
-                                           Binding="{Binding Submission.FileName, Mode=OneWay}" />
+                            <controls:DataGridTextColumn Header="Student Name"
+                                             Binding="{Binding Student.StudentName}" />
 
-                        <table:TableViewNumberColumn Header="Grade" Binding="{Binding Submission.Grade, Mode=OneWay}"/>
+  
+                            <controls:DataGridTextColumn Header="Submission Date"
+                                             Binding="{Binding Submission.SubmissionDate}" />
 
-                        <table:TableViewTemplateColumn Header="Actions">
-                            <table:TableViewTemplateColumn.CellTemplate>
-                                <DataTemplate x:DataType="vm:SubmissionViewModel">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
-                                        <Button Content="Update" Command="{Binding UpdateCommand}" Foreground="BlanchedAlmond" Background="Blue"/>
-                                        <Button Content="Delete" Command="{Binding DeleteCommand}" Foreground="DarkRed" Background="Red"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </table:TableViewTemplateColumn.CellTemplate>
-                        </table:TableViewTemplateColumn>
-                    </table:TableView.Columns>
+                            <controls:DataGridTextColumn Header="File Name"
+                                             Binding="{Binding Submission.FileName}" />
 
-                </table:TableView>
+                            <controls:DataGridTextColumn Header="Grade"
+                                             Binding="{Binding Submission.Grade}" />
+
+                            <controls:DataGridTemplateColumn Header="Actions">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="vm:SubmissionViewModel">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="Download" Command="{Binding DownloadCommand}" Foreground="Aquamarine" Background="Orange" />
+                                            <Button Content="Update" Command="{Binding UpdateCommand}" Foreground="BlanchedAlmond" Background="Blue" />
+                                            <Button Content="Delete" Command="{Binding DeleteCommand}" Foreground="DarkRed" Background="Red" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>
+                </Grid>
             </StackPanel>
 
 

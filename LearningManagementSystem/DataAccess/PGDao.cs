@@ -1,7 +1,12 @@
+using CommunityToolkit.WinUI.UI.Controls;
+using LearningManagementSystem.Controls;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -85,17 +90,26 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
+        public string GetFullCommandText(NpgsqlCommand command)
+        {
+            string commandText = command.CommandText;
+            foreach (NpgsqlParameter param in command.Parameters)
+            {
+                commandText = commandText.Replace(param.ParameterName, param.Value.ToString());
+            }
+            return commandText;
+        }
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<Course>();
 
             if (this.OpenConnection())
             {
-                var sql = """
+                var sql = $"""
                     SELECT COUNT(*) OVER() AS TotalItems, Id, CourseCode, CourseDescription, DepartmentId
                     FROM Courses
-                    WHERE CourseCode LIKE @Keyword
-                    ORDER BY Id ASC
+                    WHERE CourseDescription LIKE @Keyword
+                    ORDER BY {sortBy} {sortOrder}
                     LIMIT @Take OFFSET @Skip
                     """;
 
@@ -108,6 +122,8 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
 
                 var reader = command.ExecuteReader();
+
+                // var fullCommand = GetFullCommandText(command);
 
                 int totalItems = -1;
                 while (reader.Read())
@@ -277,6 +293,28 @@ namespace LearningManagementSystem.DataAccess
                 return department.Id;
             }
             else return -1;
+        }
+
+        public void GetFullUser(User user)
+        {
+            if (this.OpenConnection())
+            {
+                var sql = "SELECT * FROM Users WHERE username=@Username AND passwordhash=@PasswordHash";
+                var command = new NpgsqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Username", user.Username);
+                command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    user.Username = reader.GetString(reader.GetOrdinal("Username"));
+                    user.PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash"));
+                    user.Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email"));
+                    user.Role = reader.GetString(reader.GetOrdinal("Role"));
+                    user.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"));
+                }
+                this.CloseConnection();
+            }
         }
 
         public int CountCourse()
@@ -536,6 +574,98 @@ namespace LearningManagementSystem.DataAccess
             return false;
         }
 
+        //public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
+        //{
+        //    try
+        //    {
+        //        bool connectionState = OpenConnection();
+        //        if (connectionState)
+        //        {
+        //            Console.WriteLine("Connection is open");
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.Message);
+        //    }
+        //    CloseConnection();
+        //    return new ObservableCollection<StudentVer2>();
+        //}
+
+        //public (ObservableCollection<StudentVer2>, int) GetStudentsById(
+        //    int ignoringCount = 0,
+        //    int fetchingCount = 0,
+        //    IEnumerable<int> chosenIds = null
+        //    )
+        //{
+        //    ObservableCollection<StudentVer2> result = new ObservableCollection<StudentVer2>();
+        //    int queryCount = 0;
+        //    if (OpenConnection())
+        //    {
+        //        var Query = """
+        //        SELECT COUNT(*) OVER() AS TotalItem, Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear
+        //        FROM Students
+        //        """;
+
+        //        if (chosenIds != null && chosenIds.Any())
+        //        {
+        //            Query += $"\nWHERE Id IN ({string.Join(", ", chosenIds)})";
+        //        }
+
+        //        Query += "\nLIMIT @Take OFFSET @Skip";
+
+        //        var Command = new NpgsqlCommand(Query, connection);
+        //        Command.Parameters.AddWithValue("@Skip", ignoringCount);
+        //        Command.Parameters.AddWithValue("@Take", fetchingCount);
+
+        //        var QueryResultReader = Command.ExecuteReader();
+
+        //        bool isTotalItemFetched = false;
+
+        //        while (QueryResultReader.Read())
+        //        {
+        //            if (!isTotalItemFetched)
+        //            {
+        //                queryCount = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("TotalItem"));
+        //                isTotalItemFetched = true;
+        //            }
+
+        //            int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
+        //            int userIdColumn = QueryResultReader.GetOrdinal("UserId");
+        //            StudentVer2 newStudent = new()
+        //            {
+        //                Id = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("Id")),
+        //                StudentCode = QueryResultReader.GetString(QueryResultReader.GetOrdinal("StudentCode")),
+        //                StudentName = QueryResultReader.GetString(QueryResultReader.GetOrdinal("StudentName")),
+        //                Email = QueryResultReader.GetString(QueryResultReader.GetOrdinal("Email")),
+        //                BirthDate = QueryResultReader.GetDateTime(QueryResultReader.GetOrdinal("BirthDate")),
+        //                PhoneNo = QueryResultReader.GetString(QueryResultReader.GetOrdinal("PhoneNo")),
+        //                UserId = QueryResultReader.IsDBNull(userIdColumn) ? (int?)null : QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("UserId")),
+        //                EnrollmentYear = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("EnrollmentYear")),
+        //                GraduationYear = QueryResultReader.IsDBNull(graduationYearColumn) ? (int?)null : QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("GraduationYear"))
+        //            };
+
+        //            result.Add(newStudent);
+        //        };
+        //    }
+        //    CloseConnection();
+        //    return (result, queryCount);
+        //}
+
+        //public (ObservableCollection<StudentVer2>, int) GetStudents(
+        //    bool fetchingAll = false,
+        //    int ignoringCount = 0,
+        //    int fetchingCount = 0,
+        //    List<(StudentField field, Ordering order)> sortCriteria = null,
+        //    List<(StudentField field, object keyword)> searchKeyword = null,
+        //    List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
+        //)
+        //{
+        //    ObservableCollection<StudentVer2> result = new ObservableCollection<StudentVer2>();
+        //    int totalItem = 0;
+        //    return (result, totalItem);
+        //}
+
         public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
         {
             try
@@ -551,7 +681,7 @@ namespace LearningManagementSystem.DataAccess
                 Console.WriteLine(e.Message);
             }
             CloseConnection();
-            return new ObservableCollection<StudentVer2>();
+            return [];
         }
 
         public (ObservableCollection<StudentVer2>, int) GetStudentsById(
@@ -560,51 +690,58 @@ namespace LearningManagementSystem.DataAccess
             IEnumerable<int> chosenIds = null
             )
         {
-            ObservableCollection<StudentVer2> result = new ObservableCollection<StudentVer2>();
+            ObservableCollection<StudentVer2> result = [];
             int queryCount = 0;
-            if (OpenConnection())
+            if (OpenConnection() == true)
             {
-                var Query = """
-                SELECT COUNT(*) OVER() AS TotalItem, Id, StudentCode, StudentName, Email, BirthDate, PhoneNo, UserId, EnrollmentYear, GraduationYear
-                FROM Students
-                """;
 
-                if (chosenIds != null && chosenIds.Any())
+                var query = """
+                    select count(*) over() as "totalitem", "id", "studentcode", "studentname", "email", "birthdate", "phoneno", "userid", "enrollmentyear", "graduationyear"
+                    from "students"
+                    """;
+
+                if (chosenIds is not null && chosenIds.Any())
                 {
-                    Query += $"\nWHERE Id IN ({string.Join(", ", chosenIds)})";
+                    query += $"\nwhere \"id\" in ({string.Join(", ", chosenIds)})";
                 }
 
-                Query += "\nLIMIT @Take OFFSET @Skip";
+                query += "\nlimit @Take offset @Skip";
 
-                var Command = new NpgsqlCommand(Query, connection);
-                Command.Parameters.AddWithValue("@Skip", ignoringCount);
-                Command.Parameters.AddWithValue("@Take", fetchingCount);
+                var command = new NpgsqlCommand(query, connection);
+                command.Parameters.Add("@Skip", NpgsqlDbType.Integer).Value = ignoringCount;
+                command.Parameters.Add("@Take", NpgsqlDbType.Integer).Value = fetchingCount;
 
-                var QueryResultReader = Command.ExecuteReader();
+                var queryResultReader = command.ExecuteReader();
 
                 bool isTotalItemFetched = false;
 
-                while (QueryResultReader.Read())
+                while (queryResultReader.Read())
                 {
                     if (!isTotalItemFetched)
                     {
-                        queryCount = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("TotalItem"));
+                        queryCount = queryResultReader.GetInt32(queryResultReader.GetOrdinal("totalitem"));
                         isTotalItemFetched = true;
                     }
 
-                    int graduationYearColumn = QueryResultReader.GetOrdinal("GraduationYear");
-                    int userIdColumn = QueryResultReader.GetOrdinal("UserId");
+                    int graduationYearColumn = queryResultReader.GetOrdinal("graduationyear");
+                    int userIdColumn = queryResultReader.GetOrdinal("userid");
                     StudentVer2 newStudent = new()
                     {
-                        Id = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("Id")),
-                        StudentCode = QueryResultReader.GetString(QueryResultReader.GetOrdinal("StudentCode")),
-                        StudentName = QueryResultReader.GetString(QueryResultReader.GetOrdinal("StudentName")),
-                        Email = QueryResultReader.GetString(QueryResultReader.GetOrdinal("Email")),
-                        BirthDate = QueryResultReader.GetDateTime(QueryResultReader.GetOrdinal("BirthDate")),
-                        PhoneNo = QueryResultReader.GetString(QueryResultReader.GetOrdinal("PhoneNo")),
-                        UserId = QueryResultReader.IsDBNull(userIdColumn) ? (int?)null : QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("UserId")),
-                        EnrollmentYear = QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("EnrollmentYear")),
-                        GraduationYear = QueryResultReader.IsDBNull(graduationYearColumn) ? (int?)null : QueryResultReader.GetInt32(QueryResultReader.GetOrdinal("GraduationYear"))
+                        Id = queryResultReader.GetInt32("id"),
+                        StudentCode = queryResultReader.GetString("studentcode"),
+                        StudentName = queryResultReader.GetString("studentname"),
+                        Email = queryResultReader.GetString("email"),
+                        BirthDate = queryResultReader.GetDateTime("birthdate"),
+                        PhoneNo = queryResultReader.GetString("phoneno"),
+                        UserId = (queryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : queryResultReader.GetInt32("userid")
+                            ),
+                        EnrollmentYear = queryResultReader.GetInt32("enrollmentyear"),
+                        GraduationYear = (queryResultReader.IsDBNull(graduationYearColumn)
+                            ? null
+                            : queryResultReader.GetInt32("graduationyear")
+                            )
                     };
 
                     result.Add(newStudent);
@@ -614,19 +751,412 @@ namespace LearningManagementSystem.DataAccess
             return (result, queryCount);
         }
 
+
         public (ObservableCollection<StudentVer2>, int) GetStudents(
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
-            List<(StudentField field, Ordering order)> sortCriteria = null,
-            List<(StudentField field, object keyword)> searchKeyword = null,
+            IEnumerable<int> chosenIds = null,
+            IEnumerable<SortCriteria> sortCriteria = null,
+            SearchCriteria searchCriteria = null,
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
         )
         {
-            ObservableCollection<StudentVer2> result = new ObservableCollection<StudentVer2>();
-            int totalItem = 0;
-            return (result, totalItem);
+            ObservableCollection<StudentVer2> result = [];
+            int queryCount = 0;
+
+            if (OpenConnection() == true)
+            {
+                var query =
+                    """
+                    select count(*) over() as "totalitem", "id", "studentcode", "studentname", "email", "birthdate", "phoneno", "userid", "enrollmentyear", "graduationyear"
+                    from "students"
+                    """;
+
+                query += '\n';
+
+                bool startingWhere = true;
+                string whereCondition(string condition)
+                {
+                    if (startingWhere)
+                    {
+                        startingWhere = false;
+                        return String.Format("where {0}\n", condition);
+                    }
+                    else
+                    {
+                        return String.Format("    and {0}\n", condition);
+                    }
+                }
+
+                if (chosenIds is not null && chosenIds.Any())
+                {
+                    query += whereCondition($"\"id\" in ({string.Join(", ", chosenIds)})");
+                }
+
+                if (searchCriteria is not null)
+                {
+                    string searchCondition = "";
+                    searchCondition = searchCriteria.Field switch
+                    {
+                        _ => $"\"{searchCriteria.Field.ToLower()}\""
+                    };
+
+                    searchCondition = searchCriteria.Pattern switch
+                    {
+                        "is not null" or "is null" => $"{searchCondition} {searchCriteria.Pattern}",
+                        _ => $"coalesce(cast({searchCondition} as text), '') {searchCriteria.Pattern}"
+                    };
+
+                    query += whereCondition(searchCondition);
+                }
+
+                List<string> sortQuery = sortCriteria
+                    ?.Select(s =>
+                    {
+                        string sortField = $"\"{s.ColumnTag.ToLower()}\"";
+                        string sortDirection = s.SortDirection == DataGridSortDirection.Ascending ? "asc" : "desc";
+                        return $"{sortField} {sortDirection}";
+                    }
+                    ).ToList()
+                    ?? [];
+
+                if (sortQuery.Count != 0)
+                {
+                    query += $"order by {string.Join(", ", sortQuery)}\n";
+                }
+
+                if (!fetchingAll)
+                {
+                    query += "limit @Take offset @Skip\n";
+                }
+
+                var command = new NpgsqlCommand(query, connection);
+
+                if (!fetchingAll)
+                {
+                    command.Parameters.Add("@Skip", NpgsqlDbType.Integer).Value = ignoringCount;
+                    command.Parameters.Add("@Take", NpgsqlDbType.Integer).Value = fetchingCount;
+                }
+
+                var queryResultReader = command.ExecuteReader();
+
+                bool isTotalItemFetched = false;
+
+                while (queryResultReader.Read())
+                {
+                    if (!isTotalItemFetched)
+                    {
+                        queryCount = queryResultReader.GetInt32(queryResultReader.GetOrdinal("totalitem"));
+                        isTotalItemFetched = true;
+                    }
+
+                    int graduationYearColumn = queryResultReader.GetOrdinal("graduationyear");
+                    int userIdColumn = queryResultReader.GetOrdinal("userid");
+                    StudentVer2 newStudent = new()
+                    {
+                        Id = queryResultReader.GetInt32("id"),
+                        StudentCode = queryResultReader.GetString("studentcode"),
+                        StudentName = queryResultReader.GetString("studentname"),
+                        Email = queryResultReader.GetString("email"),
+                        BirthDate = queryResultReader.GetDateTime("birthdate"),
+                        PhoneNo = queryResultReader.GetString("phoneno"),
+                        UserId = (queryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : queryResultReader.GetInt32("userid")
+                            ),
+                        EnrollmentYear = queryResultReader.GetInt32("enrollmentyear"),
+                        GraduationYear = (queryResultReader.IsDBNull(graduationYearColumn)
+                            ? null
+                            : queryResultReader.GetInt32("graduationyear")
+                            )
+                    };
+
+                    result.Add(newStudent);
+                };
+            }
+            CloseConnection();
+            return (result, queryCount);
         }
+
+
+        public (
+            IList<StudentVer2> addStudents,
+            int addCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+        ) AddStudents(IEnumerable<StudentVer2> students)
+        {
+            List<StudentVer2> addedStudents = [];
+            int addedCount = 0;
+            List<(StudentVer2 student, IEnumerable<string> error)> invalidStudents = [];
+
+            if (OpenConnection() == false)
+            {
+                CloseConnection();
+                return (
+                    addedStudents,
+                    addedCount,
+                    students.Select(s => (s, (new List<string> { "Can't connect to database" }).AsEnumerable() ?? [])).ToList()
+                );
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                try
+                {
+                    var checkStudentIdCommand = new NpgsqlCommand(
+                        """
+                        SELECT COUNT(*) FROM "students"
+                        WHERE "studentcode" = @StudentCode
+                        """, connection, transaction);
+                    checkStudentIdCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    int existsCount = Convert.ToInt32(checkStudentIdCommand.ExecuteScalar() ?? 0);
+                    if (existsCount > 0)
+                    {
+                        invalidStudents.Add((student, new List<string> { "Student with StudentCode " + student.StudentCode + " already exists" }));
+                        continue;
+                    }  
+
+                    var insertCommand = new NpgsqlCommand(
+                        """
+                        INSERT INTO "students" ("studentcode", "studentname", "email", "birthdate", "phoneno", "userid", "enrollmentyear", "graduationyear")
+                        VALUES (@StudentCode, @StudentName, @Email, @BirthDate, @PhoneNo, @UserId, @EnrollmentYear, @GraduationYear)
+                        """, connection, transaction);
+
+                    insertCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    insertCommand.Parameters.AddWithValue("@StudentName", student.StudentName);
+                    insertCommand.Parameters.AddWithValue("@Email", student.Email);
+                    insertCommand.Parameters.AddWithValue("@BirthDate", student.BirthDate);
+                    insertCommand.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
+                    insertCommand.Parameters.AddWithValue("@UserId", student.UserId ?? (object)DBNull.Value);
+                    insertCommand.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
+                    insertCommand.Parameters.AddWithValue("@GraduationYear", student.GraduationYear ?? (object)DBNull.Value);
+
+                    int queryResult = insertCommand.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        addedStudents.Add(student);
+                        addedCount++;
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((student, new List<string> { "Exception raised when adding to database: " + ex.Message }));
+                }
+            }
+            transaction.Dispose();
+            CloseConnection();
+            return (addedStudents, addedCount, invalidStudents);
+        }
+
+
+        public (
+            IList<StudentVer2> updateStudents,
+            int updatedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+        ) UpdateStudents(IEnumerable<StudentVer2> students)
+        {
+            List<StudentVer2> updatedStudents = [];
+            int updatedCount = 0;
+            List<(StudentVer2 student, IEnumerable<string> error)> invalidStudents = [];
+
+            if (!OpenConnection())
+            {
+                CloseConnection();
+                return (updatedStudents, updatedCount, invalidStudents);
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                try
+                {
+                    var checkExistenceCommand = new NpgsqlCommand(
+                        """
+                        SELECT COUNT(*) FROM "students"
+                        WHERE "id" = @Id
+                        """, connection, transaction);
+                    checkExistenceCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var existsCount = Convert.ToInt32(checkExistenceCommand.ExecuteScalar() ?? 0);
+                    if (existsCount == 0)
+                    {
+                        invalidStudents.Add((student, new[] { $"Student with Id {student.Id} not found" }));
+                        continue;
+                    }
+
+                    if (student.UserId is not null)
+                    {
+                        var checkUserIdCommand = new NpgsqlCommand(
+                        """
+                        SELECT COUNT(*) FROM "users"
+                        WHERE "id" = @UserId
+                        """, connection, transaction);
+                        checkUserIdCommand.Parameters.AddWithValue("@UserId", student.UserId);
+
+                        var userIdExistsCount = Convert.ToInt32(checkUserIdCommand.ExecuteScalar() ?? 0);
+                        if (userIdExistsCount == 0)
+                        {
+                            invalidStudents.Add((student, new[] { $"User with Id {student.UserId} not found" }));
+                            continue;
+                        }
+                    }
+
+                    var checkNewCodeCommand = new NpgsqlCommand(
+                        """
+                        SELECT COUNT(*) FROM "students"
+                        WHERE "studentcode" = @StudentCode AND "id" != @Id
+                        """, connection, transaction);
+                    checkNewCodeCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    checkNewCodeCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var newCodeExistsCount = Convert.ToInt32(checkNewCodeCommand.ExecuteScalar() ?? 0);
+                    if (newCodeExistsCount > 0)
+                    {
+                        invalidStudents.Add((student, new[] { $"Student with StudentCode {student.StudentCode} already exists" }));
+                        continue;
+                    }
+
+                    var updateCommand = new NpgsqlCommand(
+                        """
+                        UPDATE "students"
+                        SET "studentcode" = @StudentCode, "studentname" = @StudentName, "email" = @Email, 
+                            "birthdate" = @BirthDate, "phoneno" = @PhoneNo, "userid" = @UserId, 
+                            "enrollmentyear" = @EnrollmentYear, "graduationyear" = @GraduationYear
+                        WHERE "id" = @Id
+                        """, connection, transaction);
+                    updateCommand.Parameters.AddWithValue("@Id", student.Id);
+                    updateCommand.Parameters.AddWithValue("@StudentCode", student.StudentCode);
+                    updateCommand.Parameters.AddWithValue("@StudentName", student.StudentName);
+                    updateCommand.Parameters.AddWithValue("@Email", student.Email);
+                    updateCommand.Parameters.AddWithValue("@BirthDate", student.BirthDate);
+                    updateCommand.Parameters.AddWithValue("@PhoneNo", student.PhoneNo);
+                    updateCommand.Parameters.AddWithValue("@UserId", student.UserId ?? (object)DBNull.Value);
+                    updateCommand.Parameters.AddWithValue("@EnrollmentYear", student.EnrollmentYear);
+                    updateCommand.Parameters.AddWithValue("@GraduationYear", student.GraduationYear ?? (object)DBNull.Value);
+
+                    int queryResult = updateCommand.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        updatedStudents.Add(student);
+                        updatedCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((student, new[] { "Exception raised when updating to database: " + ex.Message }));
+                }
+            }
+            transaction.Commit();
+            transaction.Dispose();
+
+            CloseConnection();
+            return (updatedStudents, updatedCount, invalidStudents);
+        }
+
+
+        public (
+            IList<StudentVer2> deleteStudents,
+            int deletedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+        ) DeleteStudents(IEnumerable<StudentVer2> students)
+        {
+            List<StudentVer2> deletedStudents = [];
+            int deletedCount = 0;
+            List<(StudentVer2 student, IEnumerable<string> error)> invalidStudents = [];
+
+            if (!OpenConnection())
+            {
+                CloseConnection();
+                return (deletedStudents, deletedCount, invalidStudents);
+            }
+
+            using var transaction = connection.BeginTransaction();
+            foreach (var student in students)
+            {
+                try
+                {
+                    if (student.Id == -1)
+                    {
+                        invalidStudents.Add((student, new[] { "Newly created student can't be deleted" }));
+                        continue;
+                    }
+
+                    var checkExistenceCommand = new NpgsqlCommand(
+                        """
+                        SELECT COUNT(*) FROM "students"
+                        WHERE "id" = @Id
+                        """, connection, transaction);
+                    checkExistenceCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    var existsCount = Convert.ToInt32(checkExistenceCommand.ExecuteScalar() ?? 0);
+                    if (existsCount == 0)
+                    {
+                        invalidStudents.Add((student, new[] { $"Student with Id {student.Id} not found" }));
+                        continue;
+                    }
+
+                    var checkReferenceCommand = new NpgsqlCommand(
+                        """
+                        SELECT 
+                            (SELECT COUNT(*) FROM "enrollments" WHERE "studentid" = @StudentId) 
+                        AS "TotalReferences"
+                        """, connection, transaction);
+                    checkReferenceCommand.Parameters.AddWithValue("@StudentId", student.Id);
+
+                    var referenceCount = Convert.ToInt32(checkReferenceCommand.ExecuteScalar() ?? 0);
+                    if (referenceCount > 0)
+                    {
+                        invalidStudents.Add((student, new[] { $"Student with Id {student.Id} has {referenceCount} references" }));
+                        continue;
+                    }
+
+                    if (student.UserId is not null)
+                    {
+                        var deletingUserCommand = new NpgsqlCommand(
+                            """
+                            DELETE FROM "users" 
+                            WHERE "id" = @UserId
+                            """, connection, transaction);
+                        deletingUserCommand.Parameters.AddWithValue("@UserId", student.UserId);
+
+                        int userQueryResult = deletingUserCommand.ExecuteNonQuery();
+                        if (userQueryResult == 0)
+                        {
+                            invalidStudents.Add((student, new[] { $"User with Id {student.UserId} referenced by this student not found" }));
+                            continue;
+                        }
+                    }
+
+                    var deletingStudentCommand = new NpgsqlCommand(
+                        """
+                        DELETE FROM "students" 
+                        WHERE "id" = @Id
+                        """, connection, transaction);
+                    deletingStudentCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                    int queryResult = deletingStudentCommand.ExecuteNonQuery();
+                    if (queryResult > 0)
+                    {
+                        deletedStudents.Add(student);
+                        deletedCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    invalidStudents.Add((student, new[] { "Exception raised when deleting from database: " + ex.Message }));
+                }
+            }
+            transaction.Commit();
+            transaction.Dispose();
+
+            CloseConnection();
+            return (deletedStudents, deletedCount, invalidStudents);
+        }
+
+
 
         // --------------------------- RESOURCE --------------------------- //
         public List<ResourceCategory> findAllResourceCategories()
@@ -817,7 +1347,7 @@ namespace LearningManagementSystem.DataAccess
                 {
                     Id = 1,
                     CourseId = 1,
-                    ClassCode = "APCS_1",
+                    ClassCode = "CQ_1",
                     CycleId = 1,
                     ClassStartDate = new DateTime(2022, 1, 1),
                     ClassEndDate = new DateTime(2022, 5, 1)
@@ -826,7 +1356,7 @@ namespace LearningManagementSystem.DataAccess
                 {
                     Id = 2,
                     CourseId = 2,
-                    ClassCode = "APCS_2",
+                    ClassCode = "CQ_2",
                     CycleId = 1,
                     ClassStartDate = new DateTime(2022, 1, 1),
                     ClassEndDate = new DateTime(2022, 5, 1)
@@ -1524,6 +2054,194 @@ namespace LearningManagementSystem.DataAccess
                     this.CloseConnection();
                 }
             }
+        }
+
+        public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
+        {
+            var result = new List<User>();
+
+            if (this.OpenConnection())
+            {
+                var sql = $"""
+                    SELECT COUNT(*) OVER() AS TotalItems, id, username , passwordhash , email, role, createdat
+                    FROM Users
+                    WHERE username LIKE @Keyword
+                    ORDER BY {sortBy} {sortOrder}
+                    LIMIT @Take OFFSET @Skip
+                    """;
+
+                var skip = (page - 1) * pageSize;
+                var take = pageSize;
+
+                var command = new NpgsqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Skip", skip);
+                command.Parameters.AddWithValue("@Take", take);
+                command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
+
+                var reader = command.ExecuteReader();
+
+                int totalItems = -1;
+                while (reader.Read())
+                {
+                    if (totalItems == -1)
+                    {
+                        totalItems = reader.GetInt32(reader.GetOrdinal("TotalItems"));
+                    }
+                    result.Add(new User
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        Username = reader.GetString(reader.GetOrdinal("username")),
+                        PasswordHash = reader.GetString(reader.GetOrdinal("passwordhash")),
+                        Email = reader.GetString(reader.GetOrdinal("email")),
+                        Role = reader.GetString(reader.GetOrdinal("role")),
+                        CreatedAt = reader.GetDateTime(reader.GetOrdinal("createdat"))
+                    });
+                }
+
+                this.CloseConnection();
+                return new Tuple<int, List<User>>(totalItems, result);
+            }
+            else
+            {
+                this.CloseConnection();
+                return new Tuple<int, List<User>>(-1, null);
+            }
+        }
+
+        public int InsertUser(User user)
+        {
+            if (this.OpenConnection())
+            {
+                var sql = """
+                    INSERT INTO Users (username, passwordhash, email, role, createdat)
+                    VALUES (@Username, @PasswordHash, @Email, @Role, @CreatedAt)
+                    RETURNING Id;
+                    """;
+
+                var command = new NpgsqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Username", user.Username);
+                command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+                command.Parameters.AddWithValue("@Email", user.Email);
+                command.Parameters.AddWithValue("@Role", user.Role);
+                command.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
+
+                int id = (int)command.ExecuteScalar();
+                user.Id = id;
+
+                this.CloseConnection();
+
+                return id > 0 ? 1 : -1;
+            }
+            this.CloseConnection();
+            return -1;
+        }
+
+        public void UpdateUser(User user)
+        {
+            if (this.OpenConnection())
+            {
+                var sql = "UPDATE Users SET Username=@Username, PasswordHash=@PasswordHash, Email=@Email, Role=@Role WHERE Id=@Id";
+                var command = new NpgsqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@Username", user.Username);
+                command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+                command.Parameters.AddWithValue("@Email", user.Email);
+                command.Parameters.AddWithValue("@Role", user.Role);
+                command.Parameters.AddWithValue("@Id", user.Id);
+
+                command.ExecuteNonQuery();
+
+                this.CloseConnection();
+            }
+        }
+
+        public void RemoveUserByID(int userId)
+        {
+            if (this.OpenConnection())
+            {
+                var sql = "DELETE FROM Users WHERE Id=@Id";
+                var command = new NpgsqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@Id", userId);
+
+                command.ExecuteNonQuery();
+
+                this.CloseConnection();
+            }
+        }
+
+        public int CountUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllCourseDecriptions()
+        {
+            var result = new List<string>();
+            try
+            {
+                if (this.OpenConnection())
+                {
+                    var sql = "SELECT Coursedescription FROM Courses";
+                    var command = new NpgsqlCommand(sql, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(reader.GetOrdinal("coursedescription")));
+                    }
+                    if (result.Count > 0)
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    this.CloseConnection();
+                }
+            }
+            return result;
+        }
+
+        public List<string> GetAllUsernames()
+        {
+            var result = new List<string>();
+            try
+            {
+                if (this.OpenConnection())
+                {
+                    var sql = "SELECT Username FROM Users";
+                    var command = new NpgsqlCommand(sql, connection);
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(reader.GetOrdinal("username")));
+                    }
+                    if (result.Count > 0)
+                    {
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    this.CloseConnection();
+                }
+            }
+            return result;
         }
     }
 }

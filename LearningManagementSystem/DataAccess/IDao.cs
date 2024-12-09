@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Helpers;
+﻿using LearningManagementSystem.Controls;
+using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Composition;
@@ -13,13 +14,9 @@ namespace LearningManagementSystem.DataAccess
 {
     public interface IDao
     {
-        Tuple<int, List<Course>> GetAllCourses(
-            int page = 1,
-            int pageSize = 10,
-            string keyword = "",
-            bool nameAscending = false
-            );
+        public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
 
+        List<string> GetAllCourseDecriptions();
         int InsertCourse(Course course);
         void UpdateCourse(Course course);
         void RemoveCourseByID(int courseId);
@@ -36,6 +33,18 @@ namespace LearningManagementSystem.DataAccess
         int InsertDepartment(Department department);
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
+
+        public void GetFullUser(User user);
+
+        Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
+
+        List<string> GetAllUsernames();
+        int InsertUser(User user);
+        void UpdateUser(User user);
+        void RemoveUserByID(int userId);
+
+        int CountUser();
+
 
         int CountDepartments();
         int FindDepartmentID(Department department);
@@ -60,10 +69,32 @@ namespace LearningManagementSystem.DataAccess
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
-            List<(StudentField field, Ordering order)> sortCriteria = null,
-            List<(StudentField field, object keyword)> searchKeyword = null,
+            IEnumerable<int> chosenIds = null,
+            IEnumerable<SortCriteria> sortCriteria = null,
+            SearchCriteria searchCriteria = null,
             List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
-            );
+        )
+        {
+            return (null, 0);
+        }
+        public (
+            IList<StudentVer2> addStudents,
+            int addCount,
+            IList<(StudentVer2 student, IEnumerable<String> error)> invalidStudentsInfo
+            ) AddStudents(IEnumerable<StudentVer2> students);
+
+        public (
+            IList<StudentVer2> updateStudents,
+            int updatedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) UpdateStudents(IEnumerable<StudentVer2> students);
+
+        public (
+            IList<StudentVer2> deleteStudents,
+            int deletedCount,
+            IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
+            ) DeleteStudents(IEnumerable<StudentVer2> students);
+
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);
