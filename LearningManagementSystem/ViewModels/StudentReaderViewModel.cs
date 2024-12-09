@@ -1,18 +1,14 @@
 ﻿#nullable enable
-using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using Microsoft.UI.Xaml.Data;
-using Org.BouncyCastle.Tls;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {

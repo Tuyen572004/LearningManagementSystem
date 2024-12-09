@@ -1,13 +1,6 @@
-using CommunityToolkit.Mvvm.Input;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Views;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Mysqlx.Prepare;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
-using Windows.UI.WebUI;
 
 namespace LearningManagementSystem.ViewModels
 {
