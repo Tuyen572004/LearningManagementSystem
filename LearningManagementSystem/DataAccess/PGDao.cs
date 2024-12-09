@@ -1347,7 +1347,7 @@ namespace LearningManagementSystem.DataAccess
                 {
                     Id = 1,
                     CourseId = 1,
-                    ClassCode = "APCS_1",
+                    ClassCode = "CQ_1",
                     CycleId = 1,
                     ClassStartDate = new DateTime(2022, 1, 1),
                     ClassEndDate = new DateTime(2022, 5, 1)
@@ -1356,7 +1356,7 @@ namespace LearningManagementSystem.DataAccess
                 {
                     Id = 2,
                     CourseId = 2,
-                    ClassCode = "APCS_2",
+                    ClassCode = "CQ_2",
                     CycleId = 1,
                     ClassStartDate = new DateTime(2022, 1, 1),
                     ClassEndDate = new DateTime(2022, 5, 1)

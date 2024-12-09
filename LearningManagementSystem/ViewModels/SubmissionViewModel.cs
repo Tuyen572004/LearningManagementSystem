@@ -107,7 +107,7 @@ namespace LearningManagementSystem.ViewModels
 
         public async Task<bool> CanUpdateSubmission()
         {
-            return User.Role == "Student" && DateTime.Now < Assignment.DueDate;
+            return User.Role == "student" && DateTime.Now < Assignment.DueDate;
         }
 
         public async Task UpdateSubmissionDetails(StorageFile selectedFile)
@@ -152,7 +152,7 @@ namespace LearningManagementSystem.ViewModels
         public bool CanDeleteSubmission()
         {
             var role = UserService.GetCurrentUser().Result.Role.ToString();
-            return role == "Student" && DateTime.Now < Assignment.DueDate;
+            return role == "student" && DateTime.Now < Assignment.DueDate;
         }
     }
 }
