@@ -82,6 +82,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.1.240916" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="EntityFramework" Version="6.5.1" />
+		<PackageReference Include="EPPlus" Version="7.5.2" />
 		<PackageReference Include="Fody" Version="6.9.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -90,7 +91,9 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
 		<PackageReference Include="Npgsql" Version="9.0.2" />
+		<PackageReference Include="NPOI" Version="2.7.2" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+		<PackageReference Include="WinUI.TableView" Version="1.2.2" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

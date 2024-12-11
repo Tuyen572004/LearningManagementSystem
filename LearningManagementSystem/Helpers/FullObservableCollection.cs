@@ -26,6 +26,7 @@ namespace LearningManagementSystem.Helpers
             }
         }
 
+
         private void FullObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)

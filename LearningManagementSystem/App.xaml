@@ -8,11 +8,11 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <!-- Other app resources here -->
         </ResourceDictionary>
+        
+        
     </Application.Resources>
 
 </Application>

@@ -8,7 +8,7 @@
     xmlns:h="using:LearningManagementSystem.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=vm:AssignmentViewModel}"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -17,6 +17,7 @@
         <h:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
         <h:DateTimeToTimeSpanConverter x:Key="DateTimeToTimeSpanConverter"/>
         <h:NumberToTextConverter x:Key="NumberToTextConverter"/>
+
     </Page.Resources>
 
     <ScrollView ScrollViewer.HorizontalScrollBarVisibility="Visible">
@@ -125,26 +126,44 @@
                            Mode=OneWay,
                            Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                <TextBlock Text="Showing all submissions:" FontWeight="Bold" 
-                       Foreground="Gray" FontStyle="Italic" Margin="10,0,0,0"/>
+
+                <Grid Margin="10,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Showing all submissions:" 
+               Grid.Column="0"
+               FontWeight="Bold" Foreground="Gray" FontStyle="Italic" />
+                    <TextBox PlaceholderText="Search by ID or Student Name..." 
+                             TextChanged="TextBox_TextChanged"
+                             x:Name="searchBox"
+                            Grid.Column="1" Margin="30,0,30,0"/>
+                </Grid>
+
+                <Button Content="Export to CSV" Command="{x:Bind AssignmentViewModel.ExportToExcelCommand}" Margin="10,10,10,10"/>
 
                 <Grid>
                     <controls:DataGrid x:Name="dataGridTeacherView"
-                           Margin="16"
-                           AutoGenerateColumns="False"
-                           ItemsSource="{x:Bind AssignmentViewModel.Submissions}">
+                       Margin="16"
+                       AutoGenerateColumns="False"
+                       ItemsSource="{x:Bind AssignmentViewModel.Submissions, Mode=OneWay}"
+                       Sorting="dataGridTeacherView_Sorting"
+                       CanUserSortColumns="True">
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTextColumn Header="Id"
-                                             Binding="{Binding Student.StudentCode}" />
-                            <controls:DataGridTextColumn Header="Student Name"
-                                             Binding="{Binding Student.StudentName}" />
-                            <controls:DataGridTextColumn Header="Submission Date"
-                                             Binding="{Binding Submission.SubmissionDate}" />
-                            <controls:DataGridTextColumn Header="File Name"
-                                             Binding="{Binding Submission.FileName}" />
-                            <controls:DataGridTextColumn Header="Grade"
-                                             Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=LostFocus, Converter={StaticResource NumberToTextConverter}}"/>
-                            <controls:DataGridTemplateColumn Header="Actions">
+                            <controls:DataGridTextColumn Header="Id" Tag="StudentCode" CanUserSort="True"
+                                         Binding="{Binding Student.StudentCode}" />
+                            <controls:DataGridTextColumn Header="Student Name" Tag="StudentName"
+                                         Binding="{Binding Student.StudentName}" />
+                            <controls:DataGridTextColumn Header="Submission Date" 
+                                                         Tag="SubmissionDate" CanUserSort="True"
+                                         Binding="{Binding Submission.SubmissionDate}" />
+                            <controls:DataGridTextColumn Header="File Name" Tag="FileName"
+                                         Binding="{Binding Submission.FileName}" />
+                            <controls:DataGridTextColumn Header="Grade" Tag="Grade" CanUserSort="True"
+                                         Binding="{Binding Submission.Grade, Mode=TwoWay, UpdateSourceTrigger=LostFocus, Converter={StaticResource NumberToTextConverter}}"/>
+                            <controls:DataGridTemplateColumn Header="Actions" Tag="Actions"> 
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate x:DataType="vm:SubmissionViewModel">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -157,7 +176,6 @@
                         </controls:DataGrid.Columns>
                     </controls:DataGrid>
                 </Grid>
-
 
             </StackPanel>
 
@@ -179,19 +197,19 @@
                 <Grid>
                     <controls:DataGrid x:Name="dataGrid"
                            Margin="16"
-                           ItemsSource="{x:Bind AssignmentViewModel.Submissions}"
+                           ItemsSource="{x:Bind AssignmentViewModel.Submissions, Mode=OneWay}"
                            Background="Black"
                            AutoGenerateColumns="False"
                            HeadersVisibility="Column">
                         <controls:DataGrid.Columns>
-             
+
                             <controls:DataGridTextColumn Header="Id"
                                              Binding="{Binding Student.StudentCode}" />
 
                             <controls:DataGridTextColumn Header="Student Name"
                                              Binding="{Binding Student.StudentName}" />
 
-  
+
                             <controls:DataGridTextColumn Header="Submission Date"
                                              Binding="{Binding Submission.SubmissionDate}" />
 

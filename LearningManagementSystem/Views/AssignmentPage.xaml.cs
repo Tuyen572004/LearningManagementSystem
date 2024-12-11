@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
@@ -8,6 +9,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -83,7 +86,43 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        private void dataGridTeacherView_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
+        {
+            if(e.Column.Tag.ToString() == "StudentCode")
+            {
+                if(e.Column.SortDirection==null||e.Column.SortDirection==DataGridSortDirection.Ascending) {
+                    AssignmentViewModel.Submissions.OrderBy(submission => submission.Student.StudentCode);
+                }
+                else
+                {
+                    AssignmentViewModel.Submissions.OrderByDescending(submission => submission.Student.StudentCode);
+                }
+            }
+            else if (e.Column.Tag.ToString() == "SubmissionDate")
+            {
+                if(e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                    AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.SubmissionDate);
+                }
+                else
+                {
+                    AssignmentViewModel.Submissions.OrderByDescending(submission => submission.Submission.SubmissionDate);
+                }
+            }
+            else if (e.Column.Tag.ToString() == "Grade")
+            {
+                if (e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                    AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.Grade);
+                }
+                else
+                {
+                    AssignmentViewModel.Submissions.OrderByDescending(submission => submission.Submission.Grade);
+                }
+            }
+        }
 
-
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dataGridTeacherView.ItemsSource=new ObservableCollection<SubmissionViewModel>(AssignmentViewModel.Submissions.Where(submission => submission.Student.StudentCode.Contains(searchBox.Text)));
+        }
     }
 }

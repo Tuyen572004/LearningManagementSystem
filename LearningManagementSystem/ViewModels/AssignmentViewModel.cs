@@ -1,15 +1,24 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CloudinaryDotNet.Core;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
@@ -86,6 +95,71 @@ namespace LearningManagementSystem.ViewModels
 
         public FullObservableCollection<SubmissionViewModel> Submissions { get; set; }
 
+        public ICommand ExportToExcelCommand { get; }
+
+
+        private async Task ExportToExcel()
+        {
+            try
+            {
+                
+                var folder = await FileHelper.ChooseFolder();
+                if (folder == null) return;
+
+               
+                string filename = $"{Assignment.Title}_Submissions.xlsx";
+                string filePath = System.IO.Path.Combine(folder.Path, filename);
+
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Submissions");
+
+                IRow headerRow = sheet.CreateRow(0);
+                headerRow.CreateCell(0).SetCellValue("Id");
+                headerRow.CreateCell(1).SetCellValue("Student Name");
+                headerRow.CreateCell(2).SetCellValue("Submission Date");
+                headerRow.CreateCell(3).SetCellValue("File Name");
+                headerRow.CreateCell(4).SetCellValue("Grade");
+
+                for (int i = 0; i < Submissions.Count; i++)
+                {
+                    var submission = Submissions[i];
+                    IRow row = sheet.CreateRow(i + 1);
+                    row.CreateCell(0).SetCellValue(submission.Student.StudentCode);
+                    row.CreateCell(1).SetCellValue(submission.Student.StudentName);
+                    row.CreateCell(2).SetCellValue(submission.Submission.SubmissionDate.ToString("yyyy-MM-dd"));
+                    row.CreateCell(3).SetCellValue(submission.Submission.FileName);
+                    if(submission.Submission.Grade != null)
+                    {
+                        row.CreateCell(4).SetCellValue(submission.Submission.Grade.Value);
+                    }
+                    else
+                    {
+                        row.CreateCell(4).SetCellValue("Not Graded");
+                    }
+                }
+
+                for (int col = 0; col < 5; col++)
+                {
+                    sheet.AutoSizeColumn(col);
+                }
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(fs);
+                }
+
+                workbook.Close();
+
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Export Successful", $"Submissions exported to {filePath}"));
+            }
+            catch (Exception ex)
+            {
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}"));
+            }
+        }
+
+
+
         public User User { get; set; }
         private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
 
@@ -113,6 +187,7 @@ namespace LearningManagementSystem.ViewModels
         public ICommand DeleteAttachmentCommand { get; }
 
         public ICommand AddAssignmentCommand { get; }
+
 
 
         private readonly IDao _dao = new SqlDao();
@@ -154,6 +229,8 @@ namespace LearningManagementSystem.ViewModels
             EditingChanged += UpdateEditingDependentProperties;
 
             Submissions.CollectionChanged += OnSubmissionsChanged;
+
+            ExportToExcelCommand = new AsyncRelayCommand(ExportToExcel);
         }
 
         private bool CanAddAssignment()
@@ -230,7 +307,7 @@ namespace LearningManagementSystem.ViewModels
 
         private bool canSubmitAssignment()
         {
-            return true;
+            return SubmitVisibility;
         }
 
         public async void checkRole()
@@ -347,6 +424,9 @@ namespace LearningManagementSystem.ViewModels
             RaisePropertyChanged(nameof(IsNotEditing));
             RaisePropertyChanged(nameof(EditButtonText));
         }
+
+
+
 
     }
 }
