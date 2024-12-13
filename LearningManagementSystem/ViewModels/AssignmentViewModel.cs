@@ -97,16 +97,18 @@ namespace LearningManagementSystem.ViewModels
 
         public ICommand ExportToExcelCommand { get; }
 
+        public bool IsBusy { get; set; }
+
 
         private async Task ExportToExcel()
         {
             try
             {
-                
                 var folder = await FileHelper.ChooseFolder();
                 if (folder == null) return;
 
-               
+                IsBusy = true;
+
                 string filename = $"{Assignment.Title}_Submissions.xlsx";
                 string filePath = System.IO.Path.Combine(folder.Path, filename);
 
@@ -128,7 +130,7 @@ namespace LearningManagementSystem.ViewModels
                     row.CreateCell(1).SetCellValue(submission.Student.StudentName);
                     row.CreateCell(2).SetCellValue(submission.Submission.SubmissionDate.ToString("yyyy-MM-dd"));
                     row.CreateCell(3).SetCellValue(submission.Submission.FileName);
-                    if(submission.Submission.Grade != null)
+                    if (submission.Submission.Grade != null)
                     {
                         row.CreateCell(4).SetCellValue(submission.Submission.Grade.Value);
                     }
@@ -149,11 +151,12 @@ namespace LearningManagementSystem.ViewModels
                 }
 
                 workbook.Close();
-
+                IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Export Successful", $"Submissions exported to {filePath}"));
             }
             catch (Exception ex)
             {
+                IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}"));
             }
         }
@@ -196,6 +199,7 @@ namespace LearningManagementSystem.ViewModels
 
         // Events for dependencies
         public event Action EditingChanged;
+
 
         public AssignmentViewModel()
         {
@@ -242,14 +246,22 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(Assignment.Title))
+                {
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", "Assignment title cannot be empty"));
+                    return;
+                }
+                IsBusy = true;
                 _dao.AddAssignment(Assignment);
-                // send success message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Assignment Added", "Assignment added successfully"));
+                IsBusy = false;
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Success", "Assignment added successfully"));
             }
             catch (Exception e)
             {
+                IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}"));
             }
+
         }
 
         private bool CanDeleteAttachment()
@@ -261,6 +273,7 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
+                IsBusy = true;
                 await _cloudinaryService.DeleteFileByUriAsync(Assignment.FilePath);
 
                 _dao.DeleteAttachmentByAssignmentId(Assignment.Id); ;
@@ -268,10 +281,12 @@ namespace LearningManagementSystem.ViewModels
                 Assignment.FileName = null;
                 Assignment.FilePath = null;
                 Assignment.FileType = null;
+                IsBusy = false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error deleting submission: {ex.Message}");
+                IsBusy = false;
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}"));
             }
         }
 
@@ -288,11 +303,12 @@ namespace LearningManagementSystem.ViewModels
 
                 if (selectedFolder == null) return; // User canceled folder selection
 
-                // build path to file
+                IsBusy = true;
                 var targetFilePath = selectedFolder.Path;
                 targetFilePath = Path.Combine(targetFilePath, Assignment.FileName);
 
                 await _cloudinaryService.DownloadFileAsync(Assignment.FilePath, targetFilePath);
+                IsBusy = false;
 
                 // Send success message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Successful", $"File downloaded successfully to {selectedFolder.Path}"));
@@ -300,6 +316,7 @@ namespace LearningManagementSystem.ViewModels
             }
             catch (Exception ex)
             {
+                IsBusy = false;
                 // Send error message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}"));
             }
@@ -346,53 +363,60 @@ namespace LearningManagementSystem.ViewModels
 
             if (file != null)
             {
-                string filePath = await _cloudinaryService.UploadFileAsync(file.Path);
-                string fileName = file.Name;
-                string fileType = file.FileType;
-
-                var submission = new Submission
+                try
                 {
-                    AssignmentId = Assignment.Id,
-                    UserId = User.Id,
-                    SubmissionDate = DateTime.Now,
-                    FilePath = filePath,
-                    FileName = fileName,
-                    FileType = fileType
-                };
+                    IsBusy = true;
+                    string filePath = await _cloudinaryService.UploadFileAsync(file.Path);
+                    string fileName = file.Name;
+                    string fileType = file.FileType;
 
-                // Save submission to your database here
-                _dao.SaveSubmission(submission);
+                    var submission = new Submission
+                    {
+                        AssignmentId = Assignment.Id,
+                        UserId = User.Id,
+                        SubmissionDate = DateTime.Now,
+                        FilePath = filePath,
+                        FileName = fileName,
+                        FileType = fileType
+                    };
 
-                Submissions.Add(new SubmissionViewModel(submission, Assignment));
+                    // Save submission to your database here
+                    _dao.SaveSubmission(submission);
+                    Submissions.Add(new SubmissionViewModel(submission, Assignment));
+                    IsBusy = false;
+                }
+                catch (Exception ex)
+                {
+                    IsBusy = false;
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}"));
+                }
+
             }
         }
 
         public async Task DeleteSubmission(SubmissionViewModel model)
         {
-            try
+            if (model.Submission.FilePath != null)
             {
-                if (model.Submission.FilePath != null)
-                {
-                    await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
-                }
-
-
-                _dao.DeleteSubmissionById(model.Submission.Id);
-
-                Submissions.Remove(model);
+                await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
             }
-            catch (Exception ex)
-            {
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}"));
-            }
+            _dao.DeleteSubmissionById(model.Submission.Id);
+
+            Submissions.Remove(model);
         }
 
         private void ToggleEditMode()
         {
             if (IsEditing)
             {
+                if (string.IsNullOrWhiteSpace(Assignment.Title))
+                {
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", "Assignment title cannot be empty"));
+                    return;
+                }
                 // Save changes
                 _dao.UpdateAssignment(Assignment);
+
             }
             IsEditing = !IsEditing;
         }
@@ -402,12 +426,22 @@ namespace LearningManagementSystem.ViewModels
             StorageFile selectedFile = await FileHelper.ChooseFile();
             if (selectedFile == null) return; // User canceled file selection
 
-            // Save the new file
-            Assignment.FilePath = await _cloudinaryService.UploadFileAsync(selectedFile.Path);
+            try
+            {
+                IsBusy = true;
+                // Save the new file
+                Assignment.FilePath = await _cloudinaryService.UploadFileAsync(selectedFile.Path);
 
-            // Update assignment attachment details
-            Assignment.FileName = selectedFile.Name;
-            Assignment.FileType = selectedFile.FileType;
+                // Update assignment attachment details
+                Assignment.FileName = selectedFile.Name;
+                Assignment.FileType = selectedFile.FileType;
+                IsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                IsBusy = false;
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}"));
+            }
 
         }
 

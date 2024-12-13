@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -38,6 +39,11 @@ namespace LearningManagementSystem.Views
             {
                 await ShowMessageDialog(m.Title, m.Value);
             });
+
+            WeakReferenceMessenger.Default.Register<BusyMessage>(this, (r, m) =>
+            {
+                AssignmentViewModel.IsBusy = m.Value;
+            });
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into 1 assignment to see it in detail)
@@ -47,15 +53,38 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private async void  BackButton_Click(object sender, RoutedEventArgs e)
         {
             //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
-            Frame.GoBack();
+
+            if (AssignmentViewModel.IsEditing)
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Confirm",
+                    Content = "You have unsaved changes. Do you really want to leave?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
+                };
+
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+            }
+            else
+            {
+                Frame.GoBack();
+            }
         }
+        
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
+            WeakReferenceMessenger.Default.Unregister<BusyMessage>(this);
             base.OnNavigatedFrom(e);
         }
 
@@ -122,7 +151,7 @@ namespace LearningManagementSystem.Views
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            dataGridTeacherView.ItemsSource=new ObservableCollection<SubmissionViewModel>(AssignmentViewModel.Submissions.Where(submission => submission.Student.StudentCode.Contains(searchBox.Text)));
+            dataGridTeacherView.ItemsSource = new ObservableCollection<SubmissionViewModel>(AssignmentViewModel.Submissions.Where(submission => submission.Student.StudentCode.Contains(searchBox.Text)));
         }
     }
 }

@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
 
-
 namespace LearningManagementSystem.ViewModels
 {
     public class SubmissionViewModel : BaseViewModel
@@ -29,11 +28,9 @@ namespace LearningManagementSystem.ViewModels
 
         private CloudinaryService _cloudinaryService = new CloudinaryService();
 
-
         private readonly IDao _dao;
         private readonly FileHelper FileHelper = new FileHelper();
         private readonly UserService userService = new UserService();
-
 
         public ICommand UpdateCommand { get; }
         public ICommand DownloadCommand { get; }
@@ -50,8 +47,8 @@ namespace LearningManagementSystem.ViewModels
             Assignment = new Assignment();
             User = UserService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
-            DownloadCommand = new RelayCommand(DownloadSubmission);
-            DeleteCommand = new RelayCommand(DeleteSubmission,CanDeleteSubmission);
+            DownloadCommand = new AsyncRelayCommand(DownloadSubmission);
+            DeleteCommand = new AsyncRelayCommand(DeleteSubmission, CanDeleteSubmission);
         }
 
         public SubmissionViewModel(Submission submission, Assignment assignment)
@@ -62,10 +59,9 @@ namespace LearningManagementSystem.ViewModels
             Assignment = assignment;
             User = UserService.GetCurrentUser().Result;
             UpdateCommand = new AsyncRelayCommand(UpdateSubmission);
-            DownloadCommand = new RelayCommand(DownloadSubmission);
-            DeleteCommand = new RelayCommand(DeleteSubmission, CanDeleteSubmission);
+            DownloadCommand = new AsyncRelayCommand(DownloadSubmission);
+            DeleteCommand = new AsyncRelayCommand(DeleteSubmission, CanDeleteSubmission);
             GradeCommand = new RelayCommand(GradeSubmission, CanGradeSubmission);
-
         }
 
         private bool CanGradeSubmission()
@@ -82,30 +78,32 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
-
                 StorageFile selectedFile = await FileHelper.ChooseFile();
                 if (selectedFile == null) return; // User canceled file selection
 
+                UpdateBusyStatus(true);
+
+                String oldFile = Submission.FilePath;
 
                 // Update submission details
                 await UpdateSubmissionDetails(selectedFile);
-
-                // delete old file
-                await _cloudinaryService.DeleteFileByUriAsync(Submission.FilePath);
-
-                RaisePropertyChanged(nameof(Submission));
-
                 // Update the submission in the database
                 _dao.UpdateSubmission(Submission);
+                RaisePropertyChanged(nameof(Submission));
 
+                // delete old file
+                await _cloudinaryService.DeleteFileByUriAsync(oldFile);
+
+                UpdateBusyStatus(false);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error updating assignment: {ex.Message}");
+                UpdateBusyStatus(false);
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}"));
             }
         }
 
-        public async Task<bool> CanUpdateSubmission()
+        public bool CanUpdateSubmission()
         {
             return User.Role == "student" && DateTime.Now < Assignment.DueDate;
         }
@@ -115,16 +113,18 @@ namespace LearningManagementSystem.ViewModels
             Submission.SubmissionDate = DateTime.Now;
             Submission.FileName = selectedFile.Name;
             Submission.FileType = selectedFile.FileType;
-            Submission.FilePath =await _cloudinaryService.UploadFileAsync(selectedFile.Path);
+            Submission.FilePath = await _cloudinaryService.UploadFileAsync(selectedFile.Path);
         }
 
-        public async void DownloadSubmission()
+        public async Task DownloadSubmission()
         {
             try
             {
                 StorageFolder selectedFolder = await FileHelper.ChooseFolder();
 
-                if(selectedFolder == null) return; // User canceled folder selection
+                if (selectedFolder == null) return; // User canceled folder selection
+
+                UpdateBusyStatus(true);
 
                 // build path to file
                 var targetFilePath = selectedFolder.Path;
@@ -132,27 +132,48 @@ namespace LearningManagementSystem.ViewModels
 
                 await _cloudinaryService.DownloadFileAsync(Submission.FilePath, targetFilePath);
 
+                UpdateBusyStatus(false);
+
                 // Send success message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Successful", $"File downloaded successfully to {selectedFolder.Path}"));
-
             }
             catch (Exception ex)
             {
+                UpdateBusyStatus(false);
                 // Send error message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}"));
             }
         }
 
-        public void DeleteSubmission()
+        public async Task DeleteSubmission()
         {
-            // Send delete message
-            WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
+            try
+            {
+                UpdateBusyStatus(true);
+                if (Submission.FilePath != null)
+                {
+                    await _cloudinaryService.DeleteFileByUriAsync(Submission.FilePath);
+                }
+                _dao.DeleteSubmissionById(Submission.Id);
+                WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
+                UpdateBusyStatus(false);
+            }
+            catch (Exception ex)
+            {
+                UpdateBusyStatus(false);
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}"));
+            }
         }
 
         public bool CanDeleteSubmission()
         {
             var role = UserService.GetCurrentUser().Result.Role.ToString();
             return role == "student" && DateTime.Now < Assignment.DueDate;
+        }
+
+        private void UpdateBusyStatus(bool isBusy)
+        {
+            WeakReferenceMessenger.Default.Send(new BusyMessage(isBusy));
         }
     }
 }

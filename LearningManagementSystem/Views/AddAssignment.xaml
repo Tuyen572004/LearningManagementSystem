@@ -18,87 +18,95 @@
     </Page.Resources>
 
     <ScrollViewer HorizontalScrollBarVisibility="Visible">
-        <StackPanel>
+        <Grid>
+            <StackPanel>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="80"/>
-                    <RowDefinition Height="80"/>
-                    <RowDefinition Height="80"/>
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                    </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="10"/>
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
 
-                <Rectangle RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+                    <Rectangle RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
-                <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                          PlaceholderText="Enter title of assignment" 
                           Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"/>
 
-                <Button Content="Add Resource" Command="{x:Bind AssignmentViewModel.AddAssignmentCommand}" 
+                    <Button Content="Add Resource" Command="{x:Bind AssignmentViewModel.AddAssignmentCommand}" 
                         Grid.Row="2" Grid.Column="4"
                         Foreground="Blue" 
                         BorderBrush="LightBlue" 
                         Background="LightBlue" 
                         FontWeight="Bold" 
                         Margin="10,0,0,10"/>
-            </Grid>
+                </Grid>
 
 
 
-            <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                      Background="Gray"
                     Margin="10,10" />
 
-            <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
-                <TextBlock Text="Deadline: " FontSize="14" Margin="0,0,30,0" FontWeight="Bold"/>
-                <StackPanel Orientation="Horizontal">
-                    <CalendarDatePicker Date="{x:Bind AssignmentViewModel.DueDate, 
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
+                    <TextBlock Text="Deadline: " FontSize="14" Margin="0,0,30,0" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal">
+                        <CalendarDatePicker Date="{x:Bind AssignmentViewModel.DueDate, 
                                                         Mode=TwoWay, 
                                                         UpdateSourceTrigger=PropertyChanged}" 
                                         Margin="0,0,10,0"
                                         FontSize="14" Foreground="White" Background="Brown"/>
-                    <TimePicker Time="{x:Bind AssignmentViewModel.DueTime, 
+                        <TimePicker Time="{x:Bind AssignmentViewModel.DueTime, 
                                                 Mode=TwoWay, 
                                                 UpdateSourceTrigger=PropertyChanged}" Foreground="White"
                                 FontSize="14" Background="Brown"/>
+                    </StackPanel>
                 </StackPanel>
-        </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
-                <TextBlock >
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,30">
+                    <TextBlock >
                     <Run Text="Attachment: " FontSize="14" FontWeight="Bold"/>
                     <Run Text="{x:Bind AssignmentViewModel.Assignment.FileName, Mode=OneWay}" />
-                </TextBlock>
-                <Button Content="Download" 
+                    </TextBlock>
+                    <Button Content="Download" 
                         Command="{x:Bind AssignmentViewModel.DownloadAttachmentCommand}" 
                         Margin="10,0,0,0"
                         Foreground="Blue" BorderBrush="Aquamarine" Background="Aquamarine" FontWeight="Bold"/>
-                <Button Content="Change" 
+                    <Button Content="Change" 
                         Command="{x:Bind AssignmentViewModel.ChangeAttachmentCommand}" 
                         Foreground="Green" BorderBrush="LightGreen" Background="LightGreen" Width="80" FontWeight="Bold"
                         Margin="10,0,0,0"/>
-                <Button Content="Delete" 
+                    <Button Content="Delete" 
                         Command="{x:Bind AssignmentViewModel.DeleteAttachmentCommand}" 
                         BorderBrush="Orange"  Foreground="DarkRed" Background="Red" Width="80" FontWeight="Bold"
                         Margin="10,0,0,0"/>
-            </StackPanel>
+                </StackPanel>
 
-            <TextBlock Margin="10,0,0,30" FontStyle="Italic" Foreground="Red" FontWeight="Bold">
+                <TextBlock Margin="10,0,0,30" FontStyle="Italic" Foreground="Red" FontWeight="Bold">
             <Run Text="Time Remaining: "/>
             <Run Text="{x:Bind AssignmentViewModel.DueStatus, Mode=OneWay}" />
-            </TextBlock>
+                </TextBlock>
 
 
-            <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" 
+                <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" 
                 BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
-        </StackPanel>
+            </StackPanel>
+            <!-- Centered ProgressRing -->
+            <Grid x:Name="LoadingOverlay" Background="Transparent" Visibility="{x:Bind AssignmentViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ProgressRing IsActive="True" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </Grid>
     </ScrollViewer>
+
+
 </Page>
