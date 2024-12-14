@@ -25,7 +25,7 @@ namespace LearningManagementSystem.Views
     public sealed partial class AssignmentPage : Page
     {
 
-        public AssignmentViewModel AssignmentViewModel {get; set; }
+        public AssignmentViewModel AssignmentViewModel { get; set; }
 
         private readonly IDao _dao = new SqlDao();
         private readonly UserService userService = new UserService();
@@ -53,7 +53,7 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
-        private async void  BackButton_Click(object sender, RoutedEventArgs e)
+        private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
             //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
 
@@ -79,7 +79,7 @@ namespace LearningManagementSystem.Views
                 Frame.GoBack();
             }
         }
-        
+
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
@@ -89,37 +89,50 @@ namespace LearningManagementSystem.Views
         }
 
 
-
+        private ContentDialog _currentDialog;
 
         private async Task ShowMessageDialog(string title, string content)
         {
-            var messageDialog = new ContentDialog
+            try
             {
-                Title = title,
-                Content = content,
-                CloseButtonText = "Close",
-                PrimaryButtonText = "Go Back",
-                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
-            };
+                _currentDialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "Close",
+                    PrimaryButtonText = "Go Back",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                };
 
+                var result = await _currentDialog.ShowAsync();
 
-            var result = await messageDialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                Frame.GoBack();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    _currentDialog.Hide();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                messageDialog.Hide();
+                _currentDialog?.Hide();
+                // Optionally log the exception or show a different message
+            }
+            finally
+            {
+                _currentDialog = null;
             }
         }
 
+
         private void dataGridTeacherView_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
         {
-            if(e.Column.Tag.ToString() == "StudentCode")
+            if (e.Column.Tag.ToString() == "StudentCode")
             {
-                if(e.Column.SortDirection==null||e.Column.SortDirection==DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Student.StudentCode);
                 }
                 else
@@ -129,7 +142,8 @@ namespace LearningManagementSystem.Views
             }
             else if (e.Column.Tag.ToString() == "SubmissionDate")
             {
-                if(e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.SubmissionDate);
                 }
                 else
@@ -139,7 +153,8 @@ namespace LearningManagementSystem.Views
             }
             else if (e.Column.Tag.ToString() == "Grade")
             {
-                if (e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.Grade);
                 }
                 else

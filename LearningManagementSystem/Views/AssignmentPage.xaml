@@ -55,7 +55,7 @@
                                 Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <Button Content="{x:Bind AssignmentViewModel.EditButtonText, Mode=OneWay}" 
-                            Command="{x:Bind AssignmentViewModel.ToggleEditCommand}" 
+                            Command="{x:Bind AssignmentViewModel.ToggleEditCommand, Mode=OneWay}" 
                             Visibility="{x:Bind AssignmentViewModel.IsTeacher,Mode=OneWay,Converter={StaticResource BooleanToVisibilityConverter}}"
                             Grid.Row="2" Grid.Column="4"
                             Foreground="Blue" 
@@ -141,7 +141,7 @@
                         <TextBlock Text="Showing all submissions:" 
                                    Grid.Column="0"
                                    FontWeight="Bold" Foreground="Gray" FontStyle="Italic" />
-                        <TextBox PlaceholderText="Search by ID or Student Name..." 
+                        <TextBox PlaceholderText="Search by ID..." 
                                  TextChanged="TextBox_TextChanged"
                                  x:Name="searchBox"
                                 Grid.Column="1" Margin="30,0,30,0"/>
@@ -195,7 +195,7 @@
                                         Mode=OneWay,
                                         Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="Submit your assignment:" FontWeight="Bold" Foreground="Gray" FontStyle="Italic" Margin="10,0,30,20"/>
-                        <Button Content="Submit" Command="{x:Bind AssignmentViewModel.SubmitCommand}" 
+                        <Button Content="Submit" Command="{x:Bind AssignmentViewModel.SubmitCommand, Mode=OneWay}" 
                             BorderBrush="Black" Background="Orange" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,0,30,20" Padding="10,5,10,5"/>
                     </StackPanel>
 

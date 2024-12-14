@@ -6,6 +6,7 @@ using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using NPOI.SS.UserModel;
@@ -157,7 +158,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}\n Please try again later."));
             }
         }
 
@@ -223,7 +224,7 @@ namespace LearningManagementSystem.ViewModels
             // Register to receive delete messages
             WeakReferenceMessenger.Default.Register<DeleteSubmissionMessage>(this, async (r, m) =>
             {
-                await DeleteSubmission(m.Value as SubmissionViewModel);
+                DeleteSubmission(m.Value as SubmissionViewModel);
 
             });
 
@@ -259,7 +260,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception e)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\n Please try again later."));
             }
 
         }
@@ -286,7 +287,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}\n Please try again later."));
             }
         }
 
@@ -318,7 +319,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 IsBusy = false;
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}\n Please try again later."));
             }
         }
 
@@ -388,20 +389,14 @@ namespace LearningManagementSystem.ViewModels
                 catch (Exception ex)
                 {
                     IsBusy = false;
-                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}"));
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\n Please try again later."));
                 }
 
             }
         }
 
-        public async Task DeleteSubmission(SubmissionViewModel model)
+        public void DeleteSubmission(SubmissionViewModel model)
         {
-            if (model.Submission.FilePath != null)
-            {
-                await _cloudinaryService.DeleteFileByUriAsync(model.Submission.FilePath);
-            }
-            _dao.DeleteSubmissionById(model.Submission.Id);
-
             Submissions.Remove(model);
         }
 
@@ -440,7 +435,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\n Please try again later."));
             }
 
         }
@@ -450,6 +445,7 @@ namespace LearningManagementSystem.ViewModels
         {
             RaisePropertyChanged(nameof(Submissions));
             RaisePropertyChanged(nameof(SubmitVisibility));
+            RaisePropertyChanged(nameof(SubmitCommand));
         }
 
         private void UpdateEditingDependentProperties()

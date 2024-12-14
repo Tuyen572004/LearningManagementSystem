@@ -89,17 +89,19 @@ namespace LearningManagementSystem.ViewModels
                 await UpdateSubmissionDetails(selectedFile);
                 // Update the submission in the database
                 _dao.UpdateSubmission(Submission);
-                RaisePropertyChanged(nameof(Submission));
 
                 // delete old file
                 await _cloudinaryService.DeleteFileByUriAsync(oldFile);
 
                 UpdateBusyStatus(false);
+
+                // TEST RAISE AFTER UPDATE BUSY TO FIX NOTIFICATION OF COLLECTION
+                //RaisePropertyChanged(nameof(Submission));
             }
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}\n Please try again later."));
             }
         }
 
@@ -141,7 +143,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 UpdateBusyStatus(false);
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message} \n Please try again later."));
             }
         }
 
@@ -155,13 +157,14 @@ namespace LearningManagementSystem.ViewModels
                     await _cloudinaryService.DeleteFileByUriAsync(Submission.FilePath);
                 }
                 _dao.DeleteSubmissionById(Submission.Id);
-                WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
                 UpdateBusyStatus(false);
+                WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
+                
             }
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}"));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}\n Please try again later."));
             }
         }
 
