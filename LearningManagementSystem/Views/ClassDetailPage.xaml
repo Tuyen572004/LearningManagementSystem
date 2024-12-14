@@ -104,7 +104,6 @@
                                                 <Button Grid.Column="1" Grid.Row="0"
                                                         Content="Delete" 
                                                         BorderBrush="Orange" 
-                                                        Foreground="DarkRed" 
                                                         Background="Red" 
                                                         FontWeight="Bold"
                                                         HorizontalAlignment="Left"

@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,7 +25,7 @@ namespace LearningManagementSystem.Views
     public sealed partial class AssignmentPage : Page
     {
 
-        public AssignmentViewModel AssignmentViewModel {get; set; }
+        public AssignmentViewModel AssignmentViewModel { get; set; }
 
         private readonly IDao _dao = new SqlDao();
         private readonly UserService userService = new UserService();
@@ -38,6 +39,11 @@ namespace LearningManagementSystem.Views
             {
                 await ShowMessageDialog(m.Title, m.Value);
             });
+
+            WeakReferenceMessenger.Default.Register<BusyMessage>(this, (r, m) =>
+            {
+                AssignmentViewModel.IsBusy = m.Value;
+            });
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into 1 assignment to see it in detail)
@@ -47,50 +53,86 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e)
+        private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
             //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
-            Frame.GoBack();
+
+            if (AssignmentViewModel.IsEditing)
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Confirm",
+                    Content = "You have unsaved changes. Do you really want to leave?",
+                    PrimaryButtonText = "Yes",
+                    CloseButtonText = "No"
+                };
+
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+            }
+            else
+            {
+                Frame.GoBack();
+            }
         }
+
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
+            WeakReferenceMessenger.Default.Unregister<BusyMessage>(this);
             base.OnNavigatedFrom(e);
         }
 
 
-
+        private ContentDialog _currentDialog;
 
         private async Task ShowMessageDialog(string title, string content)
         {
-            var messageDialog = new ContentDialog
+            try
             {
-                Title = title,
-                Content = content,
-                CloseButtonText = "Close",
-                PrimaryButtonText = "Go Back",
-                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
-            };
+                _currentDialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "Close",
+                    PrimaryButtonText = "Go Back",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                };
 
+                var result = await _currentDialog.ShowAsync();
 
-            var result = await messageDialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                Frame.GoBack();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    _currentDialog.Hide();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                messageDialog.Hide();
+                _currentDialog?.Hide();
+                // Optionally log the exception or show a different message
+            }
+            finally
+            {
+                _currentDialog = null;
             }
         }
 
+
         private void dataGridTeacherView_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
         {
-            if(e.Column.Tag.ToString() == "StudentCode")
+            if (e.Column.Tag.ToString() == "StudentCode")
             {
-                if(e.Column.SortDirection==null||e.Column.SortDirection==DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Student.StudentCode);
                 }
                 else
@@ -100,7 +142,8 @@ namespace LearningManagementSystem.Views
             }
             else if (e.Column.Tag.ToString() == "SubmissionDate")
             {
-                if(e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.SubmissionDate);
                 }
                 else
@@ -110,7 +153,8 @@ namespace LearningManagementSystem.Views
             }
             else if (e.Column.Tag.ToString() == "Grade")
             {
-                if (e.Column.SortDirection == null|| e.Column.SortDirection == DataGridSortDirection.Ascending) {
+                if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Ascending)
+                {
                     AssignmentViewModel.Submissions.OrderBy(submission => submission.Submission.Grade);
                 }
                 else
@@ -122,7 +166,7 @@ namespace LearningManagementSystem.Views
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            dataGridTeacherView.ItemsSource=new ObservableCollection<SubmissionViewModel>(AssignmentViewModel.Submissions.Where(submission => submission.Student.StudentCode.Contains(searchBox.Text)));
+            dataGridTeacherView.ItemsSource = new ObservableCollection<SubmissionViewModel>(AssignmentViewModel.Submissions.Where(submission => submission.Student.StudentCode.Contains(searchBox.Text)));
         }
     }
 }
