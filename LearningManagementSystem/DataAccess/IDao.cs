@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.DataAccess
 {
-    public interface IDao
+    public partial interface IDao
     {
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
 
@@ -122,5 +122,6 @@ namespace LearningManagementSystem.DataAccess
         void DeleteAttachmentByAssignmentId(int id);
         void AddAssignment(Assignment assignment);
         void DeleteAssignmentById(int id);
+
     }
 }

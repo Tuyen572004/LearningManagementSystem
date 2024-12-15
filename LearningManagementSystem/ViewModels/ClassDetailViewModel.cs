@@ -66,6 +66,15 @@ namespace LearningManagementSystem.ViewModels
 
                     WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddAssignment), assignmentViewModel));
                 }
+                else if(selectedCategory.Id == (int)ResourceCategoryEnum.Notification)
+                {
+                    NotificationViewModel notificationViewModel = new NotificationViewModel();
+                    notificationViewModel.Notification.ClassId = EnrollmentViewModel.Class.Id;
+                    notificationViewModel.Notification.CreatedBy = UserService.GetCurrentUser().Result.Id;
+                    notificationViewModel.Notification.ResourceCategoryId = (int)ResourceCategoryEnum.Notification;
+
+                    WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddNotification), notificationViewModel));
+                }
             }
         }
 
@@ -88,10 +97,20 @@ namespace LearningManagementSystem.ViewModels
                         ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Assignment).Resources.Remove(resource);
                     }
                 }
-                //else if (resource.ResourceCategoryId == (int)ResourceCategoryEnum.Notification)
-                //{
-                //    _dao.DeleteNotificationById(resource.Id);
-                //}
+                else if(categoryId == (int)ResourceCategoryEnum.Notification)
+                {
+                    var id = resource.BaseResource.Id;
+                    Notification notification = _dao.FindNotificationById(id);
+                    if (notification != null)
+                    {
+                        if (notification.FilePath != null)
+                        {
+                            await _cloudinaryService.DeleteFileByUriAsync(notification.FilePath);
+                        }
+                        _dao.DeleteNotificationById(notification.Id);
+                        ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources.Remove(resource);
+                    }
+                }
                 //else if (resource.ResourceCategoryId == (int)ResourceCategoryEnum.Document)
                 //{
                 //    _dao.DeleteDocumentById(resource.Id);

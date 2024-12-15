@@ -71,16 +71,10 @@ namespace LearningManagementSystem.Views
                     var assignment = resource as Assignment;
                     Frame.Navigate(typeof(AssignmentPage), assignment);
                 }
-                // ------------ IMPLEMENT LATER ------------
                 else if (resource is Notification)
                 {
                     var notification = resource as Notification;
                     Frame.Navigate(typeof(NotificationPage), notification);
-                }
-                else if (resource is Document)
-                {
-                    var document = resource as Document;
-                    Frame.Navigate(typeof(DocumentPage), document);
                 }
             }
         }

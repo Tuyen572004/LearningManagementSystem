@@ -26,9 +26,6 @@ namespace LearningManagementSystem.Views
     {
 
         public AssignmentViewModel AssignmentViewModel { get; set; }
-
-        private readonly IDao _dao = new SqlDao();
-        private readonly UserService userService = new UserService();
         public AssignmentPage()
         {
             this.InitializeComponent();
@@ -64,7 +61,8 @@ namespace LearningManagementSystem.Views
                     Title = "Confirm",
                     Content = "You have unsaved changes. Do you really want to leave?",
                     PrimaryButtonText = "Yes",
-                    CloseButtonText = "No"
+                    CloseButtonText = "No",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
                 };
 
                 var result = await dialog.ShowAsync();
