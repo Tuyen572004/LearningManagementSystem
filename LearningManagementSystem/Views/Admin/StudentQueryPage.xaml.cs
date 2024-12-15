@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.DataAccess;
+using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,7 +31,7 @@ namespace LearningManagementSystem.Views.Admin
         {
             this.InitializeComponent();
 
-            _viewModel = new StudentReaderViewModel(new SqlDao())
+            _viewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>())
             {
                 RowsPerPage = 5
             };

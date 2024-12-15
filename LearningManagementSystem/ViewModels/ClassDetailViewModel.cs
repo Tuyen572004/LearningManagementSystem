@@ -9,6 +9,7 @@ using LearningManagementSystem.Models;
 using Microsoft.UI.Xaml;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -18,9 +19,9 @@ namespace LearningManagementSystem.ViewModels
 
         public ResourceViewModel ResourceViewModel { get; set; }
 
-        private readonly IDao _dao = new SqlDao();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
-        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
+        private readonly CloudinaryService _cloudinaryService = App.Current.Services.GetService<CloudinaryService>();
 
         private readonly UserService _userService = new UserService();
 

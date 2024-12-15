@@ -1,11 +1,9 @@
-﻿
-using CloudinaryDotNet.Actions;
-using LearningManagementSystem.DataAccess;
+﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using System.Resources;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -17,7 +15,7 @@ namespace LearningManagementSystem.ViewModels
 
         public ResourceViewModel()
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             SingularResources = new FullObservableCollection<SingularResourceViewModel>();
             LoadResourceTitles();
         }

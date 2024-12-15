@@ -1,8 +1,8 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Services;
-using LearningManagementSystem.DataAccess;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,8 +28,22 @@ namespace LearningManagementSystem
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<ICloudinaryService, CloudinaryService>();
-            services.AddSingleton<IDao, SqlDao>();
+            services.AddSingleton<IConfigService,ConfigFileService>();
+            // Register SqlDao
+            services.AddSingleton<IDao, SqlDao>(provider =>
+            {
+                var configService = provider.GetRequiredService<IConfigService>();
+                return new SqlDao(configService);
+            });
+
+
+            // Register CloudinaryService
+            services.AddSingleton<ICloudinaryService, CloudinaryService>(provider =>
+            {
+                var configService = provider.GetRequiredService<IConfigService>();
+                return new CloudinaryService(configService);
+            });
+
 
             return services.BuildServiceProvider();
         }

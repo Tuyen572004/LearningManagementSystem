@@ -6,6 +6,7 @@ using LearningManagementSystem.Helpers;
 using System.Collections.Generic;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -27,7 +28,7 @@ namespace LearningManagementSystem.ViewModels
 
         public CourseViewModel()
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();
             SelectedCourse = new Course();
             GetAllCourse();
         }

@@ -1,5 +1,6 @@
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.ViewModels
@@ -25,7 +26,7 @@ namespace LearningManagementSystem.ViewModels
 
         public void loadClassByClassId(int classId)
         {
-            var dao = new SqlDao();
+            var dao = App.Current.Services.GetService<IDao>();;
             Class = dao.findClassById(classId);
             Course = dao.GetCourseById(Class.CourseId);
             Department = dao.GetDepartmentById(Course.DepartmentId);

@@ -1,23 +1,19 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels
 {
     public class LoginWindowViewModel
     {
-        public SqlDao _dao { get; set; }
+        public IDao _dao { get; set; }
         public User UserLogin { get; set; }
 
         public bool IsAdmin => UserLogin?.Role == "admin";
 
         public LoginWindowViewModel()
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             UserLogin = new User();
         }
 

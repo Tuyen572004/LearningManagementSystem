@@ -7,6 +7,7 @@ using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
 using LearningManagementSystem.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -26,7 +27,7 @@ namespace LearningManagementSystem.ViewModels
 
         public Assignment Assignment { get; set; }
 
-        private CloudinaryService _cloudinaryService = new CloudinaryService();
+        private CloudinaryService _cloudinaryService = App.Current.Services.GetService<CloudinaryService>();
 
         private readonly IDao _dao;
         private readonly FileHelper FileHelper = new FileHelper();
@@ -41,7 +42,7 @@ namespace LearningManagementSystem.ViewModels
 
         public SubmissionViewModel()
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             Submission = new Submission();
             Student = new Student();
             Assignment = new Assignment();
@@ -53,7 +54,7 @@ namespace LearningManagementSystem.ViewModels
 
         public SubmissionViewModel(Submission submission, Assignment assignment)
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             Submission = submission;
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;

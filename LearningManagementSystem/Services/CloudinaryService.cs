@@ -18,27 +18,11 @@ namespace LearningManagementSystem.Services
     {
         private readonly Cloudinary _cloudinary;
 
-        public CloudinaryService()
+        public CloudinaryService(IConfigService configService)
         {
-            Account account = Initialize();
+            var config = configService.GetCloudinaryConfig();
+            Account account = new Account(config.CloudName, config.ApiKey, config.ApiSecret);
             _cloudinary = new Cloudinary(account);
-        }
-
-        private Account Initialize()
-        {
-            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-            string configContent = File.ReadAllText(configFilePath);
-            var configJson = JsonDocument.Parse(configContent);
-            var cloudinaryConfig = configJson.RootElement.GetProperty("Cloudinary").ToString();
-            CloudinaryConfig config = JsonSerializer.Deserialize<CloudinaryConfig>(cloudinaryConfig);
-
-            var account = new Account(
-                config.CloudName,
-                config.ApiKey,
-                config.ApiSecret
-            );
-
-            return account;
         }
 
         public async Task<string> UploadFileAsync(string filePath)
