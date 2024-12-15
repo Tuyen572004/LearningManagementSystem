@@ -14,7 +14,7 @@ namespace LearningManagementSystem.Services
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
     }
-    public class CloudinaryService
+    public class CloudinaryService : ICloudinaryService
     {
         private readonly Cloudinary _cloudinary;
 

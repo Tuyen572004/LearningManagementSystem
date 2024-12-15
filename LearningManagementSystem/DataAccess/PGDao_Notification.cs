@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using LearningManagementSystem.Helpers;
+using LearningManagementSystem.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,52 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.DataAccess
 {
-    public partial class SqlDao : IDao
+    public partial class SqlDao
     {
+
+        FullObservableCollection<BaseResource> IDao.findNotificationsByClassId(int classId)
+        {
+            try
+            {
+                var result = new FullObservableCollection<BaseResource>();
+                if (this.OpenConnection())
+                {
+                    var sql = """
+            SELECT Id, ClassId, ResourceCategoryId, Description, PostDate, Title, FilePath, FileName, FileType, createdBy
+            FROM Notifications
+            WHERE ClassId=@ClassId
+            """;
+                    var command = new NpgsqlCommand(sql, connection);
+                    command.Parameters.AddWithValue("@ClassId", classId);
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.Add(new Notification
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            ClassId = reader.GetInt32(reader.GetOrdinal("ClassId")),
+                            ResourceCategoryId = reader.GetInt32(reader.GetOrdinal("ResourceCategoryId")),
+                            Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                            PostDate = reader.GetDateTime(reader.GetOrdinal("PostDate")),
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
+                            FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
+                            FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
+                            CreatedBy = reader.GetInt32(reader.GetOrdinal("CreatedBy"))
+                        });
+                    }
+                    this.CloseConnection();
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                this.CloseConnection();
+                return new FullObservableCollection<BaseResource>();
+            }
+
+        }
         void IDao.UpdateNotification(Notification notification)
         {
             if (this.OpenConnection())

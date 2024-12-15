@@ -6,6 +6,7 @@ using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
@@ -165,7 +166,8 @@ namespace LearningManagementSystem.ViewModels
 
 
         public User User { get; set; }
-        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
+        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
         public bool IsTeacher { get; set; }
         public bool IsStudent => !IsTeacher;
@@ -194,7 +196,6 @@ namespace LearningManagementSystem.ViewModels
 
 
 
-        private readonly IDao _dao = new SqlDao();
         private readonly UserService _userService;
         public FileHelper FileHelper = new FileHelper();
 

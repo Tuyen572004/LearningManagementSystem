@@ -6,6 +6,7 @@ using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -63,8 +64,8 @@ namespace LearningManagementSystem.ViewModels
         public ICommand DeleteAttachmentCommand { get; }
         public ICommand AddNotificationCommand { get; }
 
-        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
-        private readonly IDao _dao = new SqlDao();
+        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         public FileHelper FileHelper = new FileHelper();
 
         public NotificationViewModel()
