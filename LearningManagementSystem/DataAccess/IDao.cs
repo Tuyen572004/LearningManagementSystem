@@ -2,17 +2,13 @@
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
-using Microsoft.UI.Composition;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.DataAccess
 {
-    public interface IDao
+    public partial interface IDao
     {
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
 
@@ -101,8 +97,6 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);
 
-        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId);
-
 
         public Class findClassById(int classId);
         public Course findCourseByClassId(int classId);
@@ -122,5 +116,6 @@ namespace LearningManagementSystem.DataAccess
         void DeleteAttachmentByAssignmentId(int id);
         void AddAssignment(Assignment assignment);
         void DeleteAssignmentById(int id);
+
     }
 }

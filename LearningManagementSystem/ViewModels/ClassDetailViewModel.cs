@@ -9,6 +9,7 @@ using LearningManagementSystem.Models;
 using Microsoft.UI.Xaml;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -18,9 +19,9 @@ namespace LearningManagementSystem.ViewModels
 
         public ResourceViewModel ResourceViewModel { get; set; }
 
-        private readonly IDao _dao = new SqlDao();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
-        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
+        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
 
         private readonly UserService _userService = new UserService();
 
@@ -66,13 +67,30 @@ namespace LearningManagementSystem.ViewModels
 
                     WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddAssignment), assignmentViewModel));
                 }
+                else if(selectedCategory.Id == (int)ResourceCategoryEnum.Notification)
+                {
+                    NotificationViewModel notificationViewModel = new NotificationViewModel();
+                    notificationViewModel.Notification.ClassId = EnrollmentViewModel.Class.Id;
+                    notificationViewModel.Notification.CreatedBy = UserService.GetCurrentUser().Result.Id;
+                    notificationViewModel.Notification.ResourceCategoryId = (int)ResourceCategoryEnum.Notification;
+
+                    WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddNotification), notificationViewModel));
+                }
+            }
+        }
+
+        public void RefreshData()
+        {
+            if (EnrollmentViewModel != null)
+            {
+                ResourceViewModel.LoadMoreItems(EnrollmentViewModel.Class.Id);
             }
         }
 
         private async Task DeleteResource(BaseResourceViewModel resource)
         {
             if (resource != null)
-            {
+            {   
                 var categoryId = resource.BaseResource.ResourceCategoryId;
                 if (categoryId == (int)ResourceCategoryEnum.Assignment)
                 {
@@ -80,22 +98,34 @@ namespace LearningManagementSystem.ViewModels
                     Assignment assignment = _dao.GetAssignmentById(id);
                     if (assignment != null)
                     {
+                        if(_dao.checkIfAssignmentIsSubmitted(assignment.Id))
+                        {
+                            WeakReferenceMessenger.Default.Send(new DialogMessage("Error", "Assignment has been submitted, cannot be deleted"));
+                            return;
+                        }
                         if (assignment.FilePath != null)
                         {
                             await _cloudinaryService.DeleteFileByUriAsync(assignment.FilePath);
                         }
                         _dao.DeleteAssignmentById(assignment.Id);
                         ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Assignment).Resources.Remove(resource);
+
                     }
                 }
-                //else if (resource.ResourceCategoryId == (int)ResourceCategoryEnum.Notification)
-                //{
-                //    _dao.DeleteNotificationById(resource.Id);
-                //}
-                //else if (resource.ResourceCategoryId == (int)ResourceCategoryEnum.Document)
-                //{
-                //    _dao.DeleteDocumentById(resource.Id);
-                //}
+                else if(categoryId == (int)ResourceCategoryEnum.Notification)
+                {
+                    var id = resource.BaseResource.Id;
+                    Notification notification = _dao.FindNotificationById(id);
+                    if (notification != null)
+                    {
+                        if (notification.FilePath != null)
+                        {
+                            await _cloudinaryService.DeleteFileByUriAsync(notification.FilePath);
+                        }
+                        _dao.DeleteNotificationById(notification.Id);
+                        ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources.Remove(resource);
+                      }
+                }
             }
         }
     }

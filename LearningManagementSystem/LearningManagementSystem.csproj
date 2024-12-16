@@ -47,6 +47,7 @@
 	  <None Remove="Views\AddAccount.xaml" />
 	  <None Remove="Views\AddAssignment.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
+	  <None Remove="Views\AddNotification.xaml" />
 	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
 	  <None Remove="Views\Admin\StudentCRUDPage.xaml" />
 	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
@@ -88,6 +89,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
 		<PackageReference Include="Npgsql" Version="9.0.2" />
@@ -133,6 +135,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\AddNotification.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
         <Generator>MSBuild:Compile</Generator>
 	  </Page>

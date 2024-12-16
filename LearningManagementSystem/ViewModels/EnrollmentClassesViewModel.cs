@@ -1,6 +1,7 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.ViewModels
@@ -14,7 +15,7 @@ namespace LearningManagementSystem.ViewModels
         public EnrollmentClassesViewModel() 
         {
             enrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
-            _dao = new SqlDao(); 
+            _dao = App.Current.Services.GetService<IDao>();; 
         }
 
         public EnrollmentClassesViewModel(IDao dao) // Constructor accepting IDao

@@ -4,12 +4,18 @@ using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Services;
 using LearningManagementSystem.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,18 +25,18 @@ namespace LearningManagementSystem.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddAssignment : Page
+    public sealed partial class AddNotification : Page
     {
-
-        public AssignmentViewModel AssignmentViewModel { get; set; }
+        public NotificationViewModel NotificationViewModel { get; set; }
 
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         private readonly UserService userService = new UserService();
-        public AddAssignment()
+
+        public AddNotification()
         {
             this.InitializeComponent();
-            AssignmentViewModel = new AssignmentViewModel();
-            AssignmentViewModel.Assignment.ResourceCategoryId = (int)ResourceCategoryEnum.Assignment;
+            NotificationViewModel = new NotificationViewModel();
+            NotificationViewModel.Notification.ResourceCategoryId = (int)ResourceCategoryEnum.Notification;
 
             WeakReferenceMessenger.Default.Register<DialogMessage>(this, async (r, m) =>
             {
@@ -38,11 +44,11 @@ namespace LearningManagementSystem.Views
             });
         }
 
-       protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into Add Assignment button)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            AssignmentViewModel = e.Parameter as AssignmentViewModel;
-            AssignmentViewModel.Assignment.DueDate = DateTime.Now;
-            AssignmentViewModel.Assignment.ResourceCategoryId = (int)ResourceCategoryEnum.Assignment;
+            NotificationViewModel = e.Parameter as NotificationViewModel;
+            NotificationViewModel.Notification.PostDate = DateTime.Now;
+            NotificationViewModel.Notification.ResourceCategoryId = (int)ResourceCategoryEnum.Notification;
             base.OnNavigatedTo(e);
         }
 
@@ -54,23 +60,19 @@ namespace LearningManagementSystem.Views
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
             Frame.GoBack();
         }
 
-
         private async Task ShowMessageDialog(string title, string content)
         {
-            
             var messageDialog = new ContentDialog
             {
                 Title = title,
                 Content = content,
                 CloseButtonText = "Close",
                 PrimaryButtonText = "Go Back",
-                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                XamlRoot = this.Content.XamlRoot
             };
-
 
             var result = await messageDialog.ShowAsync();
 
@@ -83,7 +85,5 @@ namespace LearningManagementSystem.Views
                 messageDialog.Hide();
             }
         }
-
-
     }
 }

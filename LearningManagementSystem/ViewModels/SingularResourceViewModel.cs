@@ -2,6 +2,7 @@
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -10,7 +11,7 @@ namespace LearningManagementSystem.ViewModels
         public ResourceCategory ResourceCategory { get; set; }
         public FullObservableCollection<BaseResourceViewModel> Resources { get; set; }
 
-        private readonly IDao _dao = new SqlDao();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
         private readonly UserService _userService = new UserService();
         private readonly User _user;

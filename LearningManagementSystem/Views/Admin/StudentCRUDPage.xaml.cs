@@ -17,6 +17,7 @@ using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,13 +37,13 @@ namespace LearningManagementSystem.Views.Admin
         {
             this.InitializeComponent();
 
-            _readerViewModel = new StudentReaderViewModel(new SqlDao())
+            _readerViewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>())
             {
                 RowsPerPage = 5
             };
             _readerViewModel.GetStudents();
 
-            _cudViewModel = new StudentCUDViewModel(new SqlDao())
+            _cudViewModel = new StudentCUDViewModel(App.Current.Services.GetService<IDao>())
             {
                 RowsPerPage = 5
             };

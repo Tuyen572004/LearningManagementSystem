@@ -1,25 +1,18 @@
-﻿using CloudinaryDotNet.Core;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Data;
+using Microsoft.Extensions.DependencyInjection;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
@@ -158,14 +151,15 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}\nPlease try again later."));
             }
         }
 
 
 
         public User User { get; set; }
-        private readonly CloudinaryService _cloudinaryService = new CloudinaryService();
+        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
         public bool IsTeacher { get; set; }
         public bool IsStudent => !IsTeacher;
@@ -194,7 +188,6 @@ namespace LearningManagementSystem.ViewModels
 
 
 
-        private readonly IDao _dao = new SqlDao();
         private readonly UserService _userService;
         public FileHelper FileHelper = new FileHelper();
 
@@ -260,7 +253,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception e)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\nPlease try again later."));
             }
 
         }
@@ -287,7 +280,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -319,7 +312,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 IsBusy = false;
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -389,7 +382,7 @@ namespace LearningManagementSystem.ViewModels
                 catch (Exception ex)
                 {
                     IsBusy = false;
-                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\n Please try again later."));
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\nPlease try again later."));
                 }
 
             }
@@ -435,7 +428,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\nPlease try again later."));
             }
 
         }
