@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -18,12 +19,6 @@ namespace LearningManagementSystem.ViewModels
         public EnrollmentClassViewModel EnrollmentViewModel { get; set; }
 
         public ResourceViewModel ResourceViewModel { get; set; }
-
-        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
-
-        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
-
-        private readonly UserService _userService = new UserService();
 
         public readonly bool IsTeacher;
 
@@ -37,15 +32,7 @@ namespace LearningManagementSystem.ViewModels
             IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
 
             ComboBox_SelectionChanged = new SelectionChangedEventHandler(OnSelectionChanged);
-            WeakReferenceMessenger.Default.Register<DeleteResourceMessage>(this,async (r, m) =>
-            {
-                await DeleteResource(m.Value as BaseResourceViewModel);
-            });
-        }
-
-        ~ClassDetailViewModel()
-        {
-            WeakReferenceMessenger.Default.Unregister<DeleteMessage>(this);
+           
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -79,54 +66,6 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-        public void RefreshData()
-        {
-            if (EnrollmentViewModel != null)
-            {
-                ResourceViewModel.LoadMoreItems(EnrollmentViewModel.Class.Id);
-            }
-        }
-
-        private async Task DeleteResource(BaseResourceViewModel resource)
-        {
-            if (resource != null)
-            {   
-                var categoryId = resource.BaseResource.ResourceCategoryId;
-                if (categoryId == (int)ResourceCategoryEnum.Assignment)
-                {
-                    var id = resource.BaseResource.Id;
-                    Assignment assignment = _dao.GetAssignmentById(id);
-                    if (assignment != null)
-                    {
-                        if(_dao.checkIfAssignmentIsSubmitted(assignment.Id))
-                        {
-                            WeakReferenceMessenger.Default.Send(new DialogMessage("Error", "Assignment has been submitted, cannot be deleted"));
-                            return;
-                        }
-                        if (assignment.FilePath != null)
-                        {
-                            await _cloudinaryService.DeleteFileByUriAsync(assignment.FilePath);
-                        }
-                        _dao.DeleteAssignmentById(assignment.Id);
-                        ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Assignment).Resources.Remove(resource);
-
-                    }
-                }
-                else if(categoryId == (int)ResourceCategoryEnum.Notification)
-                {
-                    var id = resource.BaseResource.Id;
-                    Notification notification = _dao.FindNotificationById(id);
-                    if (notification != null)
-                    {
-                        if (notification.FilePath != null)
-                        {
-                            await _cloudinaryService.DeleteFileByUriAsync(notification.FilePath);
-                        }
-                        _dao.DeleteNotificationById(notification.Id);
-                        ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources.Remove(resource);
-                      }
-                }
-            }
-        }
+       
     }
 }

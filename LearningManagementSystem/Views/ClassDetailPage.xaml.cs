@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
@@ -30,39 +31,58 @@ namespace LearningManagementSystem.Views
             });
 
             WeakReferenceMessenger.Default.Register<DialogMessage>(this, async (r, m) =>
-{
-    await ShowMessageDialog(m.Title, m.Value);
-});
+            {
+                await ShowMessageDialog(m.Title, m.Value);
+            });
 
+            WeakReferenceMessenger.Default.Register<DeleteResourceMessage>(this, async (r, m) =>
+            {
+                await ConfirmAndDeleteResource(m.Value as BaseResourceViewModel);
+            });
+
+        }
+
+        private async Task ConfirmAndDeleteResource(BaseResourceViewModel resource)
+        {
+            var confirmDialog = new ContentDialog
+            {
+                Title = "Confirm Delete",
+                Content = "Are you sure you want to delete this resource?",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+            };
+
+            var result = await confirmDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await DeleteResource(resource);
+            }
+        }
+
+        private async Task DeleteResource(BaseResourceViewModel resource)
+        {
+            await ClassDetailViewModel.ResourceViewModel.DeleteResource(resource);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+
 
             if (e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage or AddNotification page
             {
-                ClassDetailViewModel = new ClassDetailViewModel
-                {
-                    EnrollmentViewModel = enrollmentViewModel
-                };
+                ClassDetailViewModel.EnrollmentViewModel = enrollmentViewModel;
                 // Eager loading
                 ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
             }
-            //else if(e.Parameter is int classId) // navigated by Resources Page
-            //{
-            //    ClassDetailViewModel.EnrollmentViewModel.loadClassByClassId(classId);
-            //    // Eager loading
-            //    ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
-            //}
-
+            base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
-            WeakReferenceMessenger.Default.Unregister<NavigationMessage>(this);
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
 
