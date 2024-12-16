@@ -10,21 +10,21 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
-
         public Course findCourseByClassId(int classId)
         {
             var result = new Course();
-            if (this.OpenConnection())
-            {
-                var sql = """
-                    SELECT c.Id, c.CourseCode, c.CourseDescription, c.DepartmentId
-                    FROM Courses c
-                    JOIN Classes cl ON c.Id = cl.CourseId
-                    WHERE cl.Id=@classId
-                    """;
+            var sql = """
+                SELECT c.Id, c.CourseCode, c.CourseDescription, c.DepartmentId
+                FROM Courses c
+                JOIN Classes cl ON c.Id = cl.CourseId
+                WHERE cl.Id=@classId
+                """;
 
-                var command = new NpgsqlCommand(sql, connection);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
                 command.Parameters.AddWithValue("@classId", classId);
+                connection.Open();
                 var reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -37,8 +37,6 @@ namespace LearningManagementSystem.DataAccess
                         DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
                     };
                 }
-
-                this.CloseConnection();
             }
             return result;
         }
@@ -130,33 +128,15 @@ namespace LearningManagementSystem.DataAccess
         public List<string> GetAllCourseDecriptions()
         {
             var result = new List<string>();
-            try
+            var sql = "SELECT Coursedescription FROM Courses";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                if (this.OpenConnection())
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    var sql = "SELECT Coursedescription FROM Courses";
-                    var command = new NpgsqlCommand(sql, connection);
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        result.Add(reader.GetString(reader.GetOrdinal("coursedescription")));
-                    }
-                    if (result.Count > 0)
-                    {
-                        return result;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    this.CloseConnection();
+                    result.Add(reader.GetString(reader.GetOrdinal("coursedescription")));
                 }
             }
             return result;
@@ -170,28 +150,26 @@ namespace LearningManagementSystem.DataAccess
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<Course>();
+            var sql = $"""
+                SELECT COUNT(*) OVER() AS TotalItems, Id, CourseCode, CourseDescription, DepartmentId
+                FROM Courses
+                WHERE CourseDescription LIKE @Keyword
+                ORDER BY {sortBy} {sortOrder}
+                LIMIT @Take OFFSET @Skip
+                """;
 
-            if (this.OpenConnection())
+            var skip = (page - 1) * pageSize;
+            var take = pageSize;
+
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = $"""
-                    SELECT COUNT(*) OVER() AS TotalItems, Id, CourseCode, CourseDescription, DepartmentId
-                    FROM Courses
-                    WHERE CourseDescription LIKE @Keyword
-                    ORDER BY {sortBy} {sortOrder}
-                    LIMIT @Take OFFSET @Skip
-                    """;
-
-                var skip = (page - 1) * pageSize;
-                var take = pageSize;
-
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Skip", skip);
                 command.Parameters.AddWithValue("@Take", take);
                 command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
 
+                connection.Open();
                 var reader = command.ExecuteReader();
-
-                // var fullCommand = GetFullCommandText(command);
 
                 int totalItems = -1;
                 while (reader.Read())
@@ -208,93 +186,74 @@ namespace LearningManagementSystem.DataAccess
                         DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
                     });
                 }
-
-                this.CloseConnection();
                 return new Tuple<int, List<Course>>(totalItems, result);
-            }
-            else
-            {
-                this.CloseConnection();
-                return new Tuple<int, List<Course>>(-1, null);
             }
         }
 
         public int InsertCourse(Course course)
         {
-            if (this.OpenConnection())
-            {
-                var sql = """
-                    INSERT INTO Courses (CourseCode, CourseDescription, DepartmentId)
-                    VALUES (@CourseCode, @CourseDescription, @DepartmentId)
-                    RETURNING Id;
-                    """;
+            var sql = """
+                INSERT INTO Courses (CourseCode, CourseDescription, DepartmentId)
+                VALUES (@CourseCode, @CourseDescription, @DepartmentId)
+                RETURNING Id;
+                """;
 
-                var command = new NpgsqlCommand(sql, connection);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
                 command.Parameters.AddWithValue("@CourseCode", course.CourseCode);
                 command.Parameters.AddWithValue("@CourseDescription", course.CourseDescription ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@DepartmentId", course.DepartmentId);
 
+                connection.Open();
                 int id = (int)command.ExecuteScalar();
                 course.Id = id;
 
-                this.CloseConnection();
-
                 return id > 0 ? 1 : -1;
             }
-            this.CloseConnection();
-            return -1;
         }
 
         public void RemoveCourseByID(int id)
         {
-            if (this.OpenConnection())
+            var sql = "DELETE FROM Courses WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "DELETE FROM Courses WHERE Id=@Id";
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
+                connection.Open();
                 command.ExecuteNonQuery();
-
-                this.CloseConnection();
             }
         }
 
         public void UpdateCourse(Course course)
         {
-            if (this.OpenConnection())
+            var sql = "UPDATE Courses SET CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "UPDATE Courses SET CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId WHERE Id=@Id";
-                var command = new NpgsqlCommand(sql, connection);
-
                 command.Parameters.AddWithValue("@CourseCode", course.CourseCode);
                 command.Parameters.AddWithValue("@CourseDescription", course.CourseDescription ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@DepartmentId", course.DepartmentId);
                 command.Parameters.AddWithValue("@Id", course.Id);
 
+                connection.Open();
                 command.ExecuteNonQuery();
-
-                this.CloseConnection();
             }
         }
 
         public int CountCourse()
         {
-            if (this.OpenConnection())
+            var sql = "SELECT COUNT(*) AS TotalItems FROM Courses";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT COUNT(*) AS TotalItems FROM Courses";
-                var command = new NpgsqlCommand(sql, connection);
-
+                connection.Open();
                 var reader = command.ExecuteReader();
-
                 reader.Read();
-
                 int result = reader.GetInt32(reader.GetOrdinal("TotalItems"));
-
-                this.CloseConnection();
                 return result;
             }
-            else return 0;
         }
-
     }
 }

@@ -30,19 +30,11 @@ namespace LearningManagementSystem
 
             services.AddSingleton<IConfigService,ConfigFileService>();
             // Register SqlDao
-            services.AddSingleton<IDao, SqlDao>(provider =>
-            {
-                var configService = provider.GetRequiredService<IConfigService>();
-                return new SqlDao(configService);
-            });
+            services.AddTransient<IDao, SqlDao>();
 
 
             // Register CloudinaryService
-            services.AddSingleton<ICloudinaryService, CloudinaryService>(provider =>
-            {
-                var configService = provider.GetRequiredService<IConfigService>();
-                return new CloudinaryService(configService);
-            });
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
 
 
             return services.BuildServiceProvider();

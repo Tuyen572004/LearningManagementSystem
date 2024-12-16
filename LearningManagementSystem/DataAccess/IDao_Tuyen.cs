@@ -1,9 +1,4 @@
 ﻿using LearningManagementSystem.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.DataAccess
 {
@@ -17,5 +12,6 @@ namespace LearningManagementSystem.DataAccess
         Notification FindNotificationById(int id);
 
         void DeleteNotificationById(int id);
+        bool checkIfAssignmentIsSubmitted(int id);
     }
 }

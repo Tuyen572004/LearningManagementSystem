@@ -97,8 +97,6 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);
 
-        public FullObservableCollection<BaseResource> findDocumentsByClassId(int classId);
-
 
         public Class findClassById(int classId);
         public Course findCourseByClassId(int classId);

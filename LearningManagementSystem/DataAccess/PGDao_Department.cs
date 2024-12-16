@@ -13,25 +13,25 @@ namespace LearningManagementSystem.DataAccess
         public Tuple<int, List<Department>> GetAllDepartments(int page = 1, int pageSize = 10, string keyword = "", bool nameAscending = false)
         {
             var result = new List<Department>();
+            var sql = """
+                SELECT COUNT(*) OVER() AS TotalItems, Id, DepartmentCode, DepartmentDesc
+                FROM Departments
+                WHERE DepartmentCode LIKE @Keyword
+                ORDER BY Id ASC
+                LIMIT @Take OFFSET @Skip
+                """;
 
-            if (this.OpenConnection())
+            var skip = (page - 1) * pageSize;
+            var take = pageSize;
+
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = """
-                    SELECT COUNT(*) OVER() AS TotalItems, Id, DepartmentCode, DepartmentDesc
-                    FROM Departments
-                    WHERE DepartmentCode LIKE @Keyword
-                    ORDER BY Id ASC
-                    LIMIT @Take OFFSET @Skip
-                    """;
-
-                var skip = (page - 1) * pageSize;
-                var take = pageSize;
-
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Skip", skip);
                 command.Parameters.AddWithValue("@Take", take);
                 command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
 
+                connection.Open();
                 var reader = command.ExecuteReader();
 
                 int totalItems = -1;
@@ -48,14 +48,7 @@ namespace LearningManagementSystem.DataAccess
                         DepartmentDesc = reader.GetString(reader.GetOrdinal("DepartmentDesc"))
                     });
                 }
-
-                this.CloseConnection();
                 return new Tuple<int, List<Department>>(totalItems, result);
-            }
-            else
-            {
-                this.CloseConnection();
-                return new Tuple<int, List<Department>>(-1, null);
             }
         }
 
@@ -76,45 +69,34 @@ namespace LearningManagementSystem.DataAccess
 
         public int FindDepartmentID(Department department)
         {
-            if (this.OpenConnection())
+            var sql = "SELECT Id FROM Departments WHERE DepartmentCode=@DepartmentCode";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT Id FROM Departments WHERE DepartmentCode=@DepartmentCode";
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@DepartmentCode", department.DepartmentCode);
 
+                connection.Open();
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     department.Id = reader.GetInt32(reader.GetOrdinal("Id"));
                 }
-
-                this.CloseConnection();
                 return department.Id;
             }
-            else return -1;
         }
-
-
-
-
 
         public int CountDepartments()
         {
-            if (this.OpenConnection())
+            var sql = "SELECT COUNT(*) AS TotalItems FROM Departments";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT COUNT(*) AS TotalItems FROM Departments";
-                var command = new NpgsqlCommand(sql, connection);
-
+                connection.Open();
                 var reader = command.ExecuteReader();
-
                 reader.Read();
-
                 int result = reader.GetInt32(reader.GetOrdinal("TotalItems"));
-
-                this.CloseConnection();
                 return result;
             }
-            else return 0;
         }
 
         public Department GetDepartmentById(int departmentId)
@@ -164,6 +146,5 @@ namespace LearningManagementSystem.DataAccess
                 DepartmentDesc = "Mechanical Engineering"
             };
         }
-
     }
 }

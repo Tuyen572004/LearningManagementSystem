@@ -42,9 +42,7 @@ namespace LearningManagementSystem.ViewModels
             resourcesViewModel = convertToViewModels(resources);
             SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources = resourcesViewModel;
 
-            resources = _dao.findDocumentsByClassId(classId);
-            resourcesViewModel = convertToViewModels(resources);
-            SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Document).Resources = resourcesViewModel;
+            
         }
 
 

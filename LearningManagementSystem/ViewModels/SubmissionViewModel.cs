@@ -102,7 +102,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -144,7 +144,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 UpdateBusyStatus(false);
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message} \n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message} \nPlease try again later."));
             }
         }
 
@@ -165,7 +165,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}\nPlease try again later."));
             }
         }
 

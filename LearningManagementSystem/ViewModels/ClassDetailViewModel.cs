@@ -21,7 +21,7 @@ namespace LearningManagementSystem.ViewModels
 
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
-        private readonly CloudinaryService _cloudinaryService = App.Current.Services.GetService<CloudinaryService>();
+        private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
 
         private readonly UserService _userService = new UserService();
 
@@ -79,10 +79,18 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        public void RefreshData()
+        {
+            if (EnrollmentViewModel != null)
+            {
+                ResourceViewModel.LoadMoreItems(EnrollmentViewModel.Class.Id);
+            }
+        }
+
         private async Task DeleteResource(BaseResourceViewModel resource)
         {
             if (resource != null)
-            {
+            {   
                 var categoryId = resource.BaseResource.ResourceCategoryId;
                 if (categoryId == (int)ResourceCategoryEnum.Assignment)
                 {
@@ -90,12 +98,18 @@ namespace LearningManagementSystem.ViewModels
                     Assignment assignment = _dao.GetAssignmentById(id);
                     if (assignment != null)
                     {
+                        if(_dao.checkIfAssignmentIsSubmitted(assignment.Id))
+                        {
+                            WeakReferenceMessenger.Default.Send(new DialogMessage("Error", "Assignment has been submitted, cannot be deleted"));
+                            return;
+                        }
                         if (assignment.FilePath != null)
                         {
                             await _cloudinaryService.DeleteFileByUriAsync(assignment.FilePath);
                         }
                         _dao.DeleteAssignmentById(assignment.Id);
                         ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Assignment).Resources.Remove(resource);
+
                     }
                 }
                 else if(categoryId == (int)ResourceCategoryEnum.Notification)
@@ -110,12 +124,8 @@ namespace LearningManagementSystem.ViewModels
                         }
                         _dao.DeleteNotificationById(notification.Id);
                         ResourceViewModel.SingularResources.FirstOrDefault(r => r.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources.Remove(resource);
-                    }
+                      }
                 }
-                //else if (resource.ResourceCategoryId == (int)ResourceCategoryEnum.Document)
-                //{
-                //    _dao.DeleteDocumentById(resource.Id);
-                //}
             }
         }
     }

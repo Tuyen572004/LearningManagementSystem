@@ -61,8 +61,7 @@ namespace LearningManagementSystem.Services
             }
             catch (Exception ex)
             {
-                //Console.WriteLine($"An error occurred while downloading the file: {ex.Message}");
-                throw new Exception($"An error occured while downloading the file: {ex.Message}");
+                throw;
             }
         }
 
@@ -87,15 +86,8 @@ namespace LearningManagementSystem.Services
 
             DeletionResult result = await _cloudinary.DestroyAsync(deletionParams);
 
-            if (result.Result == "ok")
-            {
-                Console.WriteLine($"File successfully deleted: {publicId}");
-            }
-            else
-            {
-                Console.WriteLine($"Failed to delete file. Result: {result.Result}");
-            }
         }
+
     }
 
 }

@@ -13,25 +13,25 @@ namespace LearningManagementSystem.DataAccess
         public Tuple<int, List<User>> GetAllUsers(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<User>();
+            var sql = $"""
+                SELECT COUNT(*) OVER() AS TotalItems, id, username , passwordhash , email, role, createdat
+                FROM Users
+                WHERE username LIKE @Keyword
+                ORDER BY {sortBy} {sortOrder}
+                LIMIT @Take OFFSET @Skip
+                """;
 
-            if (this.OpenConnection())
+            var skip = (page - 1) * pageSize;
+            var take = pageSize;
+
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = $"""
-                    SELECT COUNT(*) OVER() AS TotalItems, id, username , passwordhash , email, role, createdat
-                    FROM Users
-                    WHERE username LIKE @Keyword
-                    ORDER BY {sortBy} {sortOrder}
-                    LIMIT @Take OFFSET @Skip
-                    """;
-
-                var skip = (page - 1) * pageSize;
-                var take = pageSize;
-
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Skip", skip);
                 command.Parameters.AddWithValue("@Take", take);
                 command.Parameters.AddWithValue("@Keyword", $"%{keyword}%");
 
+                connection.Open();
                 var reader = command.ExecuteReader();
 
                 int totalItems = -1;
@@ -51,75 +51,62 @@ namespace LearningManagementSystem.DataAccess
                         CreatedAt = reader.GetDateTime(reader.GetOrdinal("createdat"))
                     });
                 }
-
-                this.CloseConnection();
                 return new Tuple<int, List<User>>(totalItems, result);
-            }
-            else
-            {
-                this.CloseConnection();
-                return new Tuple<int, List<User>>(-1, null);
             }
         }
 
         public int InsertUser(User user)
         {
-            if (this.OpenConnection())
-            {
-                var sql = """
-                    INSERT INTO Users (username, passwordhash, email, role, createdat)
-                    VALUES (@Username, @PasswordHash, @Email, @Role, @CreatedAt)
-                    RETURNING Id;
-                    """;
+            var sql = """
+                INSERT INTO Users (username, passwordhash, email, role, createdat)
+                VALUES (@Username, @PasswordHash, @Email, @Role, @CreatedAt)
+                RETURNING Id;
+                """;
 
-                var command = new NpgsqlCommand(sql, connection);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
                 command.Parameters.AddWithValue("@Username", user.Username);
                 command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
                 command.Parameters.AddWithValue("@Email", user.Email);
                 command.Parameters.AddWithValue("@Role", user.Role);
                 command.Parameters.AddWithValue("@CreatedAt", user.CreatedAt);
 
+                connection.Open();
                 int id = (int)command.ExecuteScalar();
                 user.Id = id;
 
-                this.CloseConnection();
-
                 return id > 0 ? 1 : -1;
             }
-            this.CloseConnection();
-            return -1;
         }
 
         public void UpdateUser(User user)
         {
-            if (this.OpenConnection())
+            var sql = "UPDATE Users SET Username=@Username, PasswordHash=@PasswordHash, Email=@Email, Role=@Role WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "UPDATE Users SET Username=@Username, PasswordHash=@PasswordHash, Email=@Email, Role=@Role WHERE Id=@Id";
-                var command = new NpgsqlCommand(sql, connection);
-
                 command.Parameters.AddWithValue("@Username", user.Username);
                 command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
                 command.Parameters.AddWithValue("@Email", user.Email);
                 command.Parameters.AddWithValue("@Role", user.Role);
                 command.Parameters.AddWithValue("@Id", user.Id);
 
+                connection.Open();
                 command.ExecuteNonQuery();
-
-                this.CloseConnection();
             }
         }
 
         public void RemoveUserByID(int userId)
         {
-            if (this.OpenConnection())
+            var sql = "DELETE FROM Users WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "DELETE FROM Users WHERE Id=@Id";
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Id", userId);
 
+                connection.Open();
                 command.ExecuteNonQuery();
-
-                this.CloseConnection();
             }
         }
 
@@ -128,38 +115,18 @@ namespace LearningManagementSystem.DataAccess
             throw new NotImplementedException();
         }
 
-
-
         public List<string> GetAllUsernames()
         {
             var result = new List<string>();
-            try
+            var sql = "SELECT Username FROM Users";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                if (this.OpenConnection())
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    var sql = "SELECT Username FROM Users";
-                    var command = new NpgsqlCommand(sql, connection);
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        result.Add(reader.GetString(reader.GetOrdinal("username")));
-                    }
-                    if (result.Count > 0)
-                    {
-                        return result;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    this.CloseConnection();
+                    result.Add(reader.GetString(reader.GetOrdinal("username")));
                 }
             }
             return result;
@@ -167,13 +134,14 @@ namespace LearningManagementSystem.DataAccess
 
         public void GetFullUser(User user)
         {
-            if (this.OpenConnection())
+            var sql = "SELECT * FROM Users WHERE username=@Username AND passwordhash=@PasswordHash";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT * FROM Users WHERE username=@Username AND passwordhash=@PasswordHash";
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@Username", user.Username);
                 command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
 
+                connection.Open();
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -183,76 +151,61 @@ namespace LearningManagementSystem.DataAccess
                     user.Role = reader.GetString(reader.GetOrdinal("Role"));
                     user.CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"));
                 }
-                this.CloseConnection();
             }
         }
 
         public bool CheckUserInfo(User user)
         {
-            if (this.OpenConnection())
+            var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE Username=@username AND PasswordHash=@passwordhash";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE Username=@username AND PasswordHash=@passwordhash";
-                var command = new NpgsqlCommand(sql, connection);
-
                 command.Parameters.AddWithValue("@username", user.Username);
                 command.Parameters.AddWithValue("@passwordhash", user.PasswordHash);
 
+                connection.Open();
                 var reader = command.ExecuteReader();
-
                 reader.Read();
-
                 int result = reader.GetInt32(reader.GetOrdinal("TotalItems"));
-
-                this.CloseConnection();
                 return result == 1;
             }
-            else return false;
         }
 
         public bool IsExistsUsername(string username)
         {
-            if (this.OpenConnection())
+            var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE Username=@username";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE Username=@username";
-
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@username", username);
+
+                connection.Open();
                 var reader = command.ExecuteReader();
-
                 reader.Read();
-
                 int result = reader.GetInt32(reader.GetOrdinal("TotalItems"));
-
-                this.CloseConnection();
                 return result == 1;
             }
-            else return true;
         }
 
         public bool AddUser(User user)
         {
-            if (this.OpenConnection())
+            var sql = """
+                INSERT INTO Users (Username, PasswordHash, Email, Role, CreatedAt)
+                VALUES (@username, @passwordhash, null, @role, null)
+                RETURNING Id;
+                """;
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                var sql = """
-                    INSERT INTO Users (Username, PasswordHash, Email, Role, CreatedAt)
-                    VALUES (@username, @passwordhash, null, @role, null)
-                    RETURNING Id;
-                    """;
-
-                var command = new NpgsqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@username", user.Username);
                 command.Parameters.AddWithValue("@passwordhash", user.PasswordHash);
                 command.Parameters.AddWithValue("@role", user.Role);
 
+                connection.Open();
                 int id = (int)command.ExecuteScalar();
                 user.Id = id;
-
-                this.CloseConnection();
-
-                return id > 0 ? true : false;
+                return id > 0;
             }
-            this.CloseConnection();
-            return false;
         }
     }
 }

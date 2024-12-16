@@ -5,21 +5,22 @@ using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.DataAccess
 {
-    public partial class  SqlDao
+    public partial class SqlDao
     {
         public Class findClassById(int classId)
         {
             var result = new Class();
-            if (this.OpenConnection())
-            {
-                var sql = """
-                    SELECT Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
-                    FROM Classes
-                    WHERE Id=@classId
-                    """;
+            var sql = """
+                SELECT Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
+                FROM Classes
+                WHERE Id=@classId
+                """;
 
-                var command = new NpgsqlCommand(sql, connection);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
                 command.Parameters.AddWithValue("@ClassId", classId);
+                connection.Open();
                 var reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -34,8 +35,6 @@ namespace LearningManagementSystem.DataAccess
                         ClassEndDate = reader.GetDateTime(reader.GetOrdinal("ClassEndDate"))
                     };
                 }
-
-                this.CloseConnection();
             }
             return result;
         }
@@ -44,7 +43,7 @@ namespace LearningManagementSystem.DataAccess
         {
             return new ObservableCollection<Class>
             {
-                    new Class
+                new Class
                 {
                     Id = 1,
                     CourseId = 1,
@@ -179,7 +178,6 @@ namespace LearningManagementSystem.DataAccess
                     ClassStartDate = new DateTime(2022, 1, 1),
                     ClassEndDate = new DateTime(2022, 5, 1)
                 }
-
             };
         }
     }

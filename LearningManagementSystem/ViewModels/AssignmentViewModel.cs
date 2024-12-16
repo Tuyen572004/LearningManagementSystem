@@ -151,7 +151,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error exporting to Excel: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -253,7 +253,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception e)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\nPlease try again later."));
             }
 
         }
@@ -280,7 +280,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting attachment: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -312,7 +312,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 IsBusy = false;
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -382,7 +382,7 @@ namespace LearningManagementSystem.ViewModels
                 catch (Exception ex)
                 {
                     IsBusy = false;
-                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\n Please try again later."));
+                    WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\nPlease try again later."));
                 }
 
             }
@@ -428,7 +428,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 IsBusy = false;
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\nPlease try again later."));
             }
 
         }

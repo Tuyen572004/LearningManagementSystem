@@ -10,47 +10,32 @@ namespace LearningManagementSystem.DataAccess
         public Submission GetSubmissionById(int id)
         {
             var result = new Submission();
-            try
-            {
-                if (this.OpenConnection())
-                {
-                    var sql = """
+            var sql = """
                 SELECT Id, AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade
                 FROM Submissions
                 WHERE Id=@Id
                 """;
 
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", id);
-                        var reader = command.ExecuteReader();
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+                connection.Open();
+                var reader = command.ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            result = new Submission
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
-                                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                                SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
-                                FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
-                                FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
-                                FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
-                                Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
-                            };
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
+                while (reader.Read())
                 {
-                    this.CloseConnection();
+                    result = new Submission
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
+                        FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
+                        FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
+                        FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
+                        Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
+                    };
                 }
             }
             return result;
@@ -58,87 +43,57 @@ namespace LearningManagementSystem.DataAccess
 
         public void SaveSubmission(Submission submission)
         {
-            try
-            {
-                if (this.OpenConnection())
-                {
-                    var sql = """
+            var sql = """
                 INSERT INTO Submissions (AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade)
                 VALUES (@AssignmentId, @UserId, @SubmissionDate, @FilePath, @FileName, @FileType, @Grade)
                 """;
 
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@AssignmentId", submission.AssignmentId);
-                        command.Parameters.AddWithValue("@UserId", submission.UserId);
-                        command.Parameters.AddWithValue("@SubmissionDate", submission.SubmissionDate);
-                        command.Parameters.AddWithValue("@FilePath", submission.FilePath ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@FileName", submission.FileName ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@FileType", submission.FileType ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@Grade", submission.Grade ?? (object)DBNull.Value);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@AssignmentId", submission.AssignmentId);
+                command.Parameters.AddWithValue("@UserId", submission.UserId);
+                command.Parameters.AddWithValue("@SubmissionDate", submission.SubmissionDate);
+                command.Parameters.AddWithValue("@FilePath", submission.FilePath ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@FileName", submission.FileName ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@FileType", submission.FileType ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@Grade", submission.Grade ?? (object)DBNull.Value);
 
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    this.CloseConnection();
-                }
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
 
         public List<Submission> GetSubmissionsByAssignmentId(int id)
         {
             var result = new List<Submission>();
-            try
-            {
-                if (this.OpenConnection())
-                {
-                    var sql = """
+            var sql = """
                 SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, u.Username, s.Grade
                 FROM Submissions s
                 JOIN Users u ON s.UserId = u.Id
                 WHERE s.AssignmentId=@AssignmentId
                 """;
 
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@AssignmentId", id);
-                        var reader = command.ExecuteReader();
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@AssignmentId", id);
+                connection.Open();
+                var reader = command.ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            result.Add(new Submission
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
-                                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                                SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
-                                FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
-                                FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
-                                FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
-                                Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
+                while (reader.Read())
                 {
-                    this.CloseConnection();
+                    result.Add(new Submission
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
+                        FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
+                        FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
+                        FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
+                        Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
+                    });
                 }
             }
             return result;
@@ -147,49 +102,34 @@ namespace LearningManagementSystem.DataAccess
         public List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2)
         {
             var result = new List<Submission>();
-            try
-            {
-                if (this.OpenConnection())
-                {
-                    var sql = """
+            var sql = """
                 SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, s.Grade
                 FROM Submissions s
                 JOIN Users u ON s.UserId = u.Id
                 WHERE s.AssignmentId=@AssignmentId AND s.UserId=@UserId
                 """;
 
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@AssignmentId", id1);
-                        command.Parameters.AddWithValue("@UserId", id2);
-                        var reader = command.ExecuteReader();
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@AssignmentId", id1);
+                command.Parameters.AddWithValue("@UserId", id2);
+                connection.Open();
+                var reader = command.ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            result.Add(new Submission
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
-                                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                                SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
-                                FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
-                                FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
-                                FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
-                                Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
+                while (reader.Read())
                 {
-                    this.CloseConnection();
+                    result.Add(new Submission
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        AssignmentId = reader.GetInt32(reader.GetOrdinal("AssignmentId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        SubmissionDate = reader.GetDateTime(reader.GetOrdinal("SubmissionDate")),
+                        FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
+                        FileName = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName")),
+                        FileType = reader.IsDBNull(reader.GetOrdinal("FileType")) ? null : reader.GetString(reader.GetOrdinal("FileType")),
+                        Grade = reader.IsDBNull(reader.GetOrdinal("Grade")) ? (double?)null : reader.GetDouble(reader.GetOrdinal("Grade"))
+                    });
                 }
             }
             return result;
@@ -197,67 +137,38 @@ namespace LearningManagementSystem.DataAccess
 
         public void UpdateSubmission(Submission submission)
         {
-            try
-            {
-                if (this.OpenConnection())
-                {
-                    var sql = """
+            var sql = """
                 UPDATE Submissions SET AssignmentId=@AssignmentId, UserId=@UserId, SubmissionDate=@SubmissionDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType, Grade=@Grade
                 WHERE Id=@Id
                 """;
 
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@AssignmentId", submission.AssignmentId);
-                        command.Parameters.AddWithValue("@UserId", submission.UserId);
-                        command.Parameters.AddWithValue("@SubmissionDate", submission.SubmissionDate);
-                        command.Parameters.AddWithValue("@FilePath", submission.FilePath ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@FileName", submission.FileName ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@FileType", submission.FileType ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@Grade", submission.Grade ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@Id", submission.Id);
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@AssignmentId", submission.AssignmentId);
+                command.Parameters.AddWithValue("@UserId", submission.UserId);
+                command.Parameters.AddWithValue("@SubmissionDate", submission.SubmissionDate);
+                command.Parameters.AddWithValue("@FilePath", submission.FilePath ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@FileName", submission.FileName ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@FileType", submission.FileType ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@Grade", submission.Grade ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@Id", submission.Id);
 
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    this.CloseConnection();
-                }
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
 
         public void DeleteSubmissionById(int id)
         {
-            try
+            var sql = "DELETE FROM Submissions WHERE Id=@Id";
+
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                if (this.OpenConnection())
-                {
-                    var sql = "DELETE FROM Submissions WHERE Id=@Id";
-                    using (var command = new NpgsqlCommand(sql, connection))
-                    {
-                        command.Parameters.AddWithValue("@Id", id);
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            finally
-            {
-                if (connection.State == System.Data.ConnectionState.Open)
-                {
-                    this.CloseConnection();
-                }
+                command.Parameters.AddWithValue("@Id", id);
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
     }
