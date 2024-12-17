@@ -1,8 +1,5 @@
+using LearningManagementSystem.Services.ConfigService;
 using Npgsql;
-using System;
-using LearningManagementSystem.Services;
-using System.Text.Json;
-using System.IO;
 
 namespace LearningManagementSystem.DataAccess
 {

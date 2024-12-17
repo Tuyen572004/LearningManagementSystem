@@ -1,15 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CloudinaryDotNet;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
-using LearningManagementSystem.Views;
+using LearningManagementSystem.Services.CloudinaryService;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace LearningManagementSystem.ViewModels
 
         public Assignment Assignment { get; set; }
 
-        private CloudinaryService _cloudinaryService = App.Current.Services.GetService<CloudinaryService>();
+        private ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
 
         private readonly IDao _dao;
         private readonly FileHelper FileHelper = new FileHelper();

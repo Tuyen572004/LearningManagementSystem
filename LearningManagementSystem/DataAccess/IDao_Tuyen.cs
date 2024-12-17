@@ -1,4 +1,5 @@
 ﻿using LearningManagementSystem.Models;
+using System.Collections.Generic;
 
 namespace LearningManagementSystem.DataAccess
 {
@@ -13,5 +14,9 @@ namespace LearningManagementSystem.DataAccess
 
         void DeleteNotificationById(int id);
         bool checkIfAssignmentIsSubmitted(int id);
+        List<int> findStudentIdByClassId(int id);
+
+        List<StudentVer2> findStudentsByIdIn(List<int> ids);
+        User findUserById(int? userId);
     }
 }

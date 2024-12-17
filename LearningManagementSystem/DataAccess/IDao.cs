@@ -101,7 +101,6 @@ namespace LearningManagementSystem.DataAccess
         public Class findClassById(int classId);
         public Course findCourseByClassId(int classId);
         Submission GetSubmissionById(int id);
-        Student GetStudentById(int studentId);
         Assignment GetAssignmentById(int assignmentId);
         Student GetStudentByUserId(int id);
         void SaveSubmission(Submission submission);

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace LearningManagementSystem.Services
+namespace LearningManagementSystem.Services.CloudinaryService
 {
     public interface ICloudinaryService
     {

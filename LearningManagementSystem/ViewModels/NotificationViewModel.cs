@@ -5,9 +5,13 @@ using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.CloudinaryService;
+using LearningManagementSystem.Services.EmailService;
+using LearningManagementSystem.Services.EmailService.Model;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -50,7 +54,7 @@ namespace LearningManagementSystem.ViewModels
         public bool IsBusy { get; set; }
 
         public bool IsTeacher { get; set; }
-        public bool IsStudent => !IsTeacher;
+        public bool IsStudent => UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
 
         public bool IsEditing { get; set; }
 
@@ -63,10 +67,12 @@ namespace LearningManagementSystem.ViewModels
         public ICommand DownloadAttachmentCommand { get; }
         public ICommand DeleteAttachmentCommand { get; }
         public ICommand AddNotificationCommand { get; }
+        public ICommand SendEmailCommand { get; }
 
         private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         public FileHelper FileHelper = new FileHelper();
+        public IEmailService emailService = App.Current.Services.GetService<IEmailService>();
 
         public NotificationViewModel()
         {
@@ -75,6 +81,7 @@ namespace LearningManagementSystem.ViewModels
             DownloadAttachmentCommand = new AsyncRelayCommand(DownloadAttachment);
             DeleteAttachmentCommand = new AsyncRelayCommand(DeleteAttachment, CanDeleteAttachment);
             AddNotificationCommand = new RelayCommand(AddNotification, CanAddNotification);
+            SendEmailCommand = new AsyncRelayCommand(SendEmail);
             CheckRole();
 
             Notification = new Notification();
@@ -226,6 +233,55 @@ namespace LearningManagementSystem.ViewModels
             {
                 IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding notification: {e.Message}\nPlease try again later."));
+            }
+        }
+
+
+        private EmailRequest CreateEmailRequest()
+        {
+            User user = UserService.GetCurrentUser().Result;
+            Account sender = new Account
+            {
+                name = user.Username,
+                email = user.Email
+            };
+            List<int> studentIds = _dao.findStudentIdByClassId(Notification.ClassId);
+            List<StudentVer2> students = _dao.findStudentsByIdIn(studentIds);
+            List<Account> to = new List<Account>();
+            foreach (StudentVer2 student in students)
+            {
+                User studentUser = _dao.findUserById(student.UserId);
+                if (studentUser != null) {
+                    Account receiver = new Account
+                    {
+                        name = studentUser.Username,
+                        email = studentUser.Email
+                    };
+                    to.Add(receiver);
+                }
+            }
+
+            return new EmailRequest
+            {
+                sender = sender,
+                to = to,
+                subject = Notification.Title,
+                htmlContent = $"<p>New notification posted by {user.Username}</p><p>{Notification.Description}</p>"
+            };
+            
+        }
+
+        private async Task SendEmail()
+        {
+            try
+            {
+                EmailRequest emailRequest = CreateEmailRequest();
+                await emailService.sendEmail(emailRequest);
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Success", "Email sent successfully"));
+            }
+            catch (Exception ex)
+            {
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error sending email: {ex.Message}\nPlease try again later."));
             }
         }
     }

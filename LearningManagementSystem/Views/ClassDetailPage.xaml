@@ -40,7 +40,7 @@
             <Button x:Name="BackButton" Content="Back" Click="BackButton_Click" Margin="30,30,0,0" Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1"/>
 
             <ComboBox SelectionChanged="{x:Bind ClassDetailViewModel.ComboBox_SelectionChanged}" 
-          Visibility="{x:Bind ClassDetailViewModel.IsTeacher, Converter={StaticResource BooleanToVisibilityConverter}}"
+          Visibility="{x:Bind ClassDetailViewModel.CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"
       ItemsSource="{x:Bind ClassDetailViewModel.ResourceViewModel.SingularResources, Mode=OneWay}"
       Header="Add Resources" PlaceholderText="Pick a resource type"
       Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right"
@@ -108,7 +108,7 @@
                                                 FontWeight="Bold"
                                                 HorizontalAlignment="Left"
                                                 Command="{Binding DeleteCommand}"
-                                                Visibility="{x:Bind IsTeacher, 
+                                                Visibility="{x:Bind CanEdit, 
                                                             Mode=OneWay,
                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                                 </Grid>

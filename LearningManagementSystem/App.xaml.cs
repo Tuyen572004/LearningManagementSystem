@@ -1,5 +1,9 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.CloudinaryService;
+using LearningManagementSystem.Services.ConfigService;
+using LearningManagementSystem.Services.EmailService;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
@@ -30,11 +34,14 @@ namespace LearningManagementSystem
 
             services.AddSingleton<IConfigService,ConfigFileService>();
             // Register SqlDao
-            services.AddTransient<IDao, SqlDao>();
+            services.AddSingleton<IDao, SqlDao>();
 
 
             // Register CloudinaryService
-            services.AddTransient<ICloudinaryService, CloudinaryService>();
+            services.AddSingleton<ICloudinaryService, CloudinaryService>();
+
+            // Register BrevoEmailService
+            services.AddSingleton<IEmailService, BrevoEmailService>();
 
 
             return services.BuildServiceProvider();

@@ -1,15 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using LearningManagementSystem.Views;
 using Microsoft.UI.Xaml.Controls;
-using LearningManagementSystem.Models;
-using Microsoft.UI.Xaml;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace LearningManagementSystem.ViewModels
@@ -20,7 +14,7 @@ namespace LearningManagementSystem.ViewModels
 
         public ResourceViewModel ResourceViewModel { get; set; }
 
-        public readonly bool IsTeacher;
+        public readonly bool CanEdit;
 
         public SelectionChangedEventHandler ComboBox_SelectionChanged { get; }
 
@@ -29,7 +23,7 @@ namespace LearningManagementSystem.ViewModels
         {
             EnrollmentViewModel = new EnrollmentClassViewModel();
             ResourceViewModel = new ResourceViewModel();
-            IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            CanEdit = !UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
 
             ComboBox_SelectionChanged = new SelectionChangedEventHandler(OnSelectionChanged);
            

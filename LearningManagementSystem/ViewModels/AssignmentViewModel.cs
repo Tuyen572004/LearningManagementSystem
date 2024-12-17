@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.CloudinaryService;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -162,7 +164,7 @@ namespace LearningManagementSystem.ViewModels
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
         public bool IsTeacher { get; set; }
-        public bool IsStudent => !IsTeacher;
+        public bool IsStudent { get; set; }
 
         public bool IsEditing { get; set; }
 
@@ -233,7 +235,7 @@ namespace LearningManagementSystem.ViewModels
 
         private bool CanAddAssignment()
         {
-            return IsTeacher;
+            return !IsStudent;
         }
 
         private void AddAssignment()
@@ -325,7 +327,8 @@ namespace LearningManagementSystem.ViewModels
         {
             User = await UserService.GetCurrentUser();
             var role = User.Role;
-            IsTeacher = role == "teacher";
+            IsTeacher = role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            IsStudent = role.Equals(RoleEnum.GetStringValue(Role.Student));
         }
 
         public void LoadSubmissions()

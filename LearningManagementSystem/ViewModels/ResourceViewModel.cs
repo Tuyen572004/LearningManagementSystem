@@ -4,7 +4,7 @@ using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.CloudinaryService;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
