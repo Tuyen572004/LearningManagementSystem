@@ -93,8 +93,8 @@
                 <!-- Add the new button here -->
                 <Button Content="Send Email" 
                     Command="{x:Bind NotificationViewModel.SendEmailCommand}" 
-                    Foreground="White" BorderBrush="DarkBlue" Background="Blue" FontWeight="Bold"
-                    Margin="10,0,0,0"/>
+                    Foreground="Green" 
+                BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
 
                 <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" 
                 BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
