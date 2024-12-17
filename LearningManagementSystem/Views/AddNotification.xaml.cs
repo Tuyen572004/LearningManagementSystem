@@ -57,26 +57,40 @@ namespace LearningManagementSystem.Views
             Frame.GoBack();
         }
 
+        private ContentDialog _currentDialog;
+
         private async Task ShowMessageDialog(string title, string content)
         {
-            var messageDialog = new ContentDialog
+            try
             {
-                Title = title,
-                Content = content,
-                CloseButtonText = "Close",
-                PrimaryButtonText = "Go Back",
-                XamlRoot = this.Content.XamlRoot
-            };
+                _currentDialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "Close",
+                    PrimaryButtonText = "Go Back",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                };
 
-            var result = await messageDialog.ShowAsync();
+                var result = await _currentDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary)
-            {
-                Frame.GoBack();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    _currentDialog.Hide();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                messageDialog.Hide();
+                _currentDialog?.Hide();
+                // Optionally log the exception or show a different message
+            }
+            finally
+            {
+                _currentDialog = null;
             }
         }
     }

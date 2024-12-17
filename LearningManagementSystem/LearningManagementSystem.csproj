@@ -34,6 +34,7 @@
 	  <Content Remove="Assets\teacher.png" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="config.json" />
 	  <None Remove="Controls\PagingOptionsBar.xaml" />
 	  <None Remove="Controls\QueryableStudentDisplayer.xaml" />
 	  <None Remove="Controls\SearchBar.xaml" />
@@ -63,6 +64,12 @@
 		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="config.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 	
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
@@ -72,9 +79,6 @@
 		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
 		<Content Include="Assets\StoreLogo.png" />
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-		<Content Include="config.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
