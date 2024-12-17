@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LearningManagementSystem.Views.AddClass"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto" Margin="0,10,0,0"/>
+
+        <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">Add a class</TextBlock>
+
+        <Button x:Name="cancel" Grid.Row="2" Grid.Column="3" Click="cancel_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Cancel</Button>
+        <Button x:Name="save" Grid.Row="2" Grid.Column="4" Click="save_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Save</Button>
+
+
+        <StackPanel Name="inputPanel" Spacing="20" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="20,50,0,0">
+            <TextBlock FontWeight="ExtraBold" FontSize="25">Class Code</TextBlock>
+            <TextBox Name="inputClassCode" Width="Auto"></TextBox>
+
+            <TextBlock FontWeight="ExtraBold" FontSize="25" >Cycle ID</TextBlock>
+            <NumberBox Name="inputCycleID" Width="Auto"></NumberBox>
+
+            <TextBlock FontWeight="ExtraBold" FontSize="25">Course ID</TextBlock>
+
+            <ComboBox Name="coursesComboBox" Width="Auto" Height="35">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                        <Run Text="{}"/> - <Run Text="{}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Margin="20,50,0,0" Spacing="20" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2">
+            <TextBlock FontWeight="ExtraBold" FontSize="25">Start date</TextBlock>
+            <CalendarDatePicker PlaceholderText="Pick a date" Name="inputStartDate"/>
+            <TextBlock FontWeight="ExtraBold" FontSize="25">End date</TextBlock>
+            <CalendarDatePicker PlaceholderText="Pick a date" Name="inputEndDate"/>
+        </StackPanel>
+
+    </Grid>
+</Page>

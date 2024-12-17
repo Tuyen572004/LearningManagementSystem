@@ -10,6 +10,23 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        public int FindCourseByID(Course course)
+        {
+            var sql = "SELECT Id FROM Courses WHERE CourseCode=@CourseCode";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@CourseCode", course.CourseCode);
+
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    course.Id = reader.GetInt32(reader.GetOrdinal("Id"));
+                }
+                return course.Id;
+            }
+        }
         public Course findCourseByClassId(int classId)
         {
             var result = new Course();

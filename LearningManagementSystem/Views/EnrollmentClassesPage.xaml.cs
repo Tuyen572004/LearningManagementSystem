@@ -34,6 +34,20 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        private void addClass_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AddClass));
+        }
+
+        private void deleteClass_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void editClass_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }
