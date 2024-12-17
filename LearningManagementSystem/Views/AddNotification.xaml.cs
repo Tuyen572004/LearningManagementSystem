@@ -2,20 +2,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using LearningManagementSystem.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -63,26 +57,40 @@ namespace LearningManagementSystem.Views
             Frame.GoBack();
         }
 
+        private ContentDialog _currentDialog;
+
         private async Task ShowMessageDialog(string title, string content)
         {
-            var messageDialog = new ContentDialog
+            try
             {
-                Title = title,
-                Content = content,
-                CloseButtonText = "Close",
-                PrimaryButtonText = "Go Back",
-                XamlRoot = this.Content.XamlRoot
-            };
+                _currentDialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "Close",
+                    PrimaryButtonText = "Go Back",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                };
 
-            var result = await messageDialog.ShowAsync();
+                var result = await _currentDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary)
-            {
-                Frame.GoBack();
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    _currentDialog.Hide();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                messageDialog.Hide();
+                _currentDialog?.Hide();
+                // Optionally log the exception or show a different message
+            }
+            finally
+            {
+                _currentDialog = null;
             }
         }
     }

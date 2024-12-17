@@ -1,5 +1,5 @@
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

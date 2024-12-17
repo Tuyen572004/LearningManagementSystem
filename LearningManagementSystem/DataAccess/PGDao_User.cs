@@ -207,5 +207,31 @@ namespace LearningManagementSystem.DataAccess
                 return id > 0;
             }
         }
+
+        public User findUserById(int? id)
+        {
+            var result = new User();
+            var sql = "SELECT * FROM Users WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result = new User
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Username = reader.GetString(reader.GetOrdinal("Username")),
+                        PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
+                        Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
+                        Role = reader.GetString(reader.GetOrdinal("Role")),
+                        CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+                    };
+                }
+            }
+            return result;
+        }
     }
 }

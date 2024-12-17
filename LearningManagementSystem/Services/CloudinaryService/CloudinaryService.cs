@@ -1,12 +1,13 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using LearningManagementSystem.Services.ConfigService;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace LearningManagementSystem.Services
+namespace LearningManagementSystem.Services.CloudinaryService
 {
     public class CloudinaryConfig
     {

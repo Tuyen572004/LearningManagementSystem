@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using System;
 using System.Windows.Input;
 
@@ -17,25 +17,25 @@ namespace LearningManagementSystem.ViewModels
 
         private readonly UserService _userService = new UserService();
 
-        public readonly bool IsTeacher;
+        public readonly bool CanEdit;
 
         public BaseResourceViewModel()
         {
             BaseResource = new BaseResource();
             DeleteCommand = new RelayCommand(Delete,CanDelete);
-            IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            CanEdit = !UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
         }
 
         public BaseResourceViewModel(BaseResource x)
         {
             BaseResource = x;
             DeleteCommand = new RelayCommand(Delete, CanDelete);
-            IsTeacher = UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
+            CanEdit = !UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
         }
 
         private bool CanDelete()
         {
-            return IsTeacher;
+            return CanEdit;
         }
 
         private void Delete()

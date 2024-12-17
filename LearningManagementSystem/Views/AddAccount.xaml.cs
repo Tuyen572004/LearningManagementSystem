@@ -16,7 +16,7 @@ using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.Helpers;
 using System.Collections.ObjectModel;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

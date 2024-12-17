@@ -1,7 +1,7 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LearningManagementSystem.ViewModels

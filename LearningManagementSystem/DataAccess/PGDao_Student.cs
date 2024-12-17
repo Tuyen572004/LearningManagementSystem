@@ -520,5 +520,33 @@ namespace LearningManagementSystem.DataAccess
             }
             return (result, queryCount);
         }
+
+        // only get name and user id
+        public List<StudentVer2> findStudentsByIdIn(List<int> ids){
+            List<StudentVer2> result = new List<StudentVer2>();
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var query = @"
+                    SELECT studentname, userid FROM students WHERE id = ANY(@Ids)
+                ";
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Ids", ids.ToArray());
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new StudentVer2
+                            {
+                                StudentName = reader.GetString(0),
+                                UserId = reader.IsDBNull(1) ? null : reader.GetInt32(1)
+                            });
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 }

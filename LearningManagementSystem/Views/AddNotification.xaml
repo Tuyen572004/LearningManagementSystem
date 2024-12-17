@@ -90,8 +90,19 @@
                         Margin="10,0,0,0"/>
                 </StackPanel>
 
-                <Button Content="Back" Name="BackButton" Click="BackButton_Click" Foreground="Green" 
-                BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Send Email" 
+                            Command="{x:Bind NotificationViewModel.SendEmailCommand}" 
+                            Foreground="Green" 
+                            Width="100"
+                            BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
+
+                    <Button Content="Back" Name="BackButton" Click="BackButton_Click" 
+                            Foreground="Green" Width="100"
+                            BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Margin="10"/>
+                </StackPanel>
+                <!-- Add the new button here -->
+
             </StackPanel>
             <!-- Centered ProgressRing -->
             <Grid x:Name="LoadingOverlay" Background="Transparent" Visibility="{x:Bind NotificationViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">

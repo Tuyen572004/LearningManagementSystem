@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Services.CloudinaryService;
+using System;
 using System.IO;
 using System.Text.Json;
-using LearningManagementSystem.DataAccess;
-using NPOI.SS.Formula.Functions;
 
-namespace LearningManagementSystem.Services
+namespace LearningManagementSystem.Services.ConfigService
 {
     public class ConfigFileService : IConfigService
     {
@@ -32,6 +28,12 @@ namespace LearningManagementSystem.Services
         {
             var cloudinaryConfig = configJson.RootElement.GetProperty("Cloudinary").ToString();
             return JsonSerializer.Deserialize<CloudinaryConfig>(cloudinaryConfig);
+        }
+
+        public BrevoConfig GetBrevoConfig()
+        {
+            var brevoConfig = configJson.RootElement.GetProperty("BREVO_Email").ToString();
+            return JsonSerializer.Deserialize<BrevoConfig>(brevoConfig);
         }
     }
 }
