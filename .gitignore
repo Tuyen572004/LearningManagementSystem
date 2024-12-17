@@ -364,4 +364,4 @@ FodyWeavers.xsd
 
 # Visual Studio
 
-config.json
+./config.json

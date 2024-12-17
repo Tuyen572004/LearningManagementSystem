@@ -1,0 +1,20 @@
+{
+  "Cloudinary": {
+    "CloudName": "ddw1pv5un",
+    "ApiKey": "513955292673775",
+    "ApiSecret": "Qs1OEpFUNzzKU39-mHVq3NDCszw"
+  },
+  "PG_Database": {
+    "DB_HOST": "dpg-ct3vdm52ng1s73a13mr0-a.singapore-postgres.render.com",
+    "DB_DATABASE": "lmsdb_7mch",
+    "DB_USERNAME": "posgre",
+    "DB_PASSWORD": "sOL87JmxSGdTuGCwXDNNc8ehNbyctMVH"
+  },
+  "BREVO_Email": {
+    "EMAIL_API_KEY": "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",
+    "EMAIL_BASE_URL": "https://api.brevo.com",
+    "EMAIL_ENDPOINT": "/v3/smtp/email",
+    "SENDER_EMAIL": "htkt004@gmail.com",
+    "SENDER_NAME": "React To Spring Forum"
+  }
+}
