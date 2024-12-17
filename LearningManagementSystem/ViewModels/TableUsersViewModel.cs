@@ -1,11 +1,9 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -51,7 +49,7 @@ namespace LearningManagementSystem.ViewModels
         public TableUsersViewModel()
         {
             TableUsers = new FullObservableCollection<TableUsersView>();
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             SelectedUser = new TableUsersView();
             Suggestion = _dao.GetAllUsernames();
         }

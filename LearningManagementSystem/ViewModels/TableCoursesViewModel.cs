@@ -1,22 +1,9 @@
-﻿using LearningManagementSystem.Models;
-using LearningManagementSystem.ViewModels;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Helpers;
+using LearningManagementSystem.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using LearningManagementSystem.Helpers;
-using LearningManagementSystem.DataAccess;
 
 namespace LearningManagementSystem.ViewModels
 {
@@ -61,7 +48,7 @@ namespace LearningManagementSystem.ViewModels
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             countRepeatButton = 0;
             SelectedCourse = new TableCoursesView();
             Suggestion = _dao.GetAllCourseDecriptions();

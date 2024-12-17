@@ -1,14 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CloudinaryDotNet;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
-using LearningManagementSystem.Views;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using LearningManagementSystem.Services.CloudinaryService;
+using LearningManagementSystem.Services.UserService;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace LearningManagementSystem.ViewModels
 
         public Assignment Assignment { get; set; }
 
-        private CloudinaryService _cloudinaryService = new CloudinaryService();
+        private ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
 
         private readonly IDao _dao;
         private readonly FileHelper FileHelper = new FileHelper();
@@ -41,7 +41,7 @@ namespace LearningManagementSystem.ViewModels
 
         public SubmissionViewModel()
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             Submission = new Submission();
             Student = new Student();
             Assignment = new Assignment();
@@ -53,7 +53,7 @@ namespace LearningManagementSystem.ViewModels
 
         public SubmissionViewModel(Submission submission, Assignment assignment)
         {
-            _dao = new SqlDao();
+            _dao = App.Current.Services.GetService<IDao>();;
             Submission = submission;
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;
@@ -101,7 +101,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error updating submission: {ex.Message}\nPlease try again later."));
             }
         }
 
@@ -143,7 +143,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 UpdateBusyStatus(false);
                 // Send error message
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message} \n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Download Failed", $"Error downloading file: {ex.Message} \nPlease try again later."));
             }
         }
 
@@ -164,7 +164,7 @@ namespace LearningManagementSystem.ViewModels
             catch (Exception ex)
             {
                 UpdateBusyStatus(false);
-                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}\n Please try again later."));
+                WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error deleting submission: {ex.Message}\nPlease try again later."));
             }
         }
 

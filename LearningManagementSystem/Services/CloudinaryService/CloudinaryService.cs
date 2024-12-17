@@ -1,12 +1,13 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using LearningManagementSystem.Services.ConfigService;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace LearningManagementSystem.Services
+namespace LearningManagementSystem.Services.CloudinaryService
 {
     public class CloudinaryConfig
     {
@@ -14,31 +15,15 @@ namespace LearningManagementSystem.Services
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
     }
-    public class CloudinaryService
+    public class CloudinaryService : ICloudinaryService
     {
         private readonly Cloudinary _cloudinary;
 
-        public CloudinaryService()
+        public CloudinaryService(IConfigService configService)
         {
-            Account account = Initialize();
+            var config = configService.GetCloudinaryConfig();
+            Account account = new Account(config.CloudName, config.ApiKey, config.ApiSecret);
             _cloudinary = new Cloudinary(account);
-        }
-
-        private Account Initialize()
-        {
-            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-            string configContent = File.ReadAllText(configFilePath);
-            var configJson = JsonDocument.Parse(configContent);
-            var cloudinaryConfig = configJson.RootElement.GetProperty("Cloudinary").ToString();
-            CloudinaryConfig config = JsonSerializer.Deserialize<CloudinaryConfig>(cloudinaryConfig);
-
-            var account = new Account(
-                config.CloudName,
-                config.ApiKey,
-                config.ApiSecret
-            );
-
-            return account;
         }
 
         public async Task<string> UploadFileAsync(string filePath)
@@ -77,8 +62,7 @@ namespace LearningManagementSystem.Services
             }
             catch (Exception ex)
             {
-                //Console.WriteLine($"An error occurred while downloading the file: {ex.Message}");
-                throw new Exception($"An error occured while downloading the file: {ex.Message}");
+                throw;
             }
         }
 
@@ -103,15 +87,8 @@ namespace LearningManagementSystem.Services
 
             DeletionResult result = await _cloudinary.DestroyAsync(deletionParams);
 
-            if (result.Result == "ok")
-            {
-                Console.WriteLine($"File successfully deleted: {publicId}");
-            }
-            else
-            {
-                Console.WriteLine($"Failed to delete file. Result: {result.Result}");
-            }
         }
+
     }
 
 }

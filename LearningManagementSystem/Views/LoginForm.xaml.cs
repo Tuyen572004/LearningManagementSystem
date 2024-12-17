@@ -1,5 +1,5 @@
 using LearningManagementSystem.Models;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -52,27 +52,40 @@ namespace LearningManagementSystem
                 Username = username,
                 PasswordHash = passwordhash.Length > 4096 ? passwordhash[..4096] : passwordhash,
             };
-
-            if (ViewModel.CheckUserInfo())
+            try
             {
-                ViewModel.GetUser();
-                UserService.SaveUserConfig(ViewModel.UserLogin);
-                var screen = new DashBoard();
-                screen.Activate();
+                if (ViewModel.CheckUserInfo())
+                {
+                    ViewModel.GetUser();
+                    UserService.SaveUserConfig(ViewModel.UserLogin);
+                    var screen = new DashBoard();
+                    screen.Activate();
+                }
+                else
+                {
+                    var ctDialog = new ContentDialog
+                    {
+                        XamlRoot = this.XamlRoot,
+                        Title = "Oops !",
+                        Content = "Incorrect Username or Password",
+
+                        CloseButtonText = "Try Again"
+                    };
+                    var result = await ctDialog.ShowAsync();
+                }
             }
-            else
+            catch (Exception ex)
             {
                 var ctDialog = new ContentDialog
                 {
                     XamlRoot = this.XamlRoot,
-                    Title = "Oops !",
-                    Content = "Incorrect Username or Password",
+                    Title = "Error",
+                    Content = $"An error occurred: {ex.Message}\nPlease Try Again",
 
                     CloseButtonText = "Try Again"
                 };
                 var result = await ctDialog.ShowAsync();
             }
-
         }
 
         private void revealModeCheckBox_Checked(object sender, RoutedEventArgs e)

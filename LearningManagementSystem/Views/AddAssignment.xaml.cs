@@ -2,8 +2,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
-using LearningManagementSystem.Services;
+using LearningManagementSystem.Services.UserService;
 using LearningManagementSystem.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -23,7 +24,7 @@ namespace LearningManagementSystem.Views
 
         public AssignmentViewModel AssignmentViewModel { get; set; }
 
-        private readonly IDao _dao = new SqlDao();
+        private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         private readonly UserService userService = new UserService();
         public AddAssignment()
         {

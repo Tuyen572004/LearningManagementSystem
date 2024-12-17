@@ -1,10 +1,13 @@
 using CommunityToolkit.Mvvm.Messaging;
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Messages;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Threading.Tasks;
 
 
 namespace LearningManagementSystem.Views
@@ -27,39 +30,63 @@ namespace LearningManagementSystem.Views
                 Frame.Navigate(m.DestinationPage, m.Parameter);
             });
 
+            WeakReferenceMessenger.Default.Register<DialogMessage>(this, async (r, m) =>
+            {
+                await ShowMessageDialog(m.Title, m.Value);
+            });
+
+            WeakReferenceMessenger.Default.Register<DeleteResourceMessage>(this, async (r, m) =>
+            {
+                await ConfirmAndDeleteResource(m.Value as BaseResourceViewModel);
+            });
+
+        }
+
+        private async Task ConfirmAndDeleteResource(BaseResourceViewModel resource)
+        {
+            var confirmDialog = new ContentDialog
+            {
+                Title = "Confirm Delete",
+                Content = "Are you sure you want to delete this resource?",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+                XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+            };
+
+            var result = await confirmDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await DeleteResource(resource);
+            }
+        }
+
+        private async Task DeleteResource(BaseResourceViewModel resource)
+        {
+            await ClassDetailViewModel.ResourceViewModel.DeleteResource(resource);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
 
-            if (e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage (click Enter button)
+
+            if (e.Parameter is EnrollmentClassViewModel enrollmentViewModel) // navigated by EnrollmentClassesPage or AddNotification page
             {
                 ClassDetailViewModel.EnrollmentViewModel = enrollmentViewModel;
                 // Eager loading
                 ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
-
             }
-            // USE GO BACK SO I DON'T NEED IT ANYMORE
-            //else if (e.Parameter is int classId) // navigated by Resources Page (click Back button)
-            //{
-            //    ClassDetailViewModel.EnrollmentViewModel.loadClassByClassId(classId);
-            //    // Eager loading
-            //    ClassDetailViewModel.ResourceViewModel.LoadMoreItems(ClassDetailViewModel.EnrollmentViewModel.Class.Id);
-            //}
-
-
-
+            base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            WeakReferenceMessenger.Default.Unregister<NavigationMessage>(this);
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
 
-        public void Title_DoubleTapped(object sender,DoubleTappedRoutedEventArgs e)
+        public void Title_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             var textBlock = sender as TextBlock;
             var parameter = textBlock.DataContext as BaseResourceViewModel;
@@ -71,16 +98,10 @@ namespace LearningManagementSystem.Views
                     var assignment = resource as Assignment;
                     Frame.Navigate(typeof(AssignmentPage), assignment);
                 }
-                // ------------ IMPLEMENT LATER ------------
                 else if (resource is Notification)
                 {
                     var notification = resource as Notification;
                     Frame.Navigate(typeof(NotificationPage), notification);
-                }
-                else if (resource is Document)
-                {
-                    var document = resource as Document;
-                    Frame.Navigate(typeof(DocumentPage), document);
                 }
             }
         }
@@ -91,6 +112,44 @@ namespace LearningManagementSystem.Views
         {
             Frame.Navigate(typeof(EnrollmentClassesPage));
         }
+
+        private ContentDialog _currentDialog;
+
+        private async Task ShowMessageDialog(string title, string content)
+        {
+            try
+            {
+                _currentDialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "Close",
+                    PrimaryButtonText = "Go Back",
+                    XamlRoot = this.Content.XamlRoot // Ensure the dialog is shown in the root of the current view
+                };
+
+                var result = await _currentDialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    _currentDialog?.Hide();
+                }
+            }
+            catch (Exception ex)
+            {
+                _currentDialog?.Hide();
+                // Optionally log the exception or show a different message
+            }
+            finally
+            {
+                _currentDialog = null;
+            }
+        }
+
     }
 }
 
