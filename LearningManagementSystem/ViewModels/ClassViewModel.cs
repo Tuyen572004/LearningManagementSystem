@@ -26,5 +26,15 @@ namespace LearningManagementSystem.ViewModels
             int count = _dao.InsertClass(newClass);
             return count;
         }
+
+        public void UpdateClass(Class newClass)
+        {
+            _dao.UpdateClass(newClass);
+        }
+
+        public int CountClasses()
+        {
+            return _dao.CountClass();
+        }
     };
 }

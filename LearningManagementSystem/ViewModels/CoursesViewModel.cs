@@ -76,7 +76,7 @@ namespace LearningManagementSystem.ViewModels
         {
             var token = input.Split(" - ");
 
-            return _dao.FindCourseByID(new Course { Id = 2 });
+            return _dao.FindCourseByID(new Course { CourseCode = token[0] });
 
         }
 

@@ -23,17 +23,43 @@ namespace LearningManagementSystem.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddClass : Page
+    public sealed partial class EditClass : Page
     {
-        private ClassViewModel ViewModel { get; set; }
+        public EditClassViewModel ViewModel { get; set; }
 
         private CourseViewModel CrsViewModel { get; set; }
-        public AddClass()
+        public EditClass()
         {
             this.InitializeComponent();
-            ViewModel = new ClassViewModel();
+            ViewModel = new EditClassViewModel();
             CrsViewModel = new CourseViewModel();
             coursesComboBox.ItemsSource = CrsViewModel.Courses;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var oldTableClass = e.Parameter as TableClassesView;
+
+            var oldClass = new Class
+            {
+                Id = oldTableClass.ID,
+                ClassCode = oldTableClass.ClassCode,
+                CycleId = oldTableClass.CycleID,
+                CourseId = oldTableClass.CourseID,
+                ClassStartDate = oldTableClass.ClassStartDate,
+                ClassEndDate = oldTableClass.ClassEndDate
+
+            };
+
+            ViewModel.SelectedClass = oldClass.Clone() as Class;
+
+            inputClassCode.Text = ViewModel.SelectedClass.ClassCode;
+            inputCycleID.Value = ViewModel.SelectedClass.CycleId;
+            inputStartDate.Date = ViewModel.SelectedClass.ClassStartDate;
+            inputEndDate.Date = ViewModel.SelectedClass.ClassEndDate;
+            coursesComboBox.SelectedIndex = CrsViewModel.Courses.IndexOf(CrsViewModel.Courses.FirstOrDefault(x => x.Id == ViewModel.SelectedClass.CourseId));
+
+            base.OnNavigatedTo(e);
         }
 
         private async void cancel_Click(object sender, RoutedEventArgs e)
@@ -47,16 +73,17 @@ namespace LearningManagementSystem.Views
                 CloseButtonText = "No"
             };
 
-
             var result = await ctDialog.ShowAsync();
+
             if (result == ContentDialogResult.Primary)
             {
-                Frame.GoBack();
+                Frame.Navigate(typeof(ClassesPage), ViewModel.SelectedClass);
             }
             else
             {
                 ctDialog.Hide();
             }
+
         }
 
         private async void save_Click(object sender, RoutedEventArgs e)
@@ -145,26 +172,42 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
-            var newClass = new Class
-            {
-                ClassCode = inputClassCode.Text,
-                CycleId = Convert.ToInt32(inputCycleID.Text),
-                CourseId = (int)coursesComboBox.SelectedValue,
-                ClassStartDate = inputStartDate.Date.Value.DateTime,
-                ClassEndDate = inputEndDate.Date.Value.DateTime,
-            };
 
-            int count = ViewModel.InsertClass(newClass);
-
-            await new ContentDialog
+            var dialog = new ContentDialog
             {
                 XamlRoot = this.XamlRoot,
                 Title = "Class",
-                Content = count == 1 ? "Class added successfully." : "Failed to add class.",
-                CloseButtonText = "Ok"
-            }.ShowAsync();
+                Content = "Are you sure you want to save changes?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No"
+            };
 
-            Frame.GoBack();
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                var newClass = new Class
+                {
+                    Id = ViewModel.SelectedClass.Id,
+                    ClassCode = inputClassCode.Text,
+                    CycleId = Convert.ToInt32(inputCycleID.Text),
+                    CourseId = (int)coursesComboBox.SelectedValue,
+                    ClassStartDate = inputStartDate.Date.Value.DateTime,
+                    ClassEndDate = inputEndDate.Date.Value.DateTime,
+
+                };
+
+                ViewModel.SelectedClass = newClass.Clone() as Class;
+                ViewModel.UpdateClass(ViewModel.SelectedClass);
+                Frame.Navigate(typeof(ClassesPage), ViewModel.SelectedClass);
+            }
+            else
+            {
+                dialog.Hide();
+            }
         }
+
+
+
     }
 }

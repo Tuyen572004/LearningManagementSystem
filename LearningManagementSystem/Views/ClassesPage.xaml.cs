@@ -148,7 +148,7 @@ namespace LearningManagementSystem.Views
             if (myClassesTable.SelectedItem is TableClassesView selectedClass)
             {
                 ViewModel.SelectedClass = selectedClass.Clone() as TableClassesView;
-                Frame.Navigate(typeof(EditCourses), ViewModel.SelectedClass);
+                Frame.Navigate(typeof(EditClass), ViewModel.SelectedClass);
             }
         }
 

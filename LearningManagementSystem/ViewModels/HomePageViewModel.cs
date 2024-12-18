@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LearningManagementSystem.DataAccess;
+using System;
 using System.Globalization;
 
 namespace LearningManagementSystem.ViewModels
@@ -10,11 +11,15 @@ namespace LearningManagementSystem.ViewModels
 
         public int TotalCourses { get; set; }
 
+        public int TotalClasses { get; set; }
+        public int TotalStudents { get; set; }
         public int TotalDepartments { get; set; }
         public CourseViewModel CrsViewModel { get; set; }
 
         public DepartmentsViewModel DpmViewModel { get; set; }
 
+        public ClassViewModel ClsViewModel { get; set; }
+        public StudentsInClassViewModel StdViewModel { get; set; }
 
         public HomePageViewModel()
         {
@@ -22,8 +27,12 @@ namespace LearningManagementSystem.ViewModels
             cultureNames = "";
             DpmViewModel = new DepartmentsViewModel();
             CrsViewModel = new CourseViewModel();
+            ClsViewModel = new ClassViewModel();
+
             TotalCourses = CrsViewModel.CountCourse();
             TotalDepartments = DpmViewModel.CountDepartments();
+            TotalClasses = ClsViewModel.CountClasses();
+            //   TotalStudents = StdViewModel.CountStudents()
         }
 
         public HomePageViewModel(string _cultureNames)

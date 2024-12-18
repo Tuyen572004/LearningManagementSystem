@@ -38,6 +38,10 @@ namespace LearningManagementSystem.ViewModels
             };
         }
 
+        public int CountStudents()
+        {
+            return _dao.CountStudent();
+        }
         public void LoadStudents()
         {
             ManagingStudents = _dao.GetStudentsByClassId(_managingClass.Id);

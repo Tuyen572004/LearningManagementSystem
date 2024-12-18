@@ -334,7 +334,7 @@ namespace LearningManagementSystem.ViewModels
                     throw new ArgumentException("RightBound must be comparable");
                 }
 
-                iterable = iterable.Where(student => 
+                iterable = iterable.Where(student =>
                 {
                     if (leftBound is null && rightBound is null)
                     {

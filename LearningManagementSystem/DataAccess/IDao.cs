@@ -122,5 +122,6 @@ namespace LearningManagementSystem.DataAccess
         public void RemoveClassByID(int id);
         public void UpdateClass(Class newClass);
         public int CountClass();
+        public int CountStudent();
     }
 }
