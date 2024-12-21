@@ -242,7 +242,7 @@
 //        }
 //    }
 
-//    public partial class StudentsViewModel(IDao dao) : BaseViewModel, IStudentProvider, IPagingProvider
+//    public partial class StudentsViewModel(IDao dao) : BaseViewModel, ITableItemProvider, IPagingProvider
 //    {
 //        public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
 //        private readonly IDao _dao = dao;
@@ -274,7 +274,7 @@
 //            )> FilterCriteria
 //        { get; internal set; } = [];
 
-//        public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
+//        public ObservableCollection<StudentVer2> ManagingItems { get; private set; } = [];
 
 //        public StudentQueryBuilder MakeQuery()
 //        {
@@ -293,10 +293,10 @@
 //                FilterCriteria
 //                );
 //            ItemCount = queryCount;
-//            ManagingStudents = resultList;
+//            ManagingItems = resultList;
 
 //            // You must "roar" by yourself :'))
-//            RaisePropertyChanged(nameof(ManagingStudents));
+//            RaisePropertyChanged(nameof(ManagingItems));
 //            RaisePropertyChanged(nameof(PageCount));
 //        }
 

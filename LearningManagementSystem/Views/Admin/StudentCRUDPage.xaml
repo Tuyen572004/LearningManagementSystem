@@ -27,7 +27,7 @@
             TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
             Grid.Row="0"
         />
-            <controls:QueryableStudentDisplayer x:Name="StudentReaderDisplayer" Grid.Row="1" DataContext="{x:Bind _readerViewModel}"/>
+            <controls:QueryableItemDisplayer x:Name="StudentReaderDisplayer" Grid.Row="1" DataContext="{x:Bind _readerViewModel}"/>
 
 
             <!-- TODO: Change to Grid-->
@@ -51,7 +51,7 @@
 
             </Grid>
 
-            <controls:QueryableStudentDisplayer Grid.Row="3" x:Name="StudentCUDDisplayer" DataContext="{x:Bind _cudViewModel}" />
+            <controls:QueryableItemDisplayer Grid.Row="3" x:Name="StudentCUDDisplayer" DataContext="{x:Bind _cudViewModel}" />
         </Grid>
     </ScrollViewer>
 </Page>

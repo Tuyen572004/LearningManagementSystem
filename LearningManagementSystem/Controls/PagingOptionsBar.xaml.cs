@@ -232,9 +232,9 @@ namespace LearningManagementSystem.Controls
                 {
                     Content = CurrentPage,
                     Tag = CurrentPage,
-                    Style = (Style)Resources["PagingButtonStyle"]
+                    Style = (Style)Resources["PagingButtonStyle"],
+                    IsEnabled = false
                 };
-                outOfBoundButton.IsEnabled = false;
                 outOfBoundButton.Click += Button_Click;
                 ButtonContainer.Children.Add(outOfBoundButton);
             }
@@ -259,7 +259,7 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void RowSizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RowSizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs _)
         {
             if (sender is ComboBox comboBox)
             {

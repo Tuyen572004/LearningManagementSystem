@@ -36,9 +36,9 @@
 	<ItemGroup>
 	  <None Remove="config.json" />
 	  <None Remove="Controls\PagingOptionsBar.xaml" />
-	  <None Remove="Controls\QueryableStudentDisplayer.xaml" />
+	  <None Remove="Controls\QueryableItemDisplayer.xaml" />
 	  <None Remove="Controls\SearchBar.xaml" />
-	  <None Remove="Controls\StudentTable.xaml" />
+	  <None Remove="Controls\TableView.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
@@ -142,7 +142,7 @@
 	  <Page Update="Views\AddNotification.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
+	  <Page Update="Controls\QueryableItemDisplayer.xaml">
         <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\EditUser.xaml">
@@ -237,7 +237,7 @@
 		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\StudentTable.xaml">
+	  <Page Update="Controls\TableView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

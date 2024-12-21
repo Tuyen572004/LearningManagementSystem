@@ -52,45 +52,48 @@ namespace LearningManagementSystem.Controls
         required public string ColumnTag { get; set; }
         public DataGridSortDirection? SortDirection { get; set; }
     }
-    public interface IStudentProvider: INotifyPropertyChanged
+    public interface ITableItemProvider: INotifyPropertyChanged
     {
-        public ObservableCollection<StudentVer2> ManagingStudents { get; }
+        public ObservableCollection<object> ManagingItems { get; }
         public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
-        public EventHandler<StudentVer2>? StudentDoubleTappedHandler => null;
-        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => null;
+        public EventHandler<object>? ItemDoubleTappedHandler => null;
+
+        /// <summary>
+        /// The item should be implemented with ICloneable interface. If not, the oldItem will be the same as newItem.
+        /// </summary>
+        public EventHandler<(object oldItem, object newItem)>? ItemEdittedHandler => null;
 
         public IEnumerable<string> IgnoringColumns => [];
         public IEnumerable<string> ColumnOrder => [];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
         public IEnumerable<string> ReadOnlyColumns => [];
     }
-    public partial class UnassignedStudentProvider : IStudentProvider
+    public partial class UnassignedItemProvider : ITableItemProvider
     {
-        public ObservableCollection<StudentVer2> ManagingStudents { get; } = [];
+        public ObservableCollection<object> ManagingItems { get; } = [];
 
         public event PropertyChangedEventHandler? PropertyChanged;
     }
-    public sealed partial class StudentTable : UserControl, IDisposable
+    public sealed partial class TableView : UserControl, IDisposable
     {
-        // private readonly IStudentProvider _dataContext = null;
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.Register(
                 "ContextProvider",
-                typeof(IStudentProvider),
-                typeof(StudentTable),
-                new PropertyMetadata(new UnassignedStudentProvider(), OnDataChanged)
+                typeof(ITableItemProvider),
+                typeof(TableView),
+                new PropertyMetadata(new UnassignedItemProvider(), OnDataChanged)
                 );
 
-        public IStudentProvider ContextProvider
+        public ITableItemProvider ContextProvider
         {
-            get => (IStudentProvider)GetValue(ContextProviderProperty);
+            get => (ITableItemProvider)GetValue(ContextProviderProperty);
             set => SetValue(ContextProviderProperty, value);
         }
 
         private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Do nothing currently
-            if (d is StudentTable control)
+            if (d is TableView control)
             {
                 if (e.NewValue is IInfoProvider)
                 {
@@ -101,29 +104,29 @@ namespace LearningManagementSystem.Controls
                     control.SeeItemInfoFlyout.Visibility = Visibility.Collapsed;
                 }
 
-                if (e.OldValue is IStudentProvider oldStudentProvider)
+                if (e.OldValue is ITableItemProvider oldStudentProvider)
                 {
                     control.SortChanged -= oldStudentProvider.SortChangedHandler;
-                    control.StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
-                    control.StudentEditted -= oldStudentProvider.StudentEdittedHandler;
+                    control.ItemDoubleTapped -= oldStudentProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted -= oldStudentProvider.ItemEdittedHandler;
                 }
-                if (e.NewValue is IStudentProvider newStudentProvider)
+                if (e.NewValue is ITableItemProvider newStudentProvider)
                 {
                     control.SortChanged += newStudentProvider.SortChangedHandler;
-                    control.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
-                    control.StudentEditted += newStudentProvider.StudentEdittedHandler;
+                    control.ItemDoubleTapped += newStudentProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted += newStudentProvider.ItemEdittedHandler;
                 }
             }
         }
 
-        public StudentTable()
+        public TableView()
         {
             this.InitializeComponent();
         }
 
         public event EventHandler<List<SortCriteria>>? SortChanged;
         private readonly List<SortCriteria> _sortList = [];
-        private readonly Dictionary<String, DataGridSortDirection?> _sortDirectionMapper = [];
+        private readonly Dictionary<string, DataGridSortDirection?> _sortDirectionMapper = [];
         private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
         {
             var columnTag = e.Column.Tag?.ToString();
@@ -171,13 +174,10 @@ namespace LearningManagementSystem.Controls
             set => Dg.IsReadOnly = !value;
         }
 
-        public event EventHandler<StudentVer2>? StudentDoubleTapped;
+        public event EventHandler<object>? ItemDoubleTapped;
         private void Dg_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (Dg.SelectedItem is StudentVer2 student)
-            {
-                StudentDoubleTapped?.Invoke(this, student);
-            }
+            ItemDoubleTapped?.Invoke(this, Dg.SelectedItem);
         }
 
         public void RefreshData()
@@ -190,56 +190,63 @@ namespace LearningManagementSystem.Controls
             RefreshData();
         }
 
-        public event EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEditted;
+        public event EventHandler<(object oldItem, object newItem)>? ItemEditted;
 
         // Don't delete this private variable
         // This code somehow runs Dg_CellEditEnding indefinitely if ran without the _isEdittingRow flag guard
         private bool _isEdittingRow = false;
-        private StudentVer2? _originalStudent = null;
+        private object? _originalItem = null;
         private void Dg_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             _isEdittingRow = true;
-            _originalStudent = (StudentVer2)((ICloneable)e.Row.DataContext).Clone();
+            if (e.Row.DataContext is ICloneable cloneable)
+            {
+                _originalItem = cloneable.Clone();
+            }
+            else
+            {
+                _originalItem = e.Row.DataContext;
+            }
         }
         private void Dg_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //if (!_isEdittingRow || _originalStudent is null)
+            //if (!_isEdittingRow || _originalItem is null)
             //{
             //    return;
             //}
             //if (e.EditAction == DataGridEditAction.Commit)
             //{
             //    _isEdittingRow = false;
-            //    StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+            //    ItemEditted?.Invoke(this, (_originalItem, (object)e.Row.DataContext));
             //}
             //else if (e.EditAction == DataGridEditAction.Cancel)
             //{
             //    _isEdittingRow = false;
-            //    _originalStudent = null;
+            //    _originalItem = null;
             //}
             //return;
         }
 
         private void Dg_CellEditEnded(object sender, DataGridCellEditEndedEventArgs e)
         {
-            if (!_isEdittingRow || _originalStudent is null)
+            if (!_isEdittingRow || _originalItem is null)
             {
                 return;
             }
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                // For some reasons, when the event in StudentEditted is called and would modify the TableView rows,
+                // For some reasons, when the event in ItemEditted is called and would modify the TableView rows,
                 // (in this case, de-select the current editing cell's row), the Dg_CellEditEnded event raises an Exception.
                 
                 // Solution: Using DispatcherQueue
                 
-                // Ensures that the StudentEditted event is triggered
+                // Ensures that the ItemEditted event is triggered
                 // after the behind-the-scenes code in Dg_CellEditEnded has finished.
 
-                var oldStudent = (StudentVer2)_originalStudent.Clone();
+                var oldItem = _originalItem;
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
+                    ItemEditted?.Invoke(this, (oldItem, e.Row.DataContext));
                     if (e.Row.DataContext is IValidatableItem validatable)
                     {
                         validatable.ValidateProperty(e.Column.Tag?.ToString());
@@ -248,32 +255,32 @@ namespace LearningManagementSystem.Controls
                         ResetItemInfo(forcedOpen: true);
                     }
                 });
-                // StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+                // ItemEditted?.Invoke(this, (_originalItem, (object)e.Row.DataContext));
             }
             _isEdittingRow = false;
-            _originalStudent = null;
+            _originalItem = null;
         }
 
-        public IList<StudentVer2> GetSelectedItems()
+        public IList<object> GetSelectedItems()
         {
-            return Dg.SelectedItems.Cast<StudentVer2>().ToList();
+            return Dg.SelectedItems.Cast<object>().ToList();
         }
-        private void HandleItemsReselection(object? sender, IList<StudentVer2> e)
+        private void HandleItemsReselection(object? sender, IList<object> e)
         {
             if (sender is null)
             {
                 return;
             }
             Dg.SelectedItems.Clear();
-            foreach (var studentInTable in Dg.ItemsSource)
+            foreach (var tableItem in Dg.ItemsSource)
             {
-                if (e.Any(observingStudent => ReferenceEquals(studentInTable, observingStudent)))
+                if (e.Any(observingItem => ReferenceEquals(tableItem, observingItem)))
                 {
-                    Dg.SelectedItems.Add(studentInTable);
+                    Dg.SelectedItems.Add(tableItem);
                 }
             }
         }
-        public EventHandler<IList<StudentVer2>> ItemsReselectionHandler => HandleItemsReselection;
+        public EventHandler<IList<object>> ItemsReselectionHandler => HandleItemsReselection;
 
         private object? _lastSeenItem = null;
         private void SeeItemInfo_Click(object sender, RoutedEventArgs e)
@@ -330,11 +337,8 @@ namespace LearningManagementSystem.Controls
             Dg_InfoBar.IsOpen = true;
         }
 
-        private Dictionary<string, IValueConverter>? _converterMapper = null;
-        // Restrain: always make sure the value is always increasing. 
+        private Dictionary<string, IValueConverter>? _converterMapper = null; 
         private Dictionary<string, int> _displayIndexMapper = [];
-        
-
 
         private bool _isReorderingColumns = false;
         private readonly List<DataGridColumn> _generatingColumns = [];
@@ -356,7 +360,7 @@ namespace LearningManagementSystem.Controls
         static private void AdjustColumnsOrdering(
             DataGridColumn currentColumn, // C++ ref
             List<DataGridColumn> generatedColumns, // C++ ref
-            Dictionary<string, int> referenceIndexMapper
+            Dictionary<string, int> referenceIndexMapper // C++ ref
         )
         {
             var generatedColumnsSize = generatedColumns.Count;
@@ -384,7 +388,7 @@ namespace LearningManagementSystem.Controls
         private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
 
-            if (ContextProvider is IStudentProvider provider)
+            if (ContextProvider is ITableItemProvider provider)
             {
                 var ignoringColumns = provider.IgnoringColumns.ToList();
                 if (ignoringColumns.Contains(e.PropertyName))
@@ -447,7 +451,7 @@ namespace LearningManagementSystem.Controls
 
         private void Dg_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ContextProvider is IStudentProvider provider)
+            if (ContextProvider is ITableItemProvider provider)
             {
                 Dictionary<string, int> columnDisplayIndex = [];
                 int columnIndexCounter = 0;
@@ -515,8 +519,8 @@ namespace LearningManagementSystem.Controls
                 if (disposing)
                 {
                     SortChanged -= ContextProvider.SortChangedHandler;
-                    StudentDoubleTapped -= ContextProvider.StudentDoubleTappedHandler;
-                    StudentEditted -= ContextProvider.StudentEdittedHandler;
+                    ItemDoubleTapped -= ContextProvider.ItemDoubleTappedHandler;
+                    ItemEditted -= ContextProvider.ItemEdittedHandler;
                 }
                 disposedValue = true;
             }

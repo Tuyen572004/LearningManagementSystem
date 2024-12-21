@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="LearningManagementSystem.Controls.StudentTable"
+    x:Class="LearningManagementSystem.Controls.TableView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearningManagementSystem.Controls"
@@ -9,7 +9,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:models="using:LearningManagementSystem.Models"
     xmlns:helpers="using:LearningManagementSystem.Helpers"
-    d:DataContext="{d:DesignInstance Type=local:IStudentProvider}"
+    d:DataContext="{d:DesignInstance Type=local:ITableItemProvider}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -40,7 +40,7 @@
             Sorting="Dg_Sorting"
             CanUserReorderColumns="True"
             ColumnReordered="Dg_ColumnReordered"
-            ItemsSource="{x:Bind ContextProvider.ManagingStudents, Mode=OneWay}"
+            ItemsSource="{x:Bind ContextProvider.ManagingItems, Mode=OneWay}"
             IsDoubleTapEnabled="True"
             DoubleTapped="Dg_DoubleTapped"
             IsReadOnly="True"
