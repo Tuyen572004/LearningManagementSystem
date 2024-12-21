@@ -1,16 +1,17 @@
+#nullable enable
 using LearningManagementSystem.ViewModels;
 using System;
 
 namespace LearningManagementSystem.Models
 {
-    public class Teacher : BaseViewModel
+    public partial class Teacher : BaseViewModel
     {
         public int Id { get; set; }  // Auto-incrementing Id field
-        public string TeacherCode { get; set; }
-        public string TeacherName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNo { get; set; }
-        public int UserId { get; set; }  // Foreign key to Users table
+        required public string TeacherCode { get; set; }
+        required public string TeacherName { get; set; }
+        required public string Email { get; set; }
+        public string? PhoneNo { get; set; } = null;
+        public int? UserId { get; set; } = null;  // Foreign key to Users table
 
         // Navigation property
         // public User User { get; set; }
