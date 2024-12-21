@@ -331,31 +331,56 @@ namespace LearningManagementSystem.Controls
         }
 
         private Dictionary<string, IValueConverter>? _converterMapper = null;
+        // Restrain: always make sure the value is always increasing. 
         private Dictionary<string, int> _displayIndexMapper = [];
-        private int _columnIndexCounter = 0;
-        private bool disposedValue;
+        
 
-        // This hurt performance so bad
 
-        //private bool _reorderingColumns = false;
-        //private readonly List<DataGridColumn> _generatedColumns = [];
-        //private void FixReorderColumn()
-        //{
-        //    foreach (var column in _generatedColumns)
-        //    {
-        //        string columnName = column.Tag?.ToString() ?? "";
-        //        // Should never happen
-        //        if (columnName.IsNullOrEmpty())
-        //        {
-        //            continue;
-        //        }
-        //        if (column.DisplayIndex != _displayIndexMapper[columnName])
-        //        {
-        //            column.DisplayIndex = _displayIndexMapper[columnName];
-        //        }
-        //    }
-        //    _reorderingColumns = false;
-        //}
+        private bool _isReorderingColumns = false;
+        private readonly List<DataGridColumn> _generatingColumns = [];
+        private ObservableCollection<DataGridColumn>? _actualColumnsReference = null;
+        private void OnGeneratedColumns()
+        {
+            _isReorderingColumns = false;
+            if (_actualColumnsReference is not null)
+            {
+                var temporaryColumn = _actualColumnsReference.FirstOrDefault(c => c.Tag?.ToString() == temporaryColumnTag);
+                if (temporaryColumn is not null)
+                {
+                    _actualColumnsReference.Remove(temporaryColumn);
+                }
+                _actualColumnsReference = null;
+            }
+            _generatingColumns.Clear();
+        }
+        static private void AdjustColumnsOrdering(
+            DataGridColumn currentColumn, // C++ ref
+            List<DataGridColumn> generatedColumns, // C++ ref
+            Dictionary<string, int> referenceIndexMapper
+        )
+        {
+            var generatedColumnsSize = generatedColumns.Count;
+            var currentColumnTag = currentColumn.Tag?.ToString() ?? $"ColumnG{generatedColumnsSize}";
+            if (!referenceIndexMapper.TryGetValue(currentColumnTag, out int _))
+            {
+                currentColumn.DisplayIndex = generatedColumnsSize;
+                generatedColumns.Add(currentColumn);
+                referenceIndexMapper.Add(currentColumnTag, generatedColumnsSize);
+                return;
+            }
+            int nextIndex = 0;
+            generatedColumns.Add(currentColumn);
+            referenceIndexMapper
+                .Where(pair => generatedColumns.Any(c => c.Tag?.ToString() == pair.Key))
+                .OrderBy(pair => pair.Value)
+                .ToList()
+                .ForEach(pair =>
+                {
+                    DataGridColumn column = generatedColumns.First(c => c.Tag.ToString() == pair.Key);
+                    column.DisplayIndex = nextIndex++;
+                });
+        }
+        const string temporaryColumnTag = "TO_BE_DELETED_UwU";
         private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
 
@@ -375,16 +400,17 @@ namespace LearningManagementSystem.Controls
             }
             e.Column.Tag = e.PropertyName;
 
-            // Set up column order for this colomn
-            if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
-            {
-                e.Column.DisplayIndex = value;
-            }
-            else
-            {
-                e.Column.DisplayIndex = _columnIndexCounter++;
-                _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
-            }
+            //// Set up column order for this colomn
+            //if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
+            //{
+            //    e.Column.DisplayIndex = value;
+            //}
+            //else
+            //{
+            //    e.Column.DisplayIndex = _columnIndexCounter++;
+            //    _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
+            //}
+            AdjustColumnsOrdering(e.Column, _generatingColumns, _displayIndexMapper);
 
             // Set up converter for this column value
             if (_converterMapper is not null && _converterMapper.TryGetValue(e.PropertyName, out IValueConverter? converter))
@@ -403,13 +429,20 @@ namespace LearningManagementSystem.Controls
             // Set up the sort status of this column
             e.Column.SortDirection = _sortDirectionMapper.GetValueOrDefault(e.PropertyName, null);
 
-            //if (!_reorderingColumns)
-            //{
-            //    _generatedColumns.Clear();
-            //    DispatcherQueue.TryEnqueue(FixReorderColumn);
-            //    _reorderingColumns = true;
-            //}
-            //_generatedColumns.Add(e.Column);
+            if (!_isReorderingColumns)
+            {
+                if (sender is not null)
+                {
+                    (sender as DataGrid)?.Columns.Add(new DataGridTextColumn()
+                    {
+                        Tag = temporaryColumnTag
+                    });
+                    _actualColumnsReference = (sender as DataGrid)?.Columns;
+
+                }
+                DispatcherQueue.TryEnqueue(OnGeneratedColumns);
+                _isReorderingColumns = true;
+            }
         }
 
         private void Dg_Loaded(object sender, RoutedEventArgs e)
@@ -434,11 +467,16 @@ namespace LearningManagementSystem.Controls
                     }
                 }
                 _displayIndexMapper = columnDisplayIndex;
-                foreach (DataGridColumn column in Dg.Columns)
-                {
-                    columnDisplayIndex["null"] = column.DisplayIndex; // To suppress the warning
-                    column.DisplayIndex = columnDisplayIndex[column.Tag.ToString() ?? "null"];
-                    columnDisplayIndex.Remove("null");
+
+                //// Note: No need to re-order columns, as the columns should be already ordered at this time
+                // foreach (var indexedTag in _displayIndexMapper.OrderBy(pair => pair.Value)) {
+
+                foreach (var indexedTag in _displayIndexMapper) {
+                    var column = Dg.Columns.FirstOrDefault(c => c.Tag?.ToString() == indexedTag.Key);
+                    if (column is not null)
+                    {
+                        column.DisplayIndex = indexedTag.Value;
+                    }
                 }
             }
         }
@@ -456,6 +494,20 @@ namespace LearningManagementSystem.Controls
             }
         }
 
+
+        private void Dg_ColumnReordered(object sender, DataGridColumnEventArgs e)
+        {
+            _displayIndexMapper.Clear();
+            foreach (DataGridColumn column in Dg.Columns)
+            {
+                _displayIndexMapper.Add(
+                    column.Tag?.ToString() ?? $"ColumnCR{column.DisplayIndex}",
+                    column.DisplayIndex
+                    );
+            }
+        }
+
+        private bool disposedValue;
         private void Dispose(bool disposing)
         {
             if (!disposedValue)

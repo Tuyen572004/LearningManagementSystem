@@ -38,6 +38,8 @@
             Loaded="Dg_Loaded"
             CanUserSortColumns="True"
             Sorting="Dg_Sorting"
+            CanUserReorderColumns="True"
+            ColumnReordered="Dg_ColumnReordered"
             ItemsSource="{x:Bind ContextProvider.ManagingStudents, Mode=OneWay}"
             IsDoubleTapEnabled="True"
             DoubleTapped="Dg_DoubleTapped"

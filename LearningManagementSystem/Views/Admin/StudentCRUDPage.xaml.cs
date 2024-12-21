@@ -37,13 +37,13 @@ namespace LearningManagementSystem.Views.Admin
         {
             this.InitializeComponent();
 
-            _readerViewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>())
+            _readerViewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>()!)
             {
                 RowsPerPage = 5
             };
             _readerViewModel.GetStudents();
 
-            _cudViewModel = new StudentCUDViewModel(App.Current.Services.GetService<IDao>())
+            _cudViewModel = new StudentCUDViewModel(App.Current.Services.GetService<IDao>()!)
             {
                 RowsPerPage = 5
             };
