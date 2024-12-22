@@ -92,6 +92,8 @@
                 <controls:DataGridTextColumn Header="Course ID"  Binding="{Binding ID }" />
                 <controls:DataGridTextColumn Header="Course Code"  Binding="{Binding CourseCode}" />
                 <controls:DataGridTextColumn Header="Course Description"  Binding="{Binding CourseDecription}" />
+                <controls:DataGridTextColumn Header="Department ID"  Binding="{Binding DepartmentID}" />
+                <controls:DataGridTextColumn Header="Department Name"  Binding="{Binding DepartmentName}" />
                 <controls:DataGridTextColumn Header="Total Students"  Binding="{Binding TotalStudents}" />
                 <controls:DataGridTextColumn Header="Total Classes"  Binding="{Binding TotalClasses}" />
             </controls:DataGrid.Columns>

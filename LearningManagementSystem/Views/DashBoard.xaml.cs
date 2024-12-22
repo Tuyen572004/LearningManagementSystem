@@ -33,6 +33,7 @@ namespace LearningManagementSystem
             SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole == "admin");
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole == "admin" || userRole == "teacher");
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole == "admin" || userRole == "teacher");
+            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", userRole == "teacher");
         }
         private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
         {

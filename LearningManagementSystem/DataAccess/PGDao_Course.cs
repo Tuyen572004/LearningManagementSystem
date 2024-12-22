@@ -27,6 +27,31 @@ namespace LearningManagementSystem.DataAccess
                 return course.Id;
             }
         }
+        public int findTotalClassesByCourseId(int courseId)
+        {
+            var sql = "SELECT COUNT(*) FROM classes WHERE courseid=@CourseId";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@CourseId", courseId);
+                connection.Open();
+                var result = (long)command.ExecuteScalar();
+                return (int)result;
+            }
+        }
+        public int findTotalStudentsByCourseId(int courseId)
+        {
+            // class has courseid and classid, enrollment has classid and studentid
+            var sql = "SELECT COUNT(*) FROM enrollments e JOIN classes c ON e.classid = c.id WHERE c.courseid=@CourseId";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
+            {
+                command.Parameters.AddWithValue("@CourseId", courseId);
+                connection.Open();
+                var result = (long)command.ExecuteScalar();
+                return (int)result;
+            }
+        }
         public Course findCourseByClassId(int classId)
         {
             var result = new Course();

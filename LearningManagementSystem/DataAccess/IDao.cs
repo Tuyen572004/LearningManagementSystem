@@ -25,7 +25,8 @@ namespace LearningManagementSystem.DataAccess
             string keyword = "",
             bool nameAscending = false
             );
-
+        public int findTotalClassesByCourseId(int courseId);
+        public int findTotalStudentsByCourseId(int courseId);
         int InsertDepartment(Department department);
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
@@ -112,6 +113,7 @@ namespace LearningManagementSystem.DataAccess
 
         void SaveAssignment(Assignment assignment);
 
+        public User GetUserByUserName(string username);
         void UpdateAssignment(Assignment assignment);
         void DeleteAttachmentByAssignmentId(int id);
         void AddAssignment(Assignment assignment);

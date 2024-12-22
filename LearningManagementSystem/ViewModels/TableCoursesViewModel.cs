@@ -14,7 +14,7 @@ namespace LearningManagementSystem.ViewModels
         public string CourseDecription { get; set; }
         public int TotalStudents { get; set; }
         public int TotalClasses { get; set; }
-
+        public string DepartmentName { get; set; }
         public int DepartmentID { get; set; }
         public object Clone()
         {
@@ -25,7 +25,8 @@ namespace LearningManagementSystem.ViewModels
                 CourseDecription = this.CourseDecription,
                 DepartmentID = this.DepartmentID,
                 TotalStudents = this.TotalStudents,
-                TotalClasses = this.TotalClasses
+                TotalClasses = this.TotalClasses,
+                DepartmentName = this.DepartmentName
             };
         }
     }
@@ -48,7 +49,7 @@ namespace LearningManagementSystem.ViewModels
         public TableCoursesViewModel()
         {
             TableCourses = new FullObservableCollection<TableCoursesView>();
-            _dao = App.Current.Services.GetService<IDao>();;
+            _dao = App.Current.Services.GetService<IDao>(); ;
             countRepeatButton = 0;
             SelectedCourse = new TableCoursesView();
             Suggestion = _dao.GetAllCourseDecriptions();
@@ -67,8 +68,9 @@ namespace LearningManagementSystem.ViewModels
                         CourseCode = courses[i].CourseCode,
                         CourseDecription = courses[i].CourseDescription,
                         DepartmentID = courses[i].DepartmentId,
-                        TotalStudents = 0,
-                        TotalClasses = 0
+                        DepartmentName = _dao.GetDepartmentById(courses[i].DepartmentId).DepartmentDesc,
+                        TotalStudents = _dao.findTotalStudentsByCourseId(courses[i].Id),
+                        TotalClasses = _dao.findTotalClassesByCourseId(courses[i].Id)
                     });
                 }
                 TotalItems = totalItems;

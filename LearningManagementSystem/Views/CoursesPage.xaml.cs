@@ -44,7 +44,6 @@ namespace LearningManagementSystem
                 "Course Code",
                 "Course Description",
                 "Department ID",
-
             };
             myCoursesTable.Visibility = Visibility.Collapsed;
             pagingNavi.Visibility = Visibility.Collapsed;
