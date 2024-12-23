@@ -10,7 +10,7 @@
 
     <Canvas>
 
-        <Image Source="/Assets/background.png"  Height="Auto" Width="Auto" Canvas.ZIndex="0"/>
+        <Image Source="/Assets/backgroundLogin.png" Stretch="Fill" Height="Auto" Width="Auto" Canvas.ZIndex="0"/>
 
         <StackPanel Canvas.Top="10" Canvas.Left="20" Canvas.ZIndex="2">
             <Grid Name="myGrid">

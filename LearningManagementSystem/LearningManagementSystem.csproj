@@ -24,6 +24,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\background.png" />
+	  <Content Remove="Assets\backgroundLogin.png" />
 	  <Content Remove="Assets\books.png" />
 	  <Content Remove="Assets\graduated.png" />
 	  <Content Remove="Assets\group.png" />
@@ -117,6 +118,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Assets\background.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Assets\backgroundLogin.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Assets\books.png">
