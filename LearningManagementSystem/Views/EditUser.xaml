@@ -39,7 +39,7 @@
             <TextBox Name="inputUsername" Width="Auto"></TextBox>
 
             <TextBlock Name="passwordTB" FontWeight="ExtraBold" FontSize="25">Password</TextBlock>
-            <TextBox Name="inputPassword" Width="Auto"></TextBox>
+            <Button Name="resetPasswordBtn" Click="resetPasswordBtn_Click">Reset password</Button>
         </StackPanel>
 
         <StackPanel Spacing="20" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="20,50,0,0">

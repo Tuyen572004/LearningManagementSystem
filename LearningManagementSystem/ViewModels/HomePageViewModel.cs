@@ -1,4 +1,5 @@
 ﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Services.UserService;
 using System;
 using System.Globalization;
 
@@ -11,6 +12,7 @@ namespace LearningManagementSystem.ViewModels
 
         public int TotalCourses { get; set; }
 
+        public string Role { get; set; }
         public int TotalClasses { get; set; }
         public int TotalStudents { get; set; }
         public int TotalDepartments { get; set; }
@@ -28,7 +30,19 @@ namespace LearningManagementSystem.ViewModels
             DpmViewModel = new DepartmentsViewModel();
             CrsViewModel = new CourseViewModel();
             ClsViewModel = new ClassViewModel();
-
+            var rawRole = UserService.GetCurrentUserRole().Result;
+            if (rawRole == "admin")
+            {
+                Role = "Admin";
+            }
+            else if (rawRole == "teacher")
+            {
+                Role = "Teacher";
+            }
+            else if (rawRole == "student")
+            {
+                Role = "Student";
+            }
             TotalCourses = CrsViewModel.CountCourse();
             TotalDepartments = DpmViewModel.CountDepartments();
             TotalClasses = ClsViewModel.CountClasses();

@@ -27,9 +27,9 @@
 
         <NavigationView.FooterMenuItems>
             <NavigationViewItem Content="User" Tag="LearningManagementSystem.Views.ProfilePage" Icon="OtherUser" />
-            <NavigationViewItem Content="Admin" Tag="LearningManagementSystem.Views.AdminPage" Icon="Admin"/>
-            <NavigationViewItem Content="Logout" Tag="logout" Icon="Permissions" />
-            <NavigationViewItem Content="Exit" Tag="exit" Icon="ClosePane" />
+            <NavigationViewItem Content="Management Account" Tag="LearningManagementSystem.Views.AdminPage" Icon="Admin"/>
+            <NavigationViewItem Content="Logout" Tag="LearningManagementSystem.Logout" Icon="Permissions" />
+            <NavigationViewItem Content="Exit" Tag="LearningManagementSystem.Exit" Icon="ClosePane" />
         </NavigationView.FooterMenuItems>
         <Frame x:Name="ContentFrame" />
     </NavigationView>

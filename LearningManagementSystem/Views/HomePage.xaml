@@ -31,7 +31,10 @@
         <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
         <StackPanel Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <TextBlock FontWeight="Black" FontSize="40" Margin="0,0,20,0">Welcome Adminstrator</TextBlock>
+            <TextBlock FontWeight="Black" FontSize="40" Margin="0,0,20,0">
+                <Run Text="Welcome"></Run>
+                <Run Text="{x:Bind ViewModel.Role}"></Run>
+            </TextBlock>
             <TextBlock FontSize="15" FontStyle="Italic" HorizontalAlignment="Right" Margin="0,0,20,0">
                 Today is: <Run Text="{x:Bind ViewModel.ToString()}"/>
             </TextBlock>

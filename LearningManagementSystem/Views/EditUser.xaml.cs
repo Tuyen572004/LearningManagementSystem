@@ -57,7 +57,6 @@ namespace LearningManagementSystem.Views
             ViewModel.SelectedUser = oldUser.Clone() as User;
 
             inputEmail.Text = ViewModel.SelectedUser.Email;
-            inputPassword.Text = ViewModel.SelectedUser.PasswordHash;
             roleComboBox.SelectedIndex = Roles.IndexOf(ViewModel.SelectedUser.Role);
             inputUsername.Text = ViewModel.SelectedUser.Username;
 
@@ -106,8 +105,8 @@ namespace LearningManagementSystem.Views
                 var newUser = new User
                 {
                     Username = inputUsername.Text,
-                    PasswordHash = inputPassword.Text,
                     Email = inputEmail.Text,
+                    PasswordHash = ViewModel.resetPassword ? ViewModel.MyUserService.EncryptPassword("12345") : ViewModel.SelectedUser.PasswordHash,
                     Role = roleComboBox.SelectedValue.ToString(),
                     Id = ViewModel.SelectedUser.Id,
                 };
@@ -120,6 +119,34 @@ namespace LearningManagementSystem.Views
             {
                 dialog.Hide();
             }
+        }
+
+        private async void resetPasswordBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Reset Password",
+                Content = "Are you sure you want to reset the password?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No"
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                ViewModel.resetPassword = true;
+            }
+
+            var dialog2 = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Reset Password",
+                Content = "Password has been reset.",
+                CloseButtonText = "Ok"
+            };
+
+            await dialog2.ShowAsync();
         }
     }
 }
