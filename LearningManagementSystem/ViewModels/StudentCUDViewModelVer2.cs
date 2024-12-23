@@ -30,8 +30,8 @@ namespace LearningManagementSystem.ViewModels
             {
                 if ((student as INotifyDataErrorInfoExtended).HasErrors)
                 {
-                    var errors = student.GetErrors(null) as List<String> ?? [];
-                    var newMessage = String.Join("\n", errors);
+                    var errors = (student as INotifyDataErrorInfoExtended).GetErrors(null) as List<string> ?? [];
+                    var newMessage = string.Join("\n", errors);
                     return new()
                     {
                         Title = (student.Id > 0) ? $"Error with student Id {student.Id}" : $"Error with the newly created student",

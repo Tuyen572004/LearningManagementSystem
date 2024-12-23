@@ -49,10 +49,13 @@ namespace LearningManagementSystem.Controls
 
 
             // Subscribe to new DataContext events
-            if (args.NewValue is ISearchProvider)
+            if (args.NewValue is ISearchProvider searchProvider)
             {
                 SetBinding(SearchBar, SearchBar.ContextProviderProperty);
-                SearchBar.Visibility = Visibility.Visible;
+                if (searchProvider.SearchFields.Count != 0)
+                {
+                    SearchBar.Visibility = Visibility.Visible;
+                }
             }
             if (args.NewValue is ITableItemProvider)
             {

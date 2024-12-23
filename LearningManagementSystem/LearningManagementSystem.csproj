@@ -54,6 +54,8 @@
 	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
 	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
 	  <None Remove="Views\AdminPage.xaml" />
+	  <None Remove="Views\Admin\TeacherCRUDPage.xaml" />
+	  <None Remove="Views\Admin\TeacherQueryPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
@@ -139,6 +141,12 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\Admin\TeacherCRUDPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\TeacherQueryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\AddNotification.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

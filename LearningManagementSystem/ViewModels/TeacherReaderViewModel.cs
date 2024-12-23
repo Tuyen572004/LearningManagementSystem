@@ -15,18 +15,27 @@ namespace LearningManagementSystem.ViewModels
     {
         protected override (ObservableCollection<object> fetchedItem, int queryCount) GetItems(
             int ignoreCount = 0,
-            int ignoreFetch = 0,
+            int fetchCount = 0,
             List<SortCriteria>? sortCriteria = null,
             SearchCriteria? searchCriteria = null
             )
         {
-            throw new NotImplementedException();
+            var (resultList, queryCount) = _dao.GetTeachers(
+                ignoringCount: ignoreCount,
+                fetchingCount: fetchCount,
+                sortCriteria: sortCriteria,
+                searchCriteria: searchCriteria
+            );
+
+            return (new(resultList), queryCount);
         }
 
-        public override IEnumerable<string> IgnoringColumns => base.IgnoringColumns;
-        public override IEnumerable<string> ColumnOrder => base.ColumnOrder;
-        public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => base.ColumnConverters;
+        public override IEnumerable<string> IgnoringColumns => ["IsValid"];
+        public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "TeacherCode", "TeacherName", "Email", "PhoneNo"];
+        public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
 
-        public override List<string> SearchFields => base.SearchFields;
+        public override List<string> SearchFields => [
+            "Id", "UserId", "TeacherCode", "TeacherName", "Email", "PhoneNo"
+            ];
     }
 }

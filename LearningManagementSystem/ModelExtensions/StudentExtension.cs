@@ -75,7 +75,7 @@ namespace LearningManagementSystem.Models
                     {
                         currentErrors.Add("Student code must not be empty.");
                     }
-                    if (StudentCode.Length > MAX_STUDENT_CODE_LENGTH)
+                    else if (StudentCode.Length > MAX_STUDENT_CODE_LENGTH)
                     {
                         currentErrors.Add($"Student code must be less than {MAX_STUDENT_CODE_LENGTH} characters.");
                     }
@@ -85,8 +85,8 @@ namespace LearningManagementSystem.Models
                     {
                         currentErrors.Add("Student name must not be empty.");
                     }
-                    if (StudentName.Length > MAX_STUDENT_NAME_LENGTH)
-                    {
+                    else if (StudentName.Length > MAX_STUDENT_NAME_LENGTH)
+                    {   
                         currentErrors.Add($"Student name must be less than {MAX_STUDENT_NAME_LENGTH} characters.");
                     }
                     break;

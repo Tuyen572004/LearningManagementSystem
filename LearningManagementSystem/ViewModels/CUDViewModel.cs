@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.WinUI.UI.Controls;
+﻿using CloudinaryDotNet.Core;
+using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
@@ -10,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -189,11 +191,19 @@ namespace LearningManagementSystem.ViewModels
 
         // ----------------------------------------------------------------------------------------
         // Public Handlers
-        public EventHandler<ICloneable> ItemTransferHandler => HandleItemTransfer;
-        public EventHandler<IList<ICloneable>> ItemsTransferHandler => HandleItemsTransfer;
+
+        /// <summary>
+        /// The tranfering item should be implemented with ICloneable interface for the handler to work properly
+        /// </summary>
+        public EventHandler<object> ItemTransferHandler => HandleItemTransfer;
+
+        /// <summary>
+        /// The tranfering item should be implemented with ICloneable interface for the handler to work properly
+        /// </summary>
+        public EventHandler<IList<object>> ItemsTransferHandler => HandleItemsTransfer;
         override public EventHandler<(object oldItem, object newItem)> ItemEdittedHandler => HandleItemEdit;
         public EventHandler<IList<object>> ItemsRemoveHandler => HandleItemsRemoval;
-        public EventHandler ItemsCreationHandler => HandleItemsCreation;
+        public EventHandler ItemCreationHandler => HandleItemCreation;
         public EventHandler<IList<object>> ItemsUpdateHandler => HandleItemsUpdate;
         public EventHandler<IList<object>> ItemsDeleteHandler => HandleItemsDelete;
         public EventHandler<IList<(object item, IEnumerable<string> errors)>> ItemsErrorsAddedHandler => HandleItemsErrorsAdded;
@@ -294,11 +304,11 @@ namespace LearningManagementSystem.ViewModels
         // ----------------------------------------------------------------------------------------
         // Transfering Handling
 
-        public void HandleItemTransfer(object? sender, ICloneable e)
+        public void HandleItemTransfer(object? sender, object e)
         {
             HandleItemsTransfer(sender, [e]);
         }
-        public void HandleItemsTransfer(object? sender, IList<ICloneable> e)
+        public void HandleItemsTransfer(object? sender, IList<object> e)
         {
             if (sender is null)
             {
@@ -306,7 +316,7 @@ namespace LearningManagementSystem.ViewModels
             }
             List<object> invalidItems = [];
             List<object> cloningItems = [];
-            foreach (ICloneable item in e)
+            foreach (object item in e)
             {
                 //var existingItem = AllItems.FirstOrDefault(s => s?.Id == item.Id, null);
                 //if (existingItem != null)
@@ -320,13 +330,19 @@ namespace LearningManagementSystem.ViewModels
                     invalidItems.Add(item);
                     continue;
                 }
-                object cloningItem = item.Clone();
+
+                if (item is not System.ICloneable)
+                {
+                    Debug.Assert(false, "The item should be implemented with ICloneable interface for the handler to work properly");
+                }
+
+                object cloningItem = item is System.ICloneable clonable ? clonable.Clone() : item;
                 AllItems.Add(cloningItem);
                 cloningItems.Add(cloningItem);
             }
             RefreshItemCount();
             RefreshManagingItems();
-            ItemsSelectionChanged?.Invoke(this, cloningItems.Cast<object>().ToList());
+            ItemsSelectionChanged?.Invoke(this, cloningItems);
 
             if (invalidItems.Count != 0)
             {
@@ -391,7 +407,7 @@ namespace LearningManagementSystem.ViewModels
         }
         // ----------------------------------------------------------------------------------------
         // Item Creation Handling
-        public void HandleItemsCreation(object? sender, EventArgs e)
+        public void HandleItemCreation(object? sender, EventArgs e)
         {
             if (sender is null)
             {

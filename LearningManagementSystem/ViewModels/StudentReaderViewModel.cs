@@ -42,7 +42,7 @@ namespace LearningManagementSystem.ViewModels
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
         public ObservableCollection<object> ManagingItems { get; private set; } = [];
-        public IEnumerable<string> IgnoringColumns => ["HasErrors"];
+        public IEnumerable<string> IgnoringColumns => ["IsValid"];
         public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("BirthDate", new DateTimeToStringConverter()),
