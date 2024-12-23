@@ -104,17 +104,17 @@ namespace LearningManagementSystem.Controls
                     control.SeeItemInfoFlyout.Visibility = Visibility.Collapsed;
                 }
 
-                if (e.OldValue is ITableItemProvider oldStudentProvider)
+                if (e.OldValue is ITableItemProvider oldItemProvider)
                 {
-                    control.SortChanged -= oldStudentProvider.SortChangedHandler;
-                    control.ItemDoubleTapped -= oldStudentProvider.ItemDoubleTappedHandler;
-                    control.ItemEditted -= oldStudentProvider.ItemEdittedHandler;
+                    control.SortChanged -= oldItemProvider.SortChangedHandler;
+                    control.ItemDoubleTapped -= oldItemProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted -= oldItemProvider.ItemEdittedHandler;
                 }
-                if (e.NewValue is ITableItemProvider newStudentProvider)
+                if (e.NewValue is ITableItemProvider newItemProvider)
                 {
-                    control.SortChanged += newStudentProvider.SortChangedHandler;
-                    control.ItemDoubleTapped += newStudentProvider.ItemDoubleTappedHandler;
-                    control.ItemEditted += newStudentProvider.ItemEdittedHandler;
+                    control.SortChanged += newItemProvider.SortChangedHandler;
+                    control.ItemDoubleTapped += newItemProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted += newItemProvider.ItemEdittedHandler;
                 }
             }
         }
@@ -175,7 +175,8 @@ namespace LearningManagementSystem.Controls
         }
 
         public event EventHandler<object>? ItemDoubleTapped;
-        private void Dg_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+
+        private void Dg_DoubleTapped(object _, DoubleTappedRoutedEventArgs __)
         {
             ItemDoubleTapped?.Invoke(this, Dg.SelectedItem);
         }
@@ -185,7 +186,7 @@ namespace LearningManagementSystem.Controls
             SortChanged?.Invoke(this, _sortList);
         }
 
-        private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
+        private void RefreshMenuLayout_Click(object _, RoutedEventArgs __)
         {
             RefreshData();
         }
@@ -437,6 +438,8 @@ namespace LearningManagementSystem.Controls
             {
                 if (sender is not null)
                 {
+                    // The temporary column is needed to allow assigning "overflow"-ing DisplayIndex
+                    // in the AdjustColumnsOrdering method, as the current column is not yet "acknowledge"-ed by the DataGrid
                     (sender as DataGrid)?.Columns.Add(new DataGridTextColumn()
                     {
                         Tag = temporaryColumnTag

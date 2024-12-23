@@ -29,6 +29,14 @@
         />
             <controls:QueryableItemDisplayer x:Name="StudentReaderDisplayer" Grid.Row="1" DataContext="{x:Bind _readerViewModel}"/>
 
+            <!--<toolkitcontrols:GridSplitter Grid.Row="2"
+                               Height="16"
+                               VerticalAlignment="Top">
+                <toolkitcontrols:GridSplitter.RenderTransform>
+                    <TranslateTransform Y="-7" />
+                </toolkitcontrols:GridSplitter.RenderTransform>
+            </toolkitcontrols:GridSplitter>-->
+
 
             <!-- TODO: Change to Grid-->
             <Grid Grid.Row="2" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">

@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -114,6 +115,11 @@ namespace LearningManagementSystem.Controls
         }
         private void CreatePageButtons()
         {
+            // This function was meant to created the paging buttons
+            // even if the current page exceeds the page count.
+
+            // So some conditions may be redundant or weird.
+
             ButtonContainer.Children.Clear();
             int leftBound = Math.Max(CurrentPage - PageWindowSize, 1);
             // int rightBound = Math.Min(CurrentPage + PageWindowSize, pageCount);
@@ -271,22 +277,22 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void PagingDetailEnabler_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (sender is ToggleButton toggleButton)
-            {
-                if (toggleButton.IsChecked == true)
-                {
-                    PagingDetail.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    PagingDetail.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
+        //private void PagingDetailEnabler_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (sender is ToggleButton toggleButton)
+        //    {
+        //        if (toggleButton.IsChecked == true)
+        //        {
+        //            PagingDetail.Visibility = Visibility.Visible;
+        //        }
+        //        else
+        //        {
+        //            PagingDetail.Visibility = Visibility.Collapsed;
+        //        }
+        //    }
+        //}
 
-        private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs e)
+        private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs _)
         {
             if (sender is ToggleButton)
             {
@@ -294,7 +300,7 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs e)
+        private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs _)
         {
             if (sender is ToggleButton)
             {
