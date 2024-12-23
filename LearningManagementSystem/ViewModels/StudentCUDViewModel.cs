@@ -44,13 +44,13 @@ namespace LearningManagementSystem.ViewModels
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
         public ObservableCollection<object> ManagingItems { get; private set; } = [];
         public IEnumerable<string> IgnoringColumns => [];
-        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "HasErrors", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
             ("GraduationYear", new NullableIntToStringConverter()),
             ("BirthDate", new DateTimeToStringConverter()),
             ];
-        public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "HasErrors"];
+        public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
         public ObservableCollection<StudentVer2> AllStudents { get; private set; } = [];
         public List<SortCriteria>? SortCriteria { get; private set; } = null;
 
@@ -160,25 +160,29 @@ namespace LearningManagementSystem.ViewModels
         }
         public EventHandler<IList<object>> StudentsTransferHandler => HandleStudentsTransfer;
 
-        public void HandleStudentEdit(object? sender, (StudentVer2 oldStudent, StudentVer2 newStudent) e)
+        public void HandleStudentEdit(object? sender, (object oldItem, object newItem) e)
         {
+            if (e.oldItem is not StudentVer2 oldStudent || e.newItem is not StudentVer2 newStudent)
+            {
+                return;
+            }
             if (sender is null)
             {
                 return;
             }
-            var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == e.oldStudent.Id, null);
+            var existingStudent = AllStudents.FirstOrDefault(s => s?.Id == oldStudent.Id, null);
             if (existingStudent == null)
             {
                 return;
             }
-            if (e.newStudent.BirthDate.Date == DateTimeToStringConverter.ERROR_DATETIME.Date)
+            if (newStudent.BirthDate.Date == DateTimeToStringConverter.ERROR_DATETIME.Date)
             {
-                e.newStudent.BirthDate = e.oldStudent.BirthDate;
+                newStudent.BirthDate = oldStudent.BirthDate;
             }
-            existingStudent.Copy(e.newStudent);
+            existingStudent.Copy(newStudent);
             RefreshManagingStudents();
         }
-        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)> ItemEdittedHandler => HandleStudentEdit;
+        EventHandler<(object oldItem, object newItem)> ITableItemProvider.ItemEdittedHandler => HandleStudentEdit;
 
         public void HandleStudentsRemoval(object? sender, IList<object> e)
         {
@@ -243,7 +247,7 @@ namespace LearningManagementSystem.ViewModels
             foreach (StudentVer2 updatingStudent in e.Cast<StudentVer2>())
             {
                 updatingStudent.RevalidateAllProperties();
-                if (updatingStudent.HasErrors)
+                if ((updatingStudent as INotifyDataErrorInfoExtended).HasErrors)
                 {
                     invalidStudentsInfo.Add((updatingStudent, []));
                     continue;
@@ -317,7 +321,7 @@ namespace LearningManagementSystem.ViewModels
         {
             if (item is StudentVer2 student)
             {
-                if (student.HasErrors)
+                if ((student as INotifyDataErrorInfoExtended).HasErrors)
                 {
                     var errors = student.GetErrors(null) as List<String> ?? [];
                     var newMessage = String.Join("\n", errors);
@@ -336,7 +340,7 @@ namespace LearningManagementSystem.ViewModels
         {
             if (item is StudentVer2 student)
             {
-                if (student.HasErrors)
+                if ((student as INotifyDataErrorInfoExtended).HasErrors)
                 {
                     return RowStatus.Error;
                 }

@@ -14,21 +14,21 @@ namespace LearningManagementSystem.ViewModels
 {
     partial class StudentCUDViewModelVer2(IDao dao) : CUDViewModel(dao)
     {
-        public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
         public override IEnumerable<string> IgnoringColumns => [];
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
             ("GraduationYear", new NullableIntToStringConverter()),
             ("BirthDate", new DateTimeToStringConverter()),
             ];
-        public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "HasErrors"];
+        public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
 
         // Required override from CUDViewModel
         public override InfoBarMessage? GetMessageOf(object item)
         {
             if (item is StudentVer2 student)
             {
-                if (student.HasErrors)
+                if ((student as INotifyDataErrorInfoExtended).HasErrors)
                 {
                     var errors = student.GetErrors(null) as List<String> ?? [];
                     var newMessage = String.Join("\n", errors);
@@ -47,7 +47,7 @@ namespace LearningManagementSystem.ViewModels
         {
             if (item is StudentVer2 student)
             {
-                if (student.HasErrors)
+                if ((student as INotifyDataErrorInfoExtended).HasErrors)
                 {
                     return RowStatus.Error;
                 }

@@ -30,7 +30,7 @@ namespace LearningManagementSystem.ViewModels
         }
 
         public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
-        public override IEnumerable<string> IgnoringColumns => ["HasErrors"];
+        public override IEnumerable<string> IgnoringColumns => ["IsValid"];
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("BirthDate", new DateTimeToStringConverter()),
         ];

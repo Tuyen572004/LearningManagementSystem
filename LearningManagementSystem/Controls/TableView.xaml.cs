@@ -357,6 +357,7 @@ namespace LearningManagementSystem.Controls
                 _actualColumnsReference = null;
             }
             _generatingColumns.Clear();
+            _displayIndexMapper.Remove(temporaryColumnTag);
         }
         static private void AdjustColumnsOrdering(
             DataGridColumn currentColumn, // C++ ref
@@ -368,21 +369,35 @@ namespace LearningManagementSystem.Controls
             var currentColumnTag = currentColumn.Tag?.ToString() ?? $"ColumnG{generatedColumnsSize}";
             if (!referenceIndexMapper.TryGetValue(currentColumnTag, out int _))
             {
-                currentColumn.DisplayIndex = generatedColumnsSize;
+                currentColumn.DisplayIndex = generatedColumnsSize - 1;
+                referenceIndexMapper.Add(currentColumnTag, generatedColumnsSize - 1);
+                if (referenceIndexMapper.TryGetValue(temporaryColumnTag, out int _)) {
+                    referenceIndexMapper[temporaryColumnTag] = generatedColumnsSize - 1;
+                }
                 generatedColumns.Add(currentColumn);
-                referenceIndexMapper.Add(currentColumnTag, generatedColumnsSize);
                 return;
             }
             int nextIndex = 0;
             generatedColumns.Add(currentColumn);
             referenceIndexMapper
                 .Where(pair => generatedColumns.Any(c => c.Tag?.ToString() == pair.Key))
-                .OrderBy(pair => pair.Value)
+                .OrderBy(pair => pair.Key == temporaryColumnTag ? referenceIndexMapper.Count - 1 : pair.Value)
                 .ToList()
                 .ForEach(pair =>
                 {
                     DataGridColumn column = generatedColumns.First(c => c.Tag.ToString() == pair.Key);
-                    column.DisplayIndex = nextIndex++;
+                    if (column.Tag.ToString() == temporaryColumnTag)
+                    {
+                        // -1 due to "Count" and "Index" offset
+                        // -1 so that both the temporary column and the current column should have the same DisplayIndex
+                        // (why the same display index: so that the new column would be placed before the temporary column)
+                        column.DisplayIndex = generatedColumns.Count - 2;
+                        referenceIndexMapper[temporaryColumnTag] = generatedColumns.Count - 2;
+                    }
+                    else
+                    {
+                        column.DisplayIndex = nextIndex++;
+                    }
                 });
         }
         const string temporaryColumnTag = "TO_BE_DELETED_UwU";
@@ -404,6 +419,34 @@ namespace LearningManagementSystem.Controls
                 _converterMapper ??= provider.ColumnConverters.ToDictionary(c => c.ColumnName, c => c.Converter);
             }
             e.Column.Tag = e.PropertyName;
+
+            if (!_isReorderingColumns)
+            {
+                bool hasRememberedColumnOrderAtFirstLoad = _generatingColumns.Count != 0;
+                DispatcherQueue.TryEnqueue(() => {
+                    if (!hasRememberedColumnOrderAtFirstLoad)
+                    {
+                        RememberColumnOrderAtFirstLoad();
+                    }
+                    OnGeneratedColumns();
+                });
+                if (sender is not null)
+                {
+                    // The temporary column is needed to allow assigning "overflow"-ing DisplayIndex
+                    // in the AdjustColumnsOrdering method, as the current column is not yet "acknowledge"-ed by the DataGrid
+                    var temporaryColumn = new DataGridTextColumn()
+                    {
+                        Tag = temporaryColumnTag
+                    };
+                    (sender as DataGrid)?.Columns.Add(temporaryColumn);
+                    _generatingColumns.Add(temporaryColumn);
+                    _displayIndexMapper.Add(temporaryColumnTag, 1);
+                    _actualColumnsReference = (sender as DataGrid)?.Columns;
+
+                }
+                DispatcherQueue.TryEnqueue(OnGeneratedColumns);
+                _isReorderingColumns = true;
+            }
 
             //// Set up column order for this colomn
             //if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
@@ -433,26 +476,9 @@ namespace LearningManagementSystem.Controls
 
             // Set up the sort status of this column
             e.Column.SortDirection = _sortDirectionMapper.GetValueOrDefault(e.PropertyName, null);
-
-            if (!_isReorderingColumns)
-            {
-                if (sender is not null)
-                {
-                    // The temporary column is needed to allow assigning "overflow"-ing DisplayIndex
-                    // in the AdjustColumnsOrdering method, as the current column is not yet "acknowledge"-ed by the DataGrid
-                    (sender as DataGrid)?.Columns.Add(new DataGridTextColumn()
-                    {
-                        Tag = temporaryColumnTag
-                    });
-                    _actualColumnsReference = (sender as DataGrid)?.Columns;
-
-                }
-                DispatcherQueue.TryEnqueue(OnGeneratedColumns);
-                _isReorderingColumns = true;
-            }
         }
 
-        private void Dg_Loaded(object sender, RoutedEventArgs e)
+        private void RememberColumnOrderAtFirstLoad()
         {
             if (ContextProvider is ITableItemProvider provider)
             {
@@ -470,11 +496,18 @@ namespace LearningManagementSystem.Controls
                 {
                     if (!columnDisplayIndex.ContainsKey(existingColumn))
                     {
-                        columnDisplayIndex.Add(existingColumn, columnIndexCounter++);
+                        if (existingColumn != temporaryColumnTag)
+                        {
+                            columnDisplayIndex.Add(existingColumn, columnIndexCounter++);
+                        }
                     }
                 }
+                // In case the initial data is empty
+                if (existingColumnNames.Count != 0)
+                {
+                    columnDisplayIndex.Add(temporaryColumnTag, columnIndexCounter);
+                }
                 _displayIndexMapper = columnDisplayIndex;
-
                 //// Note: No need to re-order columns, as the columns should be already ordered at this time
                 // foreach (var indexedTag in _displayIndexMapper.OrderBy(pair => pair.Value)) {
 

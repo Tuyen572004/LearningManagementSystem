@@ -48,6 +48,7 @@ namespace LearningManagementSystem.ViewModels
 
         // Should invoke ErrorsChanged event (possibly reject the event if the propertyName is not in PropertyNames)
         protected void OnErrorsChanged(string propertyName);
+        public static readonly string NoErrorPropertyName = "Ehe no error found my lord";
 
         // ----------------------------------------------------------------------------------------
         // Useful properties and methods
@@ -83,6 +84,10 @@ namespace LearningManagementSystem.ViewModels
                 {
                     RawErrors.Add(propertyName, errors.ToList());
                 }
+            }
+            if (!HasErrors)
+            {
+                OnErrorsChanged(NoErrorPropertyName);
             }
         }
 

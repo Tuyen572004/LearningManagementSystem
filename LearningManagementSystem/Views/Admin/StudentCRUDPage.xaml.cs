@@ -47,6 +47,7 @@ namespace LearningManagementSystem.Views.Admin
             {
                 RowsPerPage = 5
             };
+            _cudViewModel.RefreshManagingStudents();
 
             StudentReaderDisplayer.TableView.ItemDoubleTapped += _cudViewModel.StudentTransferHandler;
             StudentCUDDisplayer.TableView.IsEditable = true;

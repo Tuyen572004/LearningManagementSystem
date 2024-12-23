@@ -35,7 +35,6 @@
             x:Name="Dg"
             AutoGenerateColumns="True"
             AutoGeneratingColumn="Dg_AutoGeneratingColumn"
-            Loaded="Dg_Loaded"
             CanUserSortColumns="True"
             Sorting="Dg_Sorting"
             CanUserReorderColumns="True"

@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using ICSharpCode.SharpZipLib.Core;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.ViewModels;
 using System;
@@ -22,7 +23,7 @@ namespace LearningManagementSystem.Models
 
         private readonly List<string> _needErrorChecked =
             INotifyDataErrorInfoExtended.GetPropertiesOf<StudentVer2>()
-            .Except(["Id", "UserId", "HasErrors"])
+            .Except(["Id", "UserId", "IsValid"])
             .ToList();
         List<string> INotifyDataErrorInfoExtended.PropertyNames => _needErrorChecked;
 
@@ -30,7 +31,8 @@ namespace LearningManagementSystem.Models
         Dictionary<string, List<string>> INotifyDataErrorInfoExtended.RawErrors => _errors;
 
         // TODO: For the old view model
-        public bool HasErrors => _errors.Count > 0;
+        public bool IsValid => !(this as INotifyDataErrorInfoExtended).HasErrors;
+
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
         void INotifyDataErrorInfoExtended.OnErrorsChanged(string propertyName)
@@ -39,6 +41,10 @@ namespace LearningManagementSystem.Models
             //{
             //    return;
             //}
+            if (propertyName == INotifyDataErrorInfoExtended.NoErrorPropertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
+            }
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
