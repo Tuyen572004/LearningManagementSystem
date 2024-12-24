@@ -106,13 +106,13 @@ namespace LearningManagementSystem.DataAccess
                             addedStudentIds.Add(studentId);
                             addedCount++;
                         }
-                        transaction.Commit();
                     }
                     catch (Exception ex)
                     {
                         invalidStudentIds.Add((studentId, new List<string> { "Exception raised when adding to database: " + ex.Message }));
                     }
                 }
+                transaction.Commit();
             }
             return (addedStudentIds, addedCount, invalidStudentIds);
         }
@@ -208,14 +208,14 @@ namespace LearningManagementSystem.DataAccess
                             removedStudentIds.Add(studentId);
                             removedCount++;
                         }
-
-                        transaction.Commit();
+                        
                     }
                     catch (Exception ex)
                     {
                         invalidStudentIds.Add((studentId, new List<string> { "Exception raised when removing from database: " + ex.Message }));
                     }
                 }
+                transaction.Commit();
             }
 
             return (removedStudentIds, removedCount, invalidStudentIds);
@@ -390,13 +390,13 @@ namespace LearningManagementSystem.DataAccess
                             addedTeacherIds.Add(teacherId);
                             addedCount++;
                         }
-                        transaction.Commit();
                     }
                     catch (Exception ex)
                     {
                         invalidTeacherIds.Add((teacherId, new List<string> { "Exception raised when adding to database: " + ex.Message }));
                     }
                 }
+                transaction.Commit();
             }
             return (addedTeacherIds, addedCount, invalidTeacherIds);
         }
@@ -493,15 +493,15 @@ namespace LearningManagementSystem.DataAccess
                             removedCount++;
                         }
 
-                        transaction.Commit();
+                        
                     }
                     catch (Exception ex)
                     {
                         invalidTeacherIds.Add((teacherId, new List<string> { "Exception raised when removing from database: " + ex.Message }));
                     }
                 }
+                transaction.Commit();
             }
-
             return (removedTeacherIds, removedCount, invalidTeacherIds);
         }
 

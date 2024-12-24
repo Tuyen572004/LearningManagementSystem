@@ -95,7 +95,20 @@ namespace LearningManagementSystem.ViewModels
             (existingItem as Teacher)?.Copy(newItem as Teacher);
         };
 
-        public override object? EmptyItem() => Teacher.Empty();
+        public override object? EmptyItem(ref object? identitySeed)
+        {
+            if (identitySeed is int identitySeedInt)
+            {
+                identitySeed = identitySeedInt - 1;
+            }
+            else
+            {
+                identitySeed = -1;
+            }
+            var newTeacher = Teacher.Empty();
+            newTeacher.Id = (int)identitySeed;
+            return newTeacher;
+        }
 
         public override ItemChecker? ItemCheckForAdd => (object item) => item is Teacher teacher && teacher.Id < 0;
 

@@ -68,13 +68,13 @@ namespace LearningManagementSystem.DataAccess
                             addedStudents.Add(student);
                             addedCount++;
                         }
-                        transaction.Commit();
                     }
                     catch (Exception ex)
                     {
                         invalidStudents.Add((student, new List<string> { "Exception raised when adding to database: " + ex.Message }));
                     }
                 }
+                transaction.Commit();
             }
             return (addedStudents, addedCount, invalidStudents);
         }

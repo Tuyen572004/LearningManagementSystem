@@ -17,6 +17,7 @@
                 <RowDefinition Height="300" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
@@ -42,7 +43,7 @@
                 x:Name="TeacherTable" DataContext="{x:Bind _teachersInClassViewModel}" />
 
             <controls:QueryableItemDisplayer
-                Grid.Row="3" Visibility="Collapsed"
+                Grid.Row="4"
                 x:Name="StudentTable" DataContext="{x:Bind _studentsInClassViewModel}" />
         </Grid>
     </ScrollViewer>

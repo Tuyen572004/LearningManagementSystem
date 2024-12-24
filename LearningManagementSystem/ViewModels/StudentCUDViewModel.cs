@@ -205,6 +205,7 @@ namespace LearningManagementSystem.ViewModels
         public EventHandler<IList<object>> StudentsRemoveHandler => HandleStudentsRemoval;
 
         public event EventHandler<IList<object>>? StudentsSelectionChanged;
+        private int _nextIdForCreation = -1;
         public void HandleStudentsCreation(object? sender, EventArgs e)
         {
             if (sender is null)
@@ -212,6 +213,8 @@ namespace LearningManagementSystem.ViewModels
                 return;
             }
             var emptyStudent = StudentVer2.Empty();
+            emptyStudent.Id = _nextIdForCreation;
+            _nextIdForCreation--;
             emptyStudent.RevalidateAllProperties();
 
             AllStudents.Add(emptyStudent);
@@ -252,7 +255,7 @@ namespace LearningManagementSystem.ViewModels
                     invalidStudentsInfo.Add((updatingStudent, []));
                     continue;
                 }
-                if (updatingStudent.Id == -1)
+                if (updatingStudent.Id < 0)
                 {
                     validAddingStudents.Add(updatingStudent);
                 }
