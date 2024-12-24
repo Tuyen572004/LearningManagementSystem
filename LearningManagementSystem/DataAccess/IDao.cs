@@ -117,6 +117,45 @@ namespace LearningManagementSystem.DataAccess
             IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
             ) DeleteStudents(IEnumerable<StudentVer2> students);
 
+        public (ObservableCollection<StudentVer2>, int) GetStudentsFromClass(
+            int classId,
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<SortCriteria> sortCriteria = null
+        );
+
+        public (
+            IList<int> addedStudentIds,
+            int addedCount,
+            IList<(int studentId, IEnumerable<string> error)> invalidStudentIdsInfo
+        ) AddStudentsToClass(IEnumerable<int> studentIds, int classId);
+
+        public (
+            IList<int> removedStudentIds,
+            int removedCount,
+            IList<(int studentId, IEnumerable<string> error)> invalidStudentIdsInfo
+        ) RemoveStudentsFromClass(IEnumerable<int> studentIds, int classId);
+
+        public (ObservableCollection<Teacher>, int) GetTeachersFromClass(
+            int classId,
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<SortCriteria> sortCriteria = null
+        );
+
+        public (
+            IList<int> addedTeacherIds,
+            int addedCount,
+            IList<(int teacherId, IEnumerable<string> error)> invalidTeacherIdsInfo
+        ) AddTeachersToClass(IEnumerable<int> teacherIds, int classId);
+
+        public (
+            IList<int> removedTeacherIds,
+            int removedCount,
+            IList<(int teacherId, IEnumerable<string> error)> invalidTeacherIdsInfo
+        ) RemoveTeachersFromClass(IEnumerable<int> teacherIds, int classId);
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);

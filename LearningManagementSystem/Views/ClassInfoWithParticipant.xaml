@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LearningManagementSystem.Views.ClassInfoWithParticipant"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    xmlns:controls="using:LearningManagementSystem.Controls">
+
+    <ScrollViewer Margin="8, 8, 8, 8" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+        <Grid RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="300" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Fill="ForestGreen" />
+            <TextBlock 
+                Text="Class Detail" Width="400" Height="50"
+                FontSize="40" FontWeight="Bold"
+                TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
+                Grid.Row="0"
+            />
+
+            <SelectorBar
+                Grid.Row="2"
+                x:Name="TableSelector"
+                Width="500"
+                SelectionChanged="TableSelector_SelectionChanged"
+                >
+                <SelectorBarItem x:Name="TeacherTableBar" Text="Teachers In Class" IsSelected="True" />
+                <SelectorBarItem x:Name="StudentTableBar" Text="Students In Class" />
+            </SelectorBar>
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="3"
+                x:Name="TeacherTable" DataContext="{x:Bind _teachersInClassViewModel}" />
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="3" Visibility="Collapsed"
+                x:Name="StudentTable" DataContext="{x:Bind _studentsInClassViewModel}" />
+        </Grid>
+    </ScrollViewer>
+</Page>
