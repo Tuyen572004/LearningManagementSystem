@@ -72,7 +72,7 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            var rawPassword = inputPassword.Text;
+            var rawPassword = "12345";
 
             var user = new User
             {

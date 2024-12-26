@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="LearningManagementSystem.CoursesPage"
+    x:Class="LearningManagementSystem.Views.ClassesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:LearningManagementSystem"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:helper="using:LearningManagementSystem.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:LearningManagementSystem.ViewModels" xmlns:x1="using:System" d:DataContext="{d:DesignInstance Type=viewmodels:TableCoursesView}"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-
     <Page.Resources>
-
+        <helper:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -36,21 +35,21 @@
 
         <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
-        <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">All Courses</TextBlock>
+        <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">All Classes</TextBlock>
 
-        <Button x:Name="deleteCourses" Grid.Row="2" Grid.Column="3" Click="deleteCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Delete Selection Course</Button>
-        <Button x:Name="changeCourses" Grid.Row="2" Grid.Column="2" Click="changeCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Change Selection Course</Button>
-        <Button x:Name="addCourses" Grid.Row="2" Grid.Column="4" Click="addCourses_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Add Courses</Button>
+        <Button x:Name="deleteClass" Grid.Row="2" Grid.Column="3" Click="deleteClass_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Delete Selection Class</Button>
+        <Button x:Name="changeClass" Grid.Row="2" Grid.Column="2" Click="changeClass_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,0,10" Width="200">Change Selection Class</Button>
+        <Button x:Name="addClass" Grid.Row="2" Grid.Column="4" Click="addClass_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" Margin="0,0,10,10" Width="200">Add Class</Button>
 
         <ProgressRing Name="waitingRing" Width="60" Height="60" IsIndeterminate="False" Background="LightGray" Grid.RowSpan="2" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
 
         <AutoSuggestBox Name="SearchBar" PlaceholderText="Search" FontStyle="Italic"
-        TextChanged="AutoSuggestBox_TextChanged" Height="40" 
-        QueryIcon="Find" VerticalContentAlignment="Center" VerticalAlignment="Center"
-        QuerySubmitted="AutoSuggestBox_QuerySubmitted" Margin="0,10,0,0"
-        SuggestionChosen="AutoSuggestBox_SuggestionChosen"   
-                        Grid.Row="3" Grid.ColumnSpan="1" Grid.Column="4" />
+    TextChanged="AutoSuggestBox_TextChanged" Height="40" 
+    QueryIcon="Find" VerticalContentAlignment="Center" VerticalAlignment="Center"
+    QuerySubmitted="AutoSuggestBox_QuerySubmitted" Margin="0,10,0,0"
+    SuggestionChosen="AutoSuggestBox_SuggestionChosen"   
+                    Grid.Row="3" Grid.ColumnSpan="1" Grid.Column="4" />
 
 
         <StackPanel Name="SortPanel" Grid.Row="3" Margin="0,10,0,0" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
@@ -68,7 +67,7 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
-                             <Run Text="{Binding Page}"/> / <Run Text="{Binding Total}"/>
+                         <Run Text="{Binding Page}"/> / <Run Text="{Binding Total}"/>
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -76,7 +75,7 @@
             <Button x:Name="nextBtn" Click="nextBtn_Click" VerticalAlignment="Center" Width="80" Height="50">Next</Button>
         </StackPanel>
 
-        <controls:DataGrid x:Name="myCoursesTable" SelectionMode="Single" IsReadOnly="True" HeadersVisibility="Column" AutoGenerateColumns="False" ItemsSource="{x:Bind ViewModel.TableCourses, Mode=OneWay}" Grid.RowSpan="2" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,10,0,20">
+        <controls:DataGrid x:Name="myClassesTable" SelectionMode="Single" IsReadOnly="True" HeadersVisibility="Column" AutoGenerateColumns="False" ItemsSource="{x:Bind ViewModel.TableClasses, Mode=OneWay}" Grid.RowSpan="2" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,10,0,20">
             <controls:DataGrid.Resources>
                 <Style x:Key="DataGridColumnHeaderStyle" TargetType="controls:DataGridRowGroupHeader">
                     <Setter Property="FontSize" Value="20"/>
@@ -89,14 +88,14 @@
 
 
             <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="Course ID"  Binding="{Binding ID }" />
-                <controls:DataGridTextColumn Header="Course Code"  Binding="{Binding CourseCode}" />
-                <controls:DataGridTextColumn Header="Course Description"  Binding="{Binding CourseDecription}" />
-                <controls:DataGridTextColumn Header="Department ID"  Binding="{Binding DepartmentID}" />
-                <controls:DataGridTextColumn Header="Department Name"  Binding="{Binding DepartmentName}" />
-                <controls:DataGridTextColumn Header="Total Students"  Binding="{Binding TotalStudents}" />
-                <controls:DataGridTextColumn Header="Total Classes"  Binding="{Binding TotalClasses}" />
+                <controls:DataGridTextColumn Header="Class ID" Binding="{Binding ID}" />
+                <controls:DataGridTextColumn Header="Class Code" Binding="{Binding ClassCode}" />
+                <controls:DataGridTextColumn Header="Course ID" Binding="{Binding CourseID}" />
+                <controls:DataGridTextColumn Header="Cycle ID" Binding="{Binding CycleID}" />
+                <controls:DataGridTextColumn Header="Class Start Date" Binding="{Binding ClassStartDate, Converter={StaticResource DateTimeToStringConverter}}" />
+                <controls:DataGridTextColumn Header="Class End Date" Binding="{Binding ClassEndDate, Converter={StaticResource DateTimeToStringConverter}}" />
             </controls:DataGrid.Columns>
+
 
         </controls:DataGrid>
 

@@ -1,4 +1,5 @@
-﻿using LearningManagementSystem.Models;
+﻿using CloudinaryDotNet;
+using LearningManagementSystem.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -101,50 +102,24 @@ namespace LearningManagementSystem.DataAccess
 
         public Department GetDepartmentById(int departmentId)
         {
-            Random random = new Random();
-            departmentId = random.Next(1, 20);
-            if (departmentId % 5 == 1)
+            var sql = "SELECT Id, DepartmentCode, DepartmentDesc FROM Departments WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                return new Department
+                command.Parameters.AddWithValue("@Id", departmentId);
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    Id = departmentId,
-                    DepartmentCode = "CSE",
-                    DepartmentDesc = "Computer Science and Engineering"
-                };
+                    return new Department
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        DepartmentCode = reader.GetString(reader.GetOrdinal("DepartmentCode")),
+                        DepartmentDesc = reader.GetString(reader.GetOrdinal("DepartmentDesc"))
+                    };
+                }
+                return null;
             }
-            if (departmentId % 5 == 2)
-            {
-                return new Department
-                {
-                    Id = departmentId,
-                    DepartmentCode = "ECE",
-                    DepartmentDesc = "Electronics and Communication Engineering"
-                };
-            }
-            if (departmentId % 5 == 3)
-            {
-                return new Department
-                {
-                    Id = departmentId,
-                    DepartmentCode = "EEE",
-                    DepartmentDesc = "Electrical and Electronics Engineering"
-                };
-            }
-            if (departmentId % 5 == 4)
-            {
-                return new Department
-                {
-                    Id = departmentId,
-                    DepartmentCode = "CIV",
-                    DepartmentDesc = "Civil Engineering"
-                };
-            }
-            return new Department
-            {
-                Id = departmentId,
-                DepartmentCode = "ME",
-                DepartmentDesc = "Mechanical Engineering"
-            };
         }
     }
 }

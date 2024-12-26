@@ -25,7 +25,8 @@ namespace LearningManagementSystem.DataAccess
             string keyword = "",
             bool nameAscending = false
             );
-
+        public int findTotalClassesByCourseId(int courseId);
+        public int findTotalStudentsByCourseId(int courseId);
         int InsertDepartment(Department department);
         void UpdateDepartment(Department department);
         void RemoveDepartmentByID(int departmentId);
@@ -44,6 +45,7 @@ namespace LearningManagementSystem.DataAccess
 
         int CountDepartments();
         int FindDepartmentID(Department department);
+        int FindCourseByID(Course course);
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId);
         public Course GetCourseById(int courseId);
         public Department GetDepartmentById(int departmentId);
@@ -97,7 +99,7 @@ namespace LearningManagementSystem.DataAccess
 
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId);
 
-
+        public int InsertClass(Class newClass);
         public Class findClassById(int classId);
         public Course findCourseByClassId(int classId);
         Submission GetSubmissionById(int id);
@@ -111,10 +113,17 @@ namespace LearningManagementSystem.DataAccess
 
         void SaveAssignment(Assignment assignment);
 
+        public User GetUserByUserName(string username);
         void UpdateAssignment(Assignment assignment);
         void DeleteAttachmentByAssignmentId(int id);
         void AddAssignment(Assignment assignment);
         void DeleteAssignmentById(int id);
 
+        public List<String> GetAllClassesCode();
+        public Tuple<int, List<Class>> GetAllClasses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC");
+        public void RemoveClassByID(int id);
+        public void UpdateClass(Class newClass);
+        public int CountClass();
+        public int CountStudent();
     }
 }
