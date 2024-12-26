@@ -60,6 +60,7 @@
 	  <None Remove="Views\ClassInfoWithParticipant.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
+	  <None Remove="Views\EditStudentsEnrollmentInClass.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -142,6 +143,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\EditStudentsEnrollmentInClass.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\ClassInfoWithParticipant.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

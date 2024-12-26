@@ -24,6 +24,7 @@
             <NavigationViewItem Content="Read Teachers" Tag="LearningManagementSystem.Views.Admin.TeacherQueryPage" Icon="ContactPresence" />
             <NavigationViewItem Content="CRUD Teachers" Tag="LearningManagementSystem.Views.Admin.TeacherCRUDPage" Icon="ContactPresence" />
             <NavigationViewItem Content="See Mock Class Info" Tag="LearningManagementSystem.Views.ClassInfoWithParticipant" Icon="People" />
+            <NavigationViewItem Content="Edit Students Enrollment In Class" Tag="LearningManagementSystem.Views.EditStudentsEnrollmentInClass" Icon="People" />
             <!--NavigationViewItem Content="See Students In Classes" Tag="LearningManagementSystem.Views.ClassPreviewPage" Icon="People" /-->
         </NavigationView.MenuItems>
 

@@ -95,9 +95,9 @@ namespace LearningManagementSystem.Controls
         public int PageWindowSize { get; set; } = 1;
         private int FirstItemIndexInPage => (CurrentPage - 1) * ContextProvider.RowsPerPage + 1;
         public string PageCountText =>
-            $"displaying item(s) " +
-            ((FirstItemIndexInPage < ItemCount) ? $"{FirstItemIndexInPage} to " : "") +
-            $"{Math.Min(ItemCount, CurrentPage * ContextProvider.RowsPerPage)} (of {ItemCount} total item(s))";
+            $"" +
+            ((FirstItemIndexInPage < ItemCount) ? $"{FirstItemIndexInPage} - " : "") +
+            $"{Math.Min(ItemCount, CurrentPage * ContextProvider.RowsPerPage)} (of total {ItemCount}),";
         public readonly List<int> PageSizes = [5, 10, 20, 50, 100];
         public PagingOptionsBar()
         {
@@ -292,20 +292,20 @@ namespace LearningManagementSystem.Controls
         //    }
         //}
 
-        private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs _)
-        {
-            if (sender is ToggleButton)
-            {
-                PagingDetail.Visibility = Visibility.Visible;
-            }
-        }
+        //private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs _)
+        //{
+        //    if (sender is ToggleButton)
+        //    {
+        //        PagingDetail.Visibility = Visibility.Visible;
+        //    }
+        //}
 
-        private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs _)
-        {
-            if (sender is ToggleButton)
-            {
-                PagingDetail.Visibility = Visibility.Collapsed;
-            }
-        }
+        //private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs _)
+        //{
+        //    if (sender is ToggleButton)
+        //    {
+        //        PagingDetail.Visibility = Visibility.Collapsed;
+        //    }
+        //}
     }
 }

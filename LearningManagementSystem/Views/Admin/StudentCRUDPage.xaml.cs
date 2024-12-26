@@ -127,7 +127,7 @@ namespace LearningManagementSystem.Views.Admin
         public event EventHandler<IList<object>>? StudentsDeletionInitiated;
         public void HandleStudentsUpdated(object? sender, (
             IList<StudentVer2> updatedStudents,
-            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            IList<(StudentVer2 student, IEnumerable<string> errors)> invalidStudentsInfo
             ) e)
         {
             if (sender is null)
@@ -173,7 +173,7 @@ namespace LearningManagementSystem.Views.Admin
         public event EventHandler<IList<(StudentVer2 student, IEnumerable<String> errors)>>? OnStudentsErrorsAdded; 
         public EventHandler<(
             IList<StudentVer2> updatedStudents,
-            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            IList<(StudentVer2 student, IEnumerable<string> errors)> invalidStudentsInfo
             )> OnStudentsUpdatedHandler => HandleStudentsUpdated;
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {

@@ -9,7 +9,33 @@
     mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Spacing="5" Orientation="Horizontal">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel
+            Grid.Column="0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            >
+            <CheckBox 
+                x:Name="ShowSearchOptionCheckbox"
+                Content="Show advanced search options"
+                IsChecked="False"
+                Checked="ShowSearchOptionCheckbox_Checked"
+                Unchecked="ShowSearchOptionCheckbox_Unchecked"
+                />
+        </StackPanel>
+    
+            
+        <StackPanel
+            x:Name="AdvancedSearchOptionsStackPanel"
+            Grid.Column="1"
+            Visibility="Collapsed"
+            Spacing="5" Orientation="Horizontal" HorizontalAlignment="Right"
+            >
             <ComboBox
                 x:Name="ComboBox_SearchField" Width="200"
                 SelectionChanged="ComboBox_SearchField_SelectionChanged"

@@ -185,5 +185,21 @@ namespace LearningManagementSystem.Controls
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        private void ShowSearchOptionCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                AdvancedSearchOptionsStackPanel.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ShowSearchOptionCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                AdvancedSearchOptionsStackPanel.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

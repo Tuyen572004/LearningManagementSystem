@@ -30,7 +30,7 @@ namespace LearningManagementSystem.ViewModels
             return (new(resultList), queryCount);
         }
 
-        public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+        public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "TeacherCode", "TeacherName", "Email", "PhoneNo"];
         public override IEnumerable<string> IgnoringColumns => ["IsValid"];
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
     }
