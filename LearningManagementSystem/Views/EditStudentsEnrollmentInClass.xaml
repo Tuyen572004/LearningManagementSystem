@@ -17,28 +17,86 @@
                 <RowDefinition Height="100" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="300" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock 
-                Text="Students Enrollment CRUD" Width="400" Height="50"
+                Text="Students Enrollment CRUD" Width="Auto" Height="50"
                 FontSize="40" FontWeight="Bold"
-                TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
+                TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
                 Grid.Row="0"
             />
 
-            <controls:QueryableItemDisplayer
-                Grid.Row="1"
-                x:Name="StudentsInClassTable" DataContext="{x:Bind _studentsInClassViewModel}" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16, 0, 0, 4" Spacing="4">
+                <TextBlock 
+                    Text="Class Code:" Width="Auto" Height="40"
+                    FontSize="24" FontWeight="Bold"
+                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    />
+
+                <TextBlock
+                    Text="{x:Bind _simpleClassViewModel.ClassCode}"
+                    Width="Auto" Height="40"
+                    FontSize="16"
+                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    />
+            </StackPanel>
+
+            <Grid Grid.Row="2" Margin="16, 0, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Current students in class" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" 
+                    />
+            </Grid>
 
             <controls:QueryableItemDisplayer
-                Grid.Row="2"
+                Grid.Row="3"
+                x:Name="StudentsInClassTable" DataContext="{x:Bind _studentsInClassViewModel}" />
+
+            <Grid Grid.Row="4" ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="All available students" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 16, 0, 0"
+                    />
+
+                <CheckBox
+                    Grid.Column="1"
+                    x:Name="AllStudentsTableToggler"
+                    Content="(show)"
+                    IsChecked="False"
+                    Checked="AllStudentsTableToggler_Checked"
+                    Unchecked="AllStudentsTableToggler_Unchecked"
+                    VerticalAlignment="Bottom"
+                    />
+            </Grid>
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="5"
+                Visibility="Collapsed"
                 x:Name="AllStudentsTable" DataContext="{x:Bind _allStudentsViewModel}"/>
             
 
-            <Grid Grid.Row="3" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">
+            <Grid Grid.Row="6" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*" />
                     <ColumnDefinition Width="7*" />
@@ -56,8 +114,21 @@
 
             </Grid>
 
+            <Grid Grid.Row="7">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Editing Area" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 16, 0, 0"
+                    />
+            </Grid>
+
             <controls:QueryableItemDisplayer
-                Grid.Row="4"
+                Grid.Row="8"
                 x:Name="StudentsEnrollmentTable" DataContext="{x:Bind _studentsEnrollmentViewModel}" />
         </Grid>
     </ScrollViewer>

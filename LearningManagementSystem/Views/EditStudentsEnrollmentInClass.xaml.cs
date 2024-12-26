@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.Models;
+using NPOI.Util;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,9 +30,11 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class EditStudentsEnrollmentInClass : Page, IDisposable
     {
-        private readonly StudentsInClassViewModel _studentsInClassViewModel;
-        private readonly StudentReaderViewModelVer2 _allStudentsViewModel;
-        private readonly StudentsInClassCUDViewModel _studentsEnrollmentViewModel;
+        private SimpleClassViewModel? _simpleClassViewModel = null;
+        private StudentsInClassViewModel? _studentsInClassViewModel = null;
+        private StudentReaderViewModelVer2? _allStudentsViewModel = null;
+        private StudentsInClassCUDViewModel? _studentsEnrollmentViewModel = null;
+        private int _classId = -1;
         private bool disposedValue;
 
         private TableView InnerStudentsInClassTable => StudentsInClassTable.TableView;
@@ -42,44 +45,88 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
 
-            var mockClassId = 14;
+            //var mockClassId = 14;
 
-            _studentsInClassViewModel = new StudentsInClassViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
+            //_studentsInClassViewModel = new StudentsInClassViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
+            //{
+            //    RowsPerPage = 5
+            //};
+            //_studentsInClassViewModel.LoadInitialItems();
+            //_allStudentsViewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>()!)
+            //{
+            //    RowsPerPage = 5
+            //};
+            //_allStudentsViewModel.LoadInitialItems();
+            //_studentsEnrollmentViewModel = new StudentsInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
+            //{
+            //    RowsPerPage = 5
+            //};
+            //_studentsEnrollmentViewModel.LoadInitialItems();
+
+            //InnerStudentsInClassTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
+            //InnerAllStudentsTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
+
+            //OnSelectedRemoving += _studentsEnrollmentViewModel.ItemsRemoveHandler;
+            //AllSelectedItemsTransferred += _studentsEnrollmentViewModel.ItemsTransferHandler;
+            //ItemsUpdateInitiated += _studentsEnrollmentViewModel.ItemsUpdateHandler;
+            //ItemsDeletionInitiated += _studentsEnrollmentViewModel.ItemsDeleteHandler;
+            //OnItemsErrorsAdded += _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
+
+            //_studentsEnrollmentViewModel.ItemsSelectionChanged += InnerStudentsEnrollmentTable.ItemsReselectionHandler;
+
+            //_studentsEnrollmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
+            //_studentsEnrollmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            // if (e.Parameter is int classId)
+            if (14 is int classId)
             {
-                RowsPerPage = 5
-            };
-            _studentsInClassViewModel.LoadInitialItems();
-            _allStudentsViewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>()!)
-            {
-                RowsPerPage = 5
-            };
-            _allStudentsViewModel.LoadInitialItems();
-            _studentsEnrollmentViewModel = new StudentsInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
-            {
-                RowsPerPage = 5
-            };
-            _studentsEnrollmentViewModel.LoadInitialItems();
+                _classId = classId;
 
-            InnerStudentsInClassTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
-            InnerAllStudentsTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
+                _simpleClassViewModel = new SimpleClassViewModel(App.Current.Services.GetService<IDao>()!, classId);
+                _simpleClassViewModel.LoadRequiredInformation();
 
-            OnSelectedRemoving += _studentsEnrollmentViewModel.ItemsRemoveHandler;
-            AllSelectedItemsTransferred += _studentsEnrollmentViewModel.ItemsTransferHandler;
-            ItemsUpdateInitiated += _studentsEnrollmentViewModel.ItemsUpdateHandler;
-            ItemsDeletionInitiated += _studentsEnrollmentViewModel.ItemsDeleteHandler;
-            OnItemsErrorsAdded += _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
+                _studentsInClassViewModel = new StudentsInClassViewModel(App.Current.Services.GetService<IDao>()!, classId)
+                {
+                    RowsPerPage = 5
+                };
+                _studentsInClassViewModel.LoadInitialItems();
+                _allStudentsViewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>()!)
+                {
+                    RowsPerPage = 5
+                };
+                _allStudentsViewModel.LoadInitialItems();
+                _studentsEnrollmentViewModel = new StudentsInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, classId)
+                {
+                    RowsPerPage = 5
+                };
+                _studentsEnrollmentViewModel.LoadInitialItems();
 
-            _studentsEnrollmentViewModel.ItemsSelectionChanged += InnerStudentsEnrollmentTable.ItemsReselectionHandler;
+                InnerStudentsInClassTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
+                InnerAllStudentsTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
 
-            _studentsEnrollmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
-            _studentsEnrollmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
+                OnSelectedRemoving += _studentsEnrollmentViewModel.ItemsRemoveHandler;
+                AllSelectedItemsTransferred += _studentsEnrollmentViewModel.ItemsTransferHandler;
+                ItemsUpdateInitiated += _studentsEnrollmentViewModel.ItemsUpdateHandler;
+                ItemsDeletionInitiated += _studentsEnrollmentViewModel.ItemsDeleteHandler;
+                OnItemsErrorsAdded += _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
+
+                _studentsEnrollmentViewModel.ItemsSelectionChanged += InnerStudentsEnrollmentTable.ItemsReselectionHandler;
+
+                _studentsEnrollmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
+                _studentsEnrollmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
+            }
         }
 
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                if (disposing)
+                if (disposing && _studentsEnrollmentViewModel is not null)
                 {
                     InnerStudentsInClassTable.ItemDoubleTapped -= _studentsEnrollmentViewModel.ItemTransferHandler;
                     InnerAllStudentsTable.ItemDoubleTapped -= _studentsEnrollmentViewModel.ItemDoubleTappedHandler;
@@ -146,10 +193,10 @@ namespace LearningManagementSystem.Views
         {
             StudentsInClassTable.TableView.ShowInfoBar(message);
         }
-        private void ShowAllInfoBar(InfoBarMessage message)
-        {
-            AllStudentsTable.TableView.ShowInfoBar(message);
-        }
+        //private void ShowAllInfoBar(InfoBarMessage message)
+        //{
+        //    AllStudentsTable.TableView.ShowInfoBar(message);
+        //}
         private void ShowCDInfoBar(InfoBarMessage message)
         {
             StudentsEnrollmentTable.TableView.ShowInfoBar(message);
@@ -311,5 +358,21 @@ namespace LearningManagementSystem.Views
             }
         }
         public EventHandler<IList<object>> ItemsChangedHandler => HandleItemsChanged;
+
+        private void AllStudentsTableToggler_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                AllStudentsTable.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void AllStudentsTableToggler_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleButton)
+            {
+                AllStudentsTable.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

@@ -18,9 +18,9 @@
 
         <Rectangle Grid.Row="0" Fill="ForestGreen" />
         <TextBlock 
-            Text="Teacher Query" Width="400" Height="50"
+            Text="Teacher Query" Width="Auto" Height="50"
             FontSize="40" FontWeight="Bold"
-            TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
+            TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
             Grid.Row="0"
             />
         <controls:QueryableItemDisplayer x:Name="QueryableTeacherDisplayer" Grid.Row="1" DataContext="{x:Bind _viewModel}"/>

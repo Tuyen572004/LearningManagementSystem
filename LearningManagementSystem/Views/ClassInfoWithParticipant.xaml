@@ -14,36 +14,128 @@
         <Grid RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="300" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="300" />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock 
-                Text="Class Detail" Width="400" Height="50"
-                FontSize="40" FontWeight="Bold"
-                TextAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" HorizontalAlignment="Left" 
+                Text="Class Detail" Width="Auto" Height="40"
+                FontSize="28" FontWeight="Bold"
+                TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
                 Grid.Row="0"
             />
 
-            <SelectorBar
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock 
+                    Text="Class basic information" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Center" Margin="16, 0, 0, 4"
+                    />
+            </StackPanel>
+
+            <Grid 
+                Grid.Row="2"
+                Margin="20, 0, 0, 20" RowSpacing="8"
+                >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8*" />
+                    <!--<ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="5*" />-->
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel 
+                    Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="12"
+                    >
+
+                    <TextBlock FontSize="16" Text="Class Code:" />
+                    <TextBlock FontWeight="Bold" FontSize="16" Text="{x:Bind _simpleClassViewModel.ClassCode}" />
+                </StackPanel>
+
+                <StackPanel 
+                    Grid.Row="1" Grid.Column="1"
+                    Orientation="Horizontal" Spacing="12" VerticalAlignment="Center"
+                    >   
+
+                    <TextBlock FontSize="16" Text="Course Name:" />
+                    <TextBlock
+                        FontWeight="Bold" FontSize="16"
+                        TextWrapping="Wrap" MaxLines="4"
+                        Text="{x:Bind _simpleClassViewModel.CourseName}"/>
+                </StackPanel>
+
+
+            </Grid>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Teachers in class" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 0, 0, 0"
+                    />
+
+                <Button
+                    Grid.Column="1"
+                    Content="Edit teachers in class"
+                    Margin="0, 0, 16, 0"
+                    />
+            </Grid>
+            
+
+            <!--<SelectorBar
                 Grid.Row="2"
                 x:Name="TableSelector"
-                Width="500"
+                Width="400"
                 SelectionChanged="TableSelector_SelectionChanged"
                 >
                 <SelectorBarItem x:Name="TeacherTableBar" Text="Teachers In Class" IsSelected="True" />
                 <SelectorBarItem x:Name="StudentTableBar" Text="Students In Class" />
-            </SelectorBar>
-
-            <controls:QueryableItemDisplayer
-                Grid.Row="3"
-                x:Name="TeacherTable" DataContext="{x:Bind _teachersInClassViewModel}" />
+            </SelectorBar>-->
 
             <controls:QueryableItemDisplayer
                 Grid.Row="4"
+                x:Name="TeacherTable" DataContext="{x:Bind _teachersInClassViewModel}" />
+
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Students in class" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 16, 0, 0"
+                    />
+
+                <Button
+                    Grid.Column="1"
+                    Content="Edit students in class"
+                    Margin="0, 16, 16, 0"
+                    />
+            </Grid>
+
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="6"
                 x:Name="StudentTable" DataContext="{x:Bind _studentsInClassViewModel}" />
         </Grid>
     </ScrollViewer>
