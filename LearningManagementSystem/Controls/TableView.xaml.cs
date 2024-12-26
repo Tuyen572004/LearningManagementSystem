@@ -52,45 +52,48 @@ namespace LearningManagementSystem.Controls
         required public string ColumnTag { get; set; }
         public DataGridSortDirection? SortDirection { get; set; }
     }
-    public interface IStudentProvider: INotifyPropertyChanged
+    public interface ITableItemProvider: INotifyPropertyChanged
     {
-        public ObservableCollection<StudentVer2> ManagingStudents { get; }
+        public ObservableCollection<object> ManagingItems { get; }
         public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
-        public EventHandler<StudentVer2>? StudentDoubleTappedHandler => null;
-        public EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEdittedHandler => null;
+        public EventHandler<object>? ItemDoubleTappedHandler => null;
+
+        /// <summary>
+        /// The item should be implemented with ICloneable interface. If not, the oldItem will be the same as newItem.
+        /// </summary>
+        public EventHandler<(object oldItem, object newItem)>? ItemEdittedHandler => null;
 
         public IEnumerable<string> IgnoringColumns => [];
         public IEnumerable<string> ColumnOrder => [];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
         public IEnumerable<string> ReadOnlyColumns => [];
     }
-    public partial class UnassignedStudentProvider : IStudentProvider
+    public partial class UnassignedItemProvider : ITableItemProvider
     {
-        public ObservableCollection<StudentVer2> ManagingStudents { get; } = [];
+        public ObservableCollection<object> ManagingItems { get; } = [];
 
         public event PropertyChangedEventHandler? PropertyChanged;
     }
-    public sealed partial class StudentTable : UserControl, IDisposable
+    public sealed partial class TableView : UserControl, IDisposable
     {
-        // private readonly IStudentProvider _dataContext = null;
         public static readonly DependencyProperty ContextProviderProperty =
             DependencyProperty.Register(
                 "ContextProvider",
-                typeof(IStudentProvider),
-                typeof(StudentTable),
-                new PropertyMetadata(new UnassignedStudentProvider(), OnDataChanged)
+                typeof(ITableItemProvider),
+                typeof(TableView),
+                new PropertyMetadata(new UnassignedItemProvider(), OnDataChanged)
                 );
 
-        public IStudentProvider ContextProvider
+        public ITableItemProvider ContextProvider
         {
-            get => (IStudentProvider)GetValue(ContextProviderProperty);
+            get => (ITableItemProvider)GetValue(ContextProviderProperty);
             set => SetValue(ContextProviderProperty, value);
         }
 
         private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Do nothing currently
-            if (d is StudentTable control)
+            if (d is TableView control)
             {
                 if (e.NewValue is IInfoProvider)
                 {
@@ -101,29 +104,29 @@ namespace LearningManagementSystem.Controls
                     control.SeeItemInfoFlyout.Visibility = Visibility.Collapsed;
                 }
 
-                if (e.OldValue is IStudentProvider oldStudentProvider)
+                if (e.OldValue is ITableItemProvider oldItemProvider)
                 {
-                    control.SortChanged -= oldStudentProvider.SortChangedHandler;
-                    control.StudentDoubleTapped -= oldStudentProvider.StudentDoubleTappedHandler;
-                    control.StudentEditted -= oldStudentProvider.StudentEdittedHandler;
+                    control.SortChanged -= oldItemProvider.SortChangedHandler;
+                    control.ItemDoubleTapped -= oldItemProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted -= oldItemProvider.ItemEdittedHandler;
                 }
-                if (e.NewValue is IStudentProvider newStudentProvider)
+                if (e.NewValue is ITableItemProvider newItemProvider)
                 {
-                    control.SortChanged += newStudentProvider.SortChangedHandler;
-                    control.StudentDoubleTapped += newStudentProvider.StudentDoubleTappedHandler;
-                    control.StudentEditted += newStudentProvider.StudentEdittedHandler;
+                    control.SortChanged += newItemProvider.SortChangedHandler;
+                    control.ItemDoubleTapped += newItemProvider.ItemDoubleTappedHandler;
+                    control.ItemEditted += newItemProvider.ItemEdittedHandler;
                 }
             }
         }
 
-        public StudentTable()
+        public TableView()
         {
             this.InitializeComponent();
         }
 
         public event EventHandler<List<SortCriteria>>? SortChanged;
         private readonly List<SortCriteria> _sortList = [];
-        private readonly Dictionary<String, DataGridSortDirection?> _sortDirectionMapper = [];
+        private readonly Dictionary<string, DataGridSortDirection?> _sortDirectionMapper = [];
         private void Dg_Sorting(object sender, DataGridColumnEventArgs e)
         {
             var columnTag = e.Column.Tag?.ToString();
@@ -171,13 +174,11 @@ namespace LearningManagementSystem.Controls
             set => Dg.IsReadOnly = !value;
         }
 
-        public event EventHandler<StudentVer2>? StudentDoubleTapped;
-        private void Dg_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        public event EventHandler<object>? ItemDoubleTapped;
+
+        private void Dg_DoubleTapped(object _, DoubleTappedRoutedEventArgs __)
         {
-            if (Dg.SelectedItem is StudentVer2 student)
-            {
-                StudentDoubleTapped?.Invoke(this, student);
-            }
+            ItemDoubleTapped?.Invoke(this, Dg.SelectedItem);
         }
 
         public void RefreshData()
@@ -185,61 +186,68 @@ namespace LearningManagementSystem.Controls
             SortChanged?.Invoke(this, _sortList);
         }
 
-        private void RefreshMenuLayout_Click(object sender, RoutedEventArgs e)
+        private void RefreshMenuLayout_Click(object _, RoutedEventArgs __)
         {
             RefreshData();
         }
 
-        public event EventHandler<(StudentVer2 oldStudent, StudentVer2 newStudent)>? StudentEditted;
+        public event EventHandler<(object oldItem, object newItem)>? ItemEditted;
 
         // Don't delete this private variable
         // This code somehow runs Dg_CellEditEnding indefinitely if ran without the _isEdittingRow flag guard
         private bool _isEdittingRow = false;
-        private StudentVer2? _originalStudent = null;
+        private object? _originalItem = null;
         private void Dg_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
         {
             _isEdittingRow = true;
-            _originalStudent = (StudentVer2)((ICloneable)e.Row.DataContext).Clone();
+            if (e.Row.DataContext is ICloneable cloneable)
+            {
+                _originalItem = cloneable.Clone();
+            }
+            else
+            {
+                _originalItem = e.Row.DataContext;
+            }
         }
         private void Dg_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //if (!_isEdittingRow || _originalStudent is null)
+            //if (!_isEdittingRow || _originalItem is null)
             //{
             //    return;
             //}
             //if (e.EditAction == DataGridEditAction.Commit)
             //{
             //    _isEdittingRow = false;
-            //    StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+            //    ItemEditted?.Invoke(this, (_originalItem, (object)e.Row.DataContext));
             //}
             //else if (e.EditAction == DataGridEditAction.Cancel)
             //{
             //    _isEdittingRow = false;
-            //    _originalStudent = null;
+            //    _originalItem = null;
             //}
             //return;
         }
 
         private void Dg_CellEditEnded(object sender, DataGridCellEditEndedEventArgs e)
         {
-            if (!_isEdittingRow || _originalStudent is null)
+            if (!_isEdittingRow || _originalItem is null)
             {
                 return;
             }
             if (e.EditAction == DataGridEditAction.Commit)
             {
-                // For some reasons, when the event in StudentEditted is called and would modify the TableView rows,
+                // For some reasons, when the event in ItemEditted is called and would modify the TableView rows,
                 // (in this case, de-select the current editing cell's row), the Dg_CellEditEnded event raises an Exception.
                 
                 // Solution: Using DispatcherQueue
                 
-                // Ensures that the StudentEditted event is triggered
+                // Ensures that the ItemEditted event is triggered
                 // after the behind-the-scenes code in Dg_CellEditEnded has finished.
 
-                var oldStudent = (StudentVer2)_originalStudent.Clone();
+                var oldItem = _originalItem;
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    StudentEditted?.Invoke(this, (oldStudent, (StudentVer2)e.Row.DataContext));
+                    ItemEditted?.Invoke(this, (oldItem, e.Row.DataContext));
                     if (e.Row.DataContext is IValidatableItem validatable)
                     {
                         validatable.ValidateProperty(e.Column.Tag?.ToString());
@@ -248,32 +256,32 @@ namespace LearningManagementSystem.Controls
                         ResetItemInfo(forcedOpen: true);
                     }
                 });
-                // StudentEditted?.Invoke(this, (_originalStudent, (StudentVer2)e.Row.DataContext));
+                // ItemEditted?.Invoke(this, (_originalItem, (object)e.Row.DataContext));
             }
             _isEdittingRow = false;
-            _originalStudent = null;
+            _originalItem = null;
         }
 
-        public IList<StudentVer2> GetSelectedItems()
+        public IList<object> GetSelectedItems()
         {
-            return Dg.SelectedItems.Cast<StudentVer2>().ToList();
+            return Dg.SelectedItems.Cast<object>().ToList();
         }
-        private void HandleItemsReselection(object? sender, IList<StudentVer2> e)
+        private void HandleItemsReselection(object? sender, IList<object> e)
         {
             if (sender is null)
             {
                 return;
             }
             Dg.SelectedItems.Clear();
-            foreach (var studentInTable in Dg.ItemsSource)
+            foreach (var tableItem in Dg.ItemsSource)
             {
-                if (e.Any(observingStudent => ReferenceEquals(studentInTable, observingStudent)))
+                if (e.Any(observingItem => ReferenceEquals(tableItem, observingItem)))
                 {
-                    Dg.SelectedItems.Add(studentInTable);
+                    Dg.SelectedItems.Add(tableItem);
                 }
             }
         }
-        public EventHandler<IList<StudentVer2>> ItemsReselectionHandler => HandleItemsReselection;
+        public EventHandler<IList<object>> ItemsReselectionHandler => HandleItemsReselection;
 
         private object? _lastSeenItem = null;
         private void SeeItemInfo_Click(object sender, RoutedEventArgs e)
@@ -330,36 +338,73 @@ namespace LearningManagementSystem.Controls
             Dg_InfoBar.IsOpen = true;
         }
 
-        private Dictionary<string, IValueConverter>? _converterMapper = null;
+        private Dictionary<string, IValueConverter>? _converterMapper = null; 
         private Dictionary<string, int> _displayIndexMapper = [];
-        private int _columnIndexCounter = 0;
-        private bool disposedValue;
 
-        // This hurt performance so bad
-
-        //private bool _reorderingColumns = false;
-        //private readonly List<DataGridColumn> _generatedColumns = [];
-        //private void FixReorderColumn()
-        //{
-        //    foreach (var column in _generatedColumns)
-        //    {
-        //        string columnName = column.Tag?.ToString() ?? "";
-        //        // Should never happen
-        //        if (columnName.IsNullOrEmpty())
-        //        {
-        //            continue;
-        //        }
-        //        if (column.DisplayIndex != _displayIndexMapper[columnName])
-        //        {
-        //            column.DisplayIndex = _displayIndexMapper[columnName];
-        //        }
-        //    }
-        //    _reorderingColumns = false;
-        //}
+        private bool _isReorderingColumns = false;
+        private readonly List<DataGridColumn> _generatingColumns = [];
+        private ObservableCollection<DataGridColumn>? _actualColumnsReference = null;
+        private void OnGeneratedColumns()
+        {
+            _isReorderingColumns = false;
+            if (_actualColumnsReference is not null)
+            {
+                var temporaryColumn = _actualColumnsReference.FirstOrDefault(c => c.Tag?.ToString() == temporaryColumnTag);
+                if (temporaryColumn is not null)
+                {
+                    _actualColumnsReference.Remove(temporaryColumn);
+                }
+                _actualColumnsReference = null;
+            }
+            _generatingColumns.Clear();
+            _displayIndexMapper.Remove(temporaryColumnTag);
+        }
+        static private void AdjustColumnsOrdering(
+            DataGridColumn currentColumn, // C++ ref
+            List<DataGridColumn> generatedColumns, // C++ ref
+            Dictionary<string, int> referenceIndexMapper // C++ ref
+        )
+        {
+            var generatedColumnsSize = generatedColumns.Count;
+            var currentColumnTag = currentColumn.Tag?.ToString() ?? $"ColumnG{generatedColumnsSize}";
+            if (!referenceIndexMapper.TryGetValue(currentColumnTag, out int _))
+            {
+                currentColumn.DisplayIndex = generatedColumnsSize - 1;
+                referenceIndexMapper.Add(currentColumnTag, generatedColumnsSize - 1);
+                if (referenceIndexMapper.TryGetValue(temporaryColumnTag, out int _)) {
+                    referenceIndexMapper[temporaryColumnTag] = generatedColumnsSize - 1;
+                }
+                generatedColumns.Add(currentColumn);
+                return;
+            }
+            int nextIndex = 0;
+            generatedColumns.Add(currentColumn);
+            referenceIndexMapper
+                .Where(pair => generatedColumns.Any(c => c.Tag?.ToString() == pair.Key))
+                .OrderBy(pair => pair.Key == temporaryColumnTag ? referenceIndexMapper.Count - 1 : pair.Value)
+                .ToList()
+                .ForEach(pair =>
+                {
+                    DataGridColumn column = generatedColumns.First(c => c.Tag.ToString() == pair.Key);
+                    if (column.Tag.ToString() == temporaryColumnTag)
+                    {
+                        // -1 due to "Count" and "Index" offset
+                        // -1 so that both the temporary column and the current column should have the same DisplayIndex
+                        // (why the same display index: so that the new column would be placed before the temporary column)
+                        column.DisplayIndex = generatedColumns.Count - 2;
+                        referenceIndexMapper[temporaryColumnTag] = generatedColumns.Count - 2;
+                    }
+                    else
+                    {
+                        column.DisplayIndex = nextIndex++;
+                    }
+                });
+        }
+        const string temporaryColumnTag = "TO_BE_DELETED_UwU";
         private void Dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
 
-            if (ContextProvider is IStudentProvider provider)
+            if (ContextProvider is ITableItemProvider provider)
             {
                 var ignoringColumns = provider.IgnoringColumns.ToList();
                 if (ignoringColumns.Contains(e.PropertyName))
@@ -375,16 +420,45 @@ namespace LearningManagementSystem.Controls
             }
             e.Column.Tag = e.PropertyName;
 
-            // Set up column order for this colomn
-            if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
+            if (!_isReorderingColumns)
             {
-                e.Column.DisplayIndex = value;
+                bool hasRememberedColumnOrderAtFirstLoad = _generatingColumns.Count != 0;
+                DispatcherQueue.TryEnqueue(() => {
+                    if (!hasRememberedColumnOrderAtFirstLoad)
+                    {
+                        RememberColumnOrderAtFirstLoad();
+                    }
+                    OnGeneratedColumns();
+                });
+                if (sender is not null)
+                {
+                    // The temporary column is needed to allow assigning "overflow"-ing DisplayIndex
+                    // in the AdjustColumnsOrdering method, as the current column is not yet "acknowledge"-ed by the DataGrid
+                    var temporaryColumn = new DataGridTextColumn()
+                    {
+                        Tag = temporaryColumnTag
+                    };
+                    (sender as DataGrid)?.Columns.Add(temporaryColumn);
+                    _generatingColumns.Add(temporaryColumn);
+                    _displayIndexMapper.Add(temporaryColumnTag, 1);
+                    _actualColumnsReference = (sender as DataGrid)?.Columns;
+
+                }
+                DispatcherQueue.TryEnqueue(OnGeneratedColumns);
+                _isReorderingColumns = true;
             }
-            else
-            {
-                e.Column.DisplayIndex = _columnIndexCounter++;
-                _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
-            }
+
+            //// Set up column order for this colomn
+            //if (_displayIndexMapper.TryGetValue(e.PropertyName, out int value))
+            //{
+            //    e.Column.DisplayIndex = value;
+            //}
+            //else
+            //{
+            //    e.Column.DisplayIndex = _columnIndexCounter++;
+            //    _displayIndexMapper.Add(e.PropertyName, e.Column.DisplayIndex);
+            //}
+            AdjustColumnsOrdering(e.Column, _generatingColumns, _displayIndexMapper);
 
             // Set up converter for this column value
             if (_converterMapper is not null && _converterMapper.TryGetValue(e.PropertyName, out IValueConverter? converter))
@@ -402,19 +476,11 @@ namespace LearningManagementSystem.Controls
 
             // Set up the sort status of this column
             e.Column.SortDirection = _sortDirectionMapper.GetValueOrDefault(e.PropertyName, null);
-
-            //if (!_reorderingColumns)
-            //{
-            //    _generatedColumns.Clear();
-            //    DispatcherQueue.TryEnqueue(FixReorderColumn);
-            //    _reorderingColumns = true;
-            //}
-            //_generatedColumns.Add(e.Column);
         }
 
-        private void Dg_Loaded(object sender, RoutedEventArgs e)
+        private void RememberColumnOrderAtFirstLoad()
         {
-            if (ContextProvider is IStudentProvider provider)
+            if (ContextProvider is ITableItemProvider provider)
             {
                 Dictionary<string, int> columnDisplayIndex = [];
                 int columnIndexCounter = 0;
@@ -430,15 +496,27 @@ namespace LearningManagementSystem.Controls
                 {
                     if (!columnDisplayIndex.ContainsKey(existingColumn))
                     {
-                        columnDisplayIndex.Add(existingColumn, columnIndexCounter++);
+                        if (existingColumn != temporaryColumnTag)
+                        {
+                            columnDisplayIndex.Add(existingColumn, columnIndexCounter++);
+                        }
                     }
                 }
-                _displayIndexMapper = columnDisplayIndex;
-                foreach (DataGridColumn column in Dg.Columns)
+                // In case the initial data is empty
+                if (existingColumnNames.Count != 0)
                 {
-                    columnDisplayIndex["null"] = column.DisplayIndex; // To suppress the warning
-                    column.DisplayIndex = columnDisplayIndex[column.Tag.ToString() ?? "null"];
-                    columnDisplayIndex.Remove("null");
+                    columnDisplayIndex.Add(temporaryColumnTag, columnIndexCounter);
+                }
+                _displayIndexMapper = columnDisplayIndex;
+                //// Note: No need to re-order columns, as the columns should be already ordered at this time
+                // foreach (var indexedTag in _displayIndexMapper.OrderBy(pair => pair.Value)) {
+
+                foreach (var indexedTag in _displayIndexMapper) {
+                    var column = Dg.Columns.FirstOrDefault(c => c.Tag?.ToString() == indexedTag.Key);
+                    if (column is not null)
+                    {
+                        column.DisplayIndex = indexedTag.Value;
+                    }
                 }
             }
         }
@@ -456,6 +534,20 @@ namespace LearningManagementSystem.Controls
             }
         }
 
+
+        private void Dg_ColumnReordered(object sender, DataGridColumnEventArgs e)
+        {
+            _displayIndexMapper.Clear();
+            foreach (DataGridColumn column in Dg.Columns)
+            {
+                _displayIndexMapper.Add(
+                    column.Tag?.ToString() ?? $"ColumnCR{column.DisplayIndex}",
+                    column.DisplayIndex
+                    );
+            }
+        }
+
+        private bool disposedValue;
         private void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -463,8 +555,8 @@ namespace LearningManagementSystem.Controls
                 if (disposing)
                 {
                     SortChanged -= ContextProvider.SortChangedHandler;
-                    StudentDoubleTapped -= ContextProvider.StudentDoubleTappedHandler;
-                    StudentEditted -= ContextProvider.StudentEdittedHandler;
+                    ItemDoubleTapped -= ContextProvider.ItemDoubleTappedHandler;
+                    ItemEditted -= ContextProvider.ItemEdittedHandler;
                 }
                 disposedValue = true;
             }

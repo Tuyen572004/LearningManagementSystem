@@ -2,7 +2,6 @@
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using Microsoft.UI.Xaml.Data;
-using NPOI.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,20 +11,19 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    partial class StudentsInClassViewModel(IDao dao, int classId) : ReaderViewModel(dao)
+    partial class StudentReaderViewModelVer2(IDao dao): ReaderViewModel(dao) 
     {
-        private readonly int _classId = classId;
         protected override (ObservableCollection<object> fetchedItem, int queryCount) GetItems(
             int ignoreCount = 0,
             int fetchCount = 0,
             List<SortCriteria> sortCriteria = null,
             SearchCriteria searchCriteria = null)
         {
-            var (resultList, queryCount) = _dao.GetStudentsFromClass(
-                classId: _classId,
+            var (resultList, queryCount) =  _dao.GetStudents(
                 ignoringCount: ignoreCount,
                 fetchingCount: fetchCount,
-                sortCriteria: sortCriteria
+                sortCriteria: sortCriteria,
+                searchCriteria: searchCriteria
             );
 
             return (new(resultList), queryCount);
@@ -36,5 +34,10 @@ namespace LearningManagementSystem.ViewModels
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("BirthDate", new DateTimeToStringConverter()),
         ];
+
+        public override List<string> SearchFields => [
+                "Id", "UserId", "StudentCode", "StudentName", "Email",
+                "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"
+            ];
     }
 }

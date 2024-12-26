@@ -21,7 +21,7 @@ namespace LearningManagementSystem.ViewModels
         public DepartmentsViewModel DpmViewModel { get; set; }
 
         public ClassViewModel ClsViewModel { get; set; }
-        public StudentsInClassViewModel StdViewModel { get; set; }
+        //public StudentsInClassViewModel StdViewModel { get; set; }
 
         public HomePageViewModel()
         {

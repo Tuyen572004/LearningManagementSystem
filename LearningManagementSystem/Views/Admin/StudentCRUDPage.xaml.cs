@@ -37,19 +37,20 @@ namespace LearningManagementSystem.Views.Admin
         {
             this.InitializeComponent();
 
-            _readerViewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>())
+            _readerViewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>()!)
             {
                 RowsPerPage = 5
             };
             _readerViewModel.GetStudents();
 
-            _cudViewModel = new StudentCUDViewModel(App.Current.Services.GetService<IDao>())
+            _cudViewModel = new StudentCUDViewModel(App.Current.Services.GetService<IDao>()!)
             {
                 RowsPerPage = 5
             };
+            _cudViewModel.RefreshManagingStudents();
 
-            StudentReaderDisplayer.StudentTable.StudentDoubleTapped += _cudViewModel.StudentTransferHandler;
-            StudentCUDDisplayer.StudentTable.IsEditable = true;
+            StudentReaderDisplayer.TableView.ItemDoubleTapped += _cudViewModel.StudentTransferHandler;
+            StudentCUDDisplayer.TableView.IsEditable = true;
 
             OnSelectedRemoving += _cudViewModel.StudentsRemoveHandler;
             AllSelectedStudentsTransferred += _cudViewModel.StudentsTransferHandler;
@@ -58,7 +59,7 @@ namespace LearningManagementSystem.Views.Admin
             StudentsDeletionInitiated += _cudViewModel.StudentsDeleteHandler;
             OnStudentsErrorsAdded += _cudViewModel.StudentsErrorsAddedHandler;
 
-            _cudViewModel.StudentsSelectionChanged += StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
+            _cudViewModel.StudentsSelectionChanged += StudentCUDDisplayer.TableView.ItemsReselectionHandler;
             _cudViewModel.OnStudentsUpdated += OnStudentsUpdatedHandler;
             _cudViewModel.OnInvalidStudentsTranferred += InvalidStudentsTransferredHandler;
 
@@ -70,16 +71,16 @@ namespace LearningManagementSystem.Views.Admin
             {
                 if (disposing)
                 {
-                    StudentReaderDisplayer.StudentTable.StudentDoubleTapped -= _cudViewModel.StudentTransferHandler;
+                    StudentReaderDisplayer.TableView.ItemDoubleTapped -= _cudViewModel.StudentTransferHandler;
 
                     OnSelectedRemoving -= _cudViewModel.StudentsRemoveHandler;
                     AllSelectedStudentsTransferred -= _cudViewModel.StudentsTransferHandler;
                     StudentsCreationInitiated -= _cudViewModel.StudentsCreationHandler;
                     StudentsUpdateInitiated -= _cudViewModel.StudentsUpdateHandler;
-                    StudentsDeletionInitiated -= _cudViewModel.StudentsRemoveHandler;
+                    StudentsDeletionInitiated -= _cudViewModel.StudentsDeleteHandler;
                     OnStudentsErrorsAdded -= _cudViewModel.StudentsErrorsAddedHandler;
 
-                    _cudViewModel.StudentsSelectionChanged -= StudentCUDDisplayer.StudentTable.ItemsReselectionHandler;
+                    _cudViewModel.StudentsSelectionChanged -= StudentCUDDisplayer.TableView.ItemsReselectionHandler;
                     _cudViewModel.OnStudentsUpdated -= OnStudentsUpdatedHandler;
                     _cudViewModel.OnInvalidStudentsTranferred -= InvalidStudentsTransferredHandler;
                 }
@@ -114,19 +115,19 @@ namespace LearningManagementSystem.Views.Admin
         {
             StudentsCreationInitiated?.Invoke(this, new EventArgs());
         }
-        public event EventHandler<IList<StudentVer2>>? StudentsUpdateInitiated;
+        public event EventHandler<IList<object>>? StudentsUpdateInitiated;
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            var selectedItems = StudentCUDDisplayer.TableView.GetSelectedItems();
             if (selectedItems.Count != 0)
             {
                 StudentsUpdateInitiated?.Invoke(this, selectedItems);
             }
         }
-        public event EventHandler<IList<StudentVer2>>? StudentsDeletionInitiated;
+        public event EventHandler<IList<object>>? StudentsDeletionInitiated;
         public void HandleStudentsUpdated(object? sender, (
             IList<StudentVer2> updatedStudents,
-            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            IList<(StudentVer2 student, IEnumerable<string> errors)> invalidStudentsInfo
             ) e)
         {
             if (sender is null)
@@ -135,16 +136,16 @@ namespace LearningManagementSystem.Views.Admin
             }
             if (e.updatedStudents.Count > 0)
             {
-                OnSelectedRemoving?.Invoke(this, e.updatedStudents);
+                OnSelectedRemoving?.Invoke(this, e.updatedStudents.Cast<object>().ToList());
             }
             if (e.invalidStudentsInfo.Count > 0)
             {
                 OnStudentsErrorsAdded?.Invoke(this, e.invalidStudentsInfo);
                 
             }
-            StudentCUDDisplayer.StudentTable.ItemsReselectionHandler?.Invoke(
+            StudentCUDDisplayer.TableView.ItemsReselectionHandler?.Invoke(
                 this,
-                e.invalidStudentsInfo.Select(info => info.student).ToList()
+                e.invalidStudentsInfo.Select(info => info.student).Cast<object>().ToList()
                 );
 
             var displayTitle = "Student(s) Updated";
@@ -160,30 +161,30 @@ namespace LearningManagementSystem.Views.Admin
             var displayMessage = e.invalidStudentsInfo.Count > 0
                 ? $"{e.updatedStudents.Count} students have been modified successfully. \n{e.invalidStudentsInfo.Count} students have errors."
                 : $"{e.updatedStudents.Count} students have been modified successfully.";
-            StudentCUDDisplayer.StudentTable.ShowInfoBar(new()
+            StudentCUDDisplayer.TableView.ShowInfoBar(new()
             {
                 Title = displayTitle,
                 Message = displayMessage,
                 Severity = InfoBarMessageSeverity.Info
             });
 
-            StudentReaderDisplayer.StudentTable.RefreshData();
+            StudentReaderDisplayer.TableView.RefreshData();
         }
         public event EventHandler<IList<(StudentVer2 student, IEnumerable<String> errors)>>? OnStudentsErrorsAdded; 
         public EventHandler<(
             IList<StudentVer2> updatedStudents,
-            IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
+            IList<(StudentVer2 student, IEnumerable<string> errors)> invalidStudentsInfo
             )> OnStudentsUpdatedHandler => HandleStudentsUpdated;
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            var selectedItems = StudentCUDDisplayer.TableView.GetSelectedItems();
             if (selectedItems.Count != 0)
             {
                 StudentsDeletionInitiated?.Invoke(this, selectedItems);
             }
         }
 
-        public event EventHandler<IList<StudentVer2>>? AllSelectedStudentsTransferred;
+        public event EventHandler<IList<object>>? AllSelectedStudentsTransferred;
 
         public void HandleInvalidStudentsTransfered(object? sender, IList<StudentVer2> invalidStudents)
         {
@@ -197,7 +198,7 @@ namespace LearningManagementSystem.Views.Admin
                 Ignoring {invalidStudents.Count} student(s) with the following Id(s): {String.Join(", ", invalidIds)}.
                 They have already existed in the transferred table.
                 """;
-            StudentReaderDisplayer.StudentTable.ShowInfoBar(new()
+            StudentReaderDisplayer.TableView.ShowInfoBar(new()
             {
                 Title = displayTitle,
                 Message = displayMessage,
@@ -207,23 +208,23 @@ namespace LearningManagementSystem.Views.Admin
         public EventHandler<IList<StudentVer2>> InvalidStudentsTransferredHandler => HandleInvalidStudentsTransfered;
         private void EditAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = StudentReaderDisplayer.StudentTable.GetSelectedItems();
+            var selectedItems = StudentReaderDisplayer.TableView.GetSelectedItems();
             if (selectedItems.Count != 0)
             {
                 AllSelectedStudentsTransferred?.Invoke(this, selectedItems);
             }
         }
 
-        public event EventHandler<IList<StudentVer2>>? OnSelectedRemoving;
+        public event EventHandler<IList<object>>? OnSelectedRemoving;
         private void RemoveAllButton_Click(object _, RoutedEventArgs __)
         {
-            var selectedItems = StudentCUDDisplayer.StudentTable.GetSelectedItems();
+            var selectedItems = StudentCUDDisplayer.TableView.GetSelectedItems();
             if (selectedItems.Count != 0)
             {
                 OnSelectedRemoving?.Invoke(this, selectedItems);
             }
         }
-        private void HandleStudentsChanged(object? sender, IList<StudentVer2> selectedItems)
+        private void HandleStudentsChanged(object? sender, IList<object> selectedItems)
         {
             if (sender is null)
             {
@@ -234,6 +235,6 @@ namespace LearningManagementSystem.Views.Admin
                 OnSelectedRemoving?.Invoke(this, selectedItems);
             }
         }
-        public EventHandler<IList<StudentVer2>> StudentsChangedHandler => HandleStudentsChanged;
+        public EventHandler<IList<object>> StudentsChangedHandler => HandleStudentsChanged;
     }
 }

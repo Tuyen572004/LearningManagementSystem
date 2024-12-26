@@ -1,3 +1,4 @@
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Services.UserService;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,10 +31,18 @@ namespace LearningManagementSystem
         private async void InitializeAsync()
         {
             var userRole = await UserService.GetCurrentUserRole();
-            SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole == "admin");
-            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole == "admin" || userRole == "teacher");
-            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole == "admin" || userRole == "teacher");
-            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", userRole == "teacher");
+            SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.TeacherCRUDPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.TeacherQueryPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.EnrollmentClassesPage",checkAdmin(userRole));
+        }
+
+        private bool checkAdmin(string userRole)
+        {
+            return userRole.Equals(RoleEnum.GetStringValue(Role.Admin));
         }
         private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
         {

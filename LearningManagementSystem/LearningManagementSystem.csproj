@@ -37,9 +37,9 @@
 	<ItemGroup>
 	  <None Remove="config.json" />
 	  <None Remove="Controls\PagingOptionsBar.xaml" />
-	  <None Remove="Controls\QueryableStudentDisplayer.xaml" />
+	  <None Remove="Controls\QueryableItemDisplayer.xaml" />
 	  <None Remove="Controls\SearchBar.xaml" />
-	  <None Remove="Controls\StudentTable.xaml" />
+	  <None Remove="Controls\TableView.xaml" />
 	  <None Remove="CoursesPage.xaml" />
 	  <None Remove="DashBoard.xaml" />
 	  <None Remove="HomePage.xaml" />
@@ -56,11 +56,16 @@
 	  <None Remove="Views\Admin\StudentQueryPage.xaml" />
 	  <None Remove="Views\Admin\StudentToClassAssignPage.xaml" />
 	  <None Remove="Views\AdminPage.xaml" />
+	  <None Remove="Views\Admin\TeacherCRUDPage.xaml" />
+	  <None Remove="Views\Admin\TeacherQueryPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
+	  <None Remove="Views\ClassInfoWithParticipant.xaml" />
 	  <None Remove="Views\ClassesPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditClass.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
+	  <None Remove="Views\EditStudentsInClass.xaml" />
+	  <None Remove="Views\EditTeachersInClassPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -147,6 +152,21 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\EditTeachersInClassPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\EditStudentsInClass.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\ClassInfoWithParticipant.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\TeacherCRUDPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\Admin\TeacherQueryPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\ProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -162,7 +182,7 @@
 	  <Page Update="Views\AddNotification.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Controls\QueryableStudentDisplayer.xaml">
+	  <Page Update="Controls\QueryableItemDisplayer.xaml">
         <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\EditUser.xaml">
@@ -257,7 +277,7 @@
 		</Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\StudentTable.xaml">
+	  <Page Update="Controls\TableView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
