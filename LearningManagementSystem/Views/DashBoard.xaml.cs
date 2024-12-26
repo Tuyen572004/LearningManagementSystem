@@ -34,6 +34,8 @@ namespace LearningManagementSystem
             SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", checkAdmin(userRole));
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", checkAdmin(userRole));
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.TeacherCRUDPage", checkAdmin(userRole));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.TeacherQueryPage", checkAdmin(userRole));
             SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", checkAdmin(userRole));
             SetMenuItemVisibility("LearningManagementSystem.Views.EnrollmentClassesPage",checkAdmin(userRole));
         }

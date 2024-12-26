@@ -18,20 +18,19 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    // public interface IQueryableProvider: IStudentProvider, ISearchProvider, IPagingProvider;
-    public sealed partial class QueryableStudentDisplayer : UserControl
+    public sealed partial class QueryableItemDisplayer : UserControl
     {
         public SearchBar SearchBar => QSDSearchBar;
         public PagingOptionsBar PagingOptionsBar => QSDPagingOptionsBar;
-        public StudentTable StudentTable => QSDStudentTable;
-        public QueryableStudentDisplayer()
+        public TableView TableView => QSDTableView;
+        public QueryableItemDisplayer()
         {
             this.InitializeComponent();
 
-            DataContextChanged += QueryableStudentDisplayer_DataContextChanged;
+            DataContextChanged += QueryableItemDisplayer_DataContextChanged;
         }
         private object _oldDataContext = null;
-        private void QueryableStudentDisplayer_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void QueryableItemDisplayer_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             // Should manually unsubscribe previous DataContext events
 
@@ -50,14 +49,17 @@ namespace LearningManagementSystem.Controls
 
 
             // Subscribe to new DataContext events
-            if (args.NewValue is ISearchProvider)
+            if (args.NewValue is ISearchProvider searchProvider)
             {
                 SetBinding(SearchBar, SearchBar.ContextProviderProperty);
-                SearchBar.Visibility = Visibility.Visible;
+                if (searchProvider.SearchFields.Count != 0)
+                {
+                    SearchBar.Visibility = Visibility.Visible;
+                }
             }
-            if (args.NewValue is IStudentProvider)
+            if (args.NewValue is ITableItemProvider)
             {
-                SetBinding(StudentTable, StudentTable.ContextProviderProperty);
+                SetBinding(TableView, TableView.ContextProviderProperty);
             }
             if (args.NewValue is IPagingProvider)
             {

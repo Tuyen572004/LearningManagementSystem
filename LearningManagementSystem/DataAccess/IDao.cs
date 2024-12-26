@@ -52,25 +52,51 @@ namespace LearningManagementSystem.DataAccess
         public FullObservableCollection<Teacher> GetTeachersByClassId(int classId);
         Teacher GetTeacherById(int teacherId);
 
+        public (
+            IList<Teacher> addedTeachers,
+            int addedCount,
+            IList<(Teacher teacher, IEnumerable<string> errors)> invalidTeachersInfo
+        ) AddTeachers(IEnumerable<Teacher> teachers);
+
+        public (
+           IList<Teacher> updatedTeachers,
+           int updatedCount,
+           IList<(Teacher teacher, IEnumerable<string> errors)> invalidTeachersInfo
+       ) UpdateTeachers(IEnumerable<Teacher> teachers);
+
+        public (
+            IList<Teacher> deletedTeachers,
+            int deletedCount,
+            IList<(Teacher teacher, IEnumerable<string> errors)> invalidTeachersInfo
+        ) DeleteTeachers(IEnumerable<Teacher> teachers);
+
+        public (ObservableCollection<Teacher>, int) GetTeachers(
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<int> chosenIds = null,
+            IEnumerable<SortCriteria> sortCriteria = null,
+            SearchCriteria searchCriteria = null
+        );
+
         public bool CheckUserInfo(User user);
 
         public bool IsExistsUsername(string username);
         public bool AddUser(User user);
 
-        public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId);
-        public (ObservableCollection<StudentVer2>, int) GetStudentsById(
-            int ignoringCount = 0,
-            int fetchingCount = 0,
-            IEnumerable<int> chosenIds = null
-            );
+        //public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId);
+        //public (ObservableCollection<StudentVer2>, int) GetStudentsById(
+        //    int ignoringCount = 0,
+        //    int fetchingCount = 0,
+        //    IEnumerable<int> chosenIds = null
+        //    );
         public (ObservableCollection<StudentVer2>, int) GetStudents(
             bool fetchingAll = false,
             int ignoringCount = 0,
             int fetchingCount = 0,
             IEnumerable<int> chosenIds = null,
             IEnumerable<SortCriteria> sortCriteria = null,
-            SearchCriteria searchCriteria = null,
-            List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
+            SearchCriteria searchCriteria = null
         )
         {
             return (null, 0);
@@ -93,6 +119,45 @@ namespace LearningManagementSystem.DataAccess
             IList<(StudentVer2 student, IEnumerable<string> error)> invalidStudentsInfo
             ) DeleteStudents(IEnumerable<StudentVer2> students);
 
+        public (ObservableCollection<StudentVer2>, int) GetStudentsFromClass(
+            int classId,
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<SortCriteria> sortCriteria = null
+        );
+
+        public (
+            IList<int> addedStudentIds,
+            int addedCount,
+            IList<(int studentId, IEnumerable<string> error)> invalidStudentIdsInfo
+        ) AddStudentsToClass(IEnumerable<int> studentIds, int classId);
+
+        public (
+            IList<int> removedStudentIds,
+            int removedCount,
+            IList<(int studentId, IEnumerable<string> error)> invalidStudentIdsInfo
+        ) RemoveStudentsFromClass(IEnumerable<int> studentIds, int classId);
+
+        public (ObservableCollection<Teacher>, int) GetTeachersFromClass(
+            int classId,
+            bool fetchingAll = false,
+            int ignoringCount = 0,
+            int fetchingCount = 0,
+            IEnumerable<SortCriteria> sortCriteria = null
+        );
+
+        public (
+            IList<int> addedTeacherIds,
+            int addedCount,
+            IList<(int teacherId, IEnumerable<string> error)> invalidTeacherIdsInfo
+        ) AddTeachersToClass(IEnumerable<int> teacherIds, int classId);
+
+        public (
+            IList<int> removedTeacherIds,
+            int removedCount,
+            IList<(int teacherId, IEnumerable<string> error)> invalidTeacherIdsInfo
+        ) RemoveTeachersFromClass(IEnumerable<int> teacherIds, int classId);
 
         public List<ResourceCategory> findAllResourceCategories();
         public FullObservableCollection<BaseResource> findNotificationsByClassId(int classId);

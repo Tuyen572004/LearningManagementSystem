@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.UI.Controls;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
@@ -272,6 +273,16 @@ namespace LearningManagementSystem.Views
 
             ViewModel.Load();
             UpdatePagingInfo_bootstrap();
+        }
+
+        // Thuc's part, please don't delete :DD
+        private void myClassesTable_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (myClassesTable.SelectedItem is TableClassesView selectedClass)
+            {
+                var selectedClassId = selectedClass.ID;
+                Frame.Navigate(typeof(ClassInfoWithParticipant), selectedClassId);
+            }
         }
     }
 }

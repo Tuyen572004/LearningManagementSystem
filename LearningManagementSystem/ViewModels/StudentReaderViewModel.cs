@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class StudentReaderViewModel(IDao dao) : BaseViewModel, IStudentProvider, IPagingProvider, ISearchProvider
+    public partial class StudentReaderViewModel(IDao dao) : BaseViewModel, ITableItemProvider, IPagingProvider, ISearchProvider
     {
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao = dao;
@@ -41,8 +41,9 @@ namespace LearningManagementSystem.ViewModels
         public int ItemCount { get; private set; } = 0;
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
-        public IEnumerable<string> IgnoringColumns => ["HasErrors"];
-        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
+        public ObservableCollection<object> ManagingItems { get; private set; } = [];
+        public IEnumerable<string> IgnoringColumns => ["IsValid"];
+        public IEnumerable<string> ColumnOrder => ["Id", "UserId", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("BirthDate", new DateTimeToStringConverter()),
             ];
@@ -110,6 +111,7 @@ namespace LearningManagementSystem.ViewModels
                 );
                 ItemCount = queryCount;
                 ManagingStudents = resultList;
+                ManagingItems = new(ManagingStudents);
                 // Why the do loop and this check:
                 // If the current page is empty, "queryCount" would always be zero, regardless of the actual number of items in the database.
                 if (ItemCount == 0 && CurrentPage > 1)
@@ -129,7 +131,7 @@ namespace LearningManagementSystem.ViewModels
             {
                 RaisePropertyChanged(nameof(CurrentPage));
             }
-            RaisePropertyChanged(nameof(ManagingStudents));
+            RaisePropertyChanged(nameof(ManagingItems));
             RaisePropertyChanged(nameof(ItemCount));
         }
 

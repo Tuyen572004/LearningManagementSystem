@@ -26,16 +26,16 @@ namespace LearningManagementSystem.Views.Admin
     /// </summary>
     public sealed partial class StudentQueryPage : Page
     {
-        private readonly StudentReaderViewModel _viewModel;
+        private readonly StudentReaderViewModelVer2 _viewModel;
         public StudentQueryPage()
         {
             this.InitializeComponent();
 
-            _viewModel = new StudentReaderViewModel(App.Current.Services.GetService<IDao>())
+            _viewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>())
             {
                 RowsPerPage = 5
             };
-            _viewModel.GetStudents();
+            _viewModel.LoadInitialItems();
         }
     }
 }

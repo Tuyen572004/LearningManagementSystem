@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="LearningManagementSystem.Views.Admin.StudentQueryPage"
+    x:Class="LearningManagementSystem.Views.Admin.TeacherQueryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearningManagementSystem.Views.Admin"
@@ -18,11 +18,11 @@
 
         <Rectangle Grid.Row="0" Fill="ForestGreen" />
         <TextBlock 
-            Text="Student Query" Width="Auto" Height="50"
+            Text="Teacher Query" Width="Auto" Height="50"
             FontSize="40" FontWeight="Bold"
             TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
             Grid.Row="0"
             />
-        <controls:QueryableItemDisplayer x:Name="QueryableStudentDisplayer" Grid.Row="1" DataContext="{x:Bind _viewModel}"/>
+        <controls:QueryableItemDisplayer x:Name="QueryableTeacherDisplayer" Grid.Row="1" DataContext="{x:Bind _viewModel}"/>
     </Grid>
 </Page>

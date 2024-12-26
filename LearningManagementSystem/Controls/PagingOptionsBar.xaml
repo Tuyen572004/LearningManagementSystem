@@ -29,7 +29,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <!--<Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -74,10 +74,48 @@
             <StackPanel 
                 x:Name="ButtonContainer"
                 Orientation="Horizontal"
-                />  
+                />
         </StackPanel>
-        
-        
-        
+
+    </Grid>-->
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel
+            Grid.Column="0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Left"
+            Spacing="8">
+
+            <StackPanel 
+            x:Name="ButtonContainer"
+            Orientation="Horizontal"
+            />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Column="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Left"
+            Spacing="8"
+            >
+            <TextBlock 
+                x:Name="PagingInfo" 
+                Height="40" VerticalAlignment="Bottom" Width="Auto"
+                TextWrapping="Wrap" TextAlignment="Center" Padding="5" />
+            <ComboBox
+                x:Name="RowSizeSelector" Width="80" Height="32"
+                SelectionChanged="RowSizeSelector_SelectionChanged"
+                ItemsSource="{x:Bind PageSizes}" />
+            <TextBlock 
+                Height="40" VerticalAlignment="Bottom" Width="Auto"
+                Text="items per page" TextWrapping="Wrap" TextAlignment="Center" Padding="5" />
+        </StackPanel>
+
     </Grid>
+
 </UserControl>

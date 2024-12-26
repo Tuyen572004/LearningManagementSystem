@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -94,9 +95,9 @@ namespace LearningManagementSystem.Controls
         public int PageWindowSize { get; set; } = 1;
         private int FirstItemIndexInPage => (CurrentPage - 1) * ContextProvider.RowsPerPage + 1;
         public string PageCountText =>
-            $"displaying item(s) " +
-            ((FirstItemIndexInPage < ItemCount) ? $"{FirstItemIndexInPage} to " : "") +
-            $"{Math.Min(ItemCount, CurrentPage * ContextProvider.RowsPerPage)} (of {ItemCount} total item(s))";
+            $"" +
+            ((FirstItemIndexInPage < ItemCount) ? $"{FirstItemIndexInPage} - " : "") +
+            $"{Math.Min(ItemCount, CurrentPage * ContextProvider.RowsPerPage)} (of total {ItemCount}),";
         public readonly List<int> PageSizes = [5, 10, 20, 50, 100];
         public PagingOptionsBar()
         {
@@ -114,6 +115,11 @@ namespace LearningManagementSystem.Controls
         }
         private void CreatePageButtons()
         {
+            // This function was meant to created the paging buttons
+            // even if the current page exceeds the page count.
+
+            // So some conditions may be redundant or weird.
+
             ButtonContainer.Children.Clear();
             int leftBound = Math.Max(CurrentPage - PageWindowSize, 1);
             // int rightBound = Math.Min(CurrentPage + PageWindowSize, pageCount);
@@ -232,9 +238,9 @@ namespace LearningManagementSystem.Controls
                 {
                     Content = CurrentPage,
                     Tag = CurrentPage,
-                    Style = (Style)Resources["PagingButtonStyle"]
+                    Style = (Style)Resources["PagingButtonStyle"],
+                    IsEnabled = false
                 };
-                outOfBoundButton.IsEnabled = false;
                 outOfBoundButton.Click += Button_Click;
                 ButtonContainer.Children.Add(outOfBoundButton);
             }
@@ -259,7 +265,7 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void RowSizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RowSizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs _)
         {
             if (sender is ComboBox comboBox)
             {
@@ -271,35 +277,35 @@ namespace LearningManagementSystem.Controls
             }
         }
 
-        private void PagingDetailEnabler_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (sender is ToggleButton toggleButton)
-            {
-                if (toggleButton.IsChecked == true)
-                {
-                    PagingDetail.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    PagingDetail.Visibility = Visibility.Collapsed;
-                }
-            }
-        }
+        //private void PagingDetailEnabler_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (sender is ToggleButton toggleButton)
+        //    {
+        //        if (toggleButton.IsChecked == true)
+        //        {
+        //            PagingDetail.Visibility = Visibility.Visible;
+        //        }
+        //        else
+        //        {
+        //            PagingDetail.Visibility = Visibility.Collapsed;
+        //        }
+        //    }
+        //}
 
-        private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs e)
-        {
-            if (sender is ToggleButton)
-            {
-                PagingDetail.Visibility = Visibility.Visible;
-            }
-        }
+        //private void PagingDetailEnabler_Checked(object sender, RoutedEventArgs _)
+        //{
+        //    if (sender is ToggleButton)
+        //    {
+        //        PagingDetail.Visibility = Visibility.Visible;
+        //    }
+        //}
 
-        private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (sender is ToggleButton)
-            {
-                PagingDetail.Visibility = Visibility.Collapsed;
-            }
-        }
+        //private void PagingDetailEnabler_Unchecked(object sender, RoutedEventArgs _)
+        //{
+        //    if (sender is ToggleButton)
+        //    {
+        //        PagingDetail.Visibility = Visibility.Collapsed;
+        //    }
+        //}
     }
 }
