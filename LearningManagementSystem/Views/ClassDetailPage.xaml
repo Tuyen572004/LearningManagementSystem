@@ -35,7 +35,7 @@
            Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" 
            Height="Auto" Width="Auto"/>
 
-            <TextBlock Text="{x:Bind ClassDetailViewModel.EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" FontWeight="ExtraBold" Foreground="White" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="20,0,0,0"/>
+            <TextBlock Text="{x:Bind ClassDetailViewModel.EnrollmentViewModel.ClassTitle, Mode=OneWay}" Style="{StaticResource HeaderTextBlockStyle}" FontWeight="ExtraBold" Foreground="White" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,0,0"/>
 
             <Button x:Name="BackButton" Content="Back" Click="BackButton_Click" Margin="30,30,0,0" Foreground="Green" BorderBrush="Black" Background="LawnGreen" FontWeight="Bold" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1"/>
 

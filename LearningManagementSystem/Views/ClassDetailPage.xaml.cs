@@ -110,7 +110,11 @@ namespace LearningManagementSystem.Views
         // it will navigate to Resources Page instead of EnrollmentClassesPage
         public void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(EnrollmentClassesPage));
+            //Frame.Navigate(typeof(EnrollmentClassesPage));
+            if(Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
 
         private ContentDialog _currentDialog;
@@ -132,7 +136,10 @@ namespace LearningManagementSystem.Views
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    Frame.GoBack();
+                    if(Frame.CanGoBack)
+                    {
+                        Frame.GoBack();
+                    }
                 }
                 else
                 {
