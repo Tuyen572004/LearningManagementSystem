@@ -73,6 +73,25 @@ namespace LearningManagementSystem.Views
             }
         }
 
+
+        private void EditTeacherButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(EditTeachersInClassPage), _classId);
+        }
+
+        private void EditStudentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(EditStudentsInClassPage), _classId);
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+        }
+
         //private void TableSelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
         //{
         //    if (sender.SelectedItem == StudentTableBar)

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LearningManagementSystem.Views.EditStudentsInClassPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    xmlns:controls="using:LearningManagementSystem.Controls"
+    >
+
+    <ScrollViewer Margin="8, 8, 8, 8" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+        <Grid RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="300" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Rectangle Grid.Row="0" Fill="ForestGreen" />
+            <TextBlock 
+                Text="Students Enrollment CRUD" Width="Auto" Height="50"
+                FontSize="40" FontWeight="Bold"
+                TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
+                Grid.Row="0"
+            />
+            <Button
+                Grid.Row="0"
+                x:Name="BackButton"
+                Content="Back" Click="BackButton_Click"
+                Margin="0, 0, 16, 16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                />
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16, 0, 0, 4" Spacing="4">
+                <TextBlock 
+                    Text="Class Code:" Width="Auto" Height="40"
+                    FontSize="24" FontWeight="Bold"
+                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    />
+
+                <TextBlock
+                    Text="{x:Bind _simpleClassViewModel.ClassCode}"
+                    Width="Auto" Height="40"
+                    FontSize="16"
+                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    />
+            </StackPanel>
+
+            <Grid Grid.Row="2" Margin="16, 0, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Current students in class" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" 
+                    />
+            </Grid>
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="3"
+                x:Name="StudentsInClassTable" DataContext="{x:Bind _studentsInClassViewModel}" />
+
+            <Grid Grid.Row="4" ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="All available students" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 16, 0, 0"
+                    />
+
+                <CheckBox
+                    Grid.Column="1"
+                    x:Name="AllStudentsTableToggler"
+                    Content="(show)"
+                    IsChecked="False"
+                    Checked="AllStudentsTableToggler_Checked"
+                    Unchecked="AllStudentsTableToggler_Unchecked"
+                    VerticalAlignment="Bottom"
+                    />
+            </Grid>
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="5"
+                Visibility="Collapsed"
+                x:Name="AllStudentsTable" DataContext="{x:Bind _allStudentsViewModel}"/>
+            
+
+            <Grid Grid.Row="6" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="7*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="8, 0, 0, 0">
+                    <Button x:Name="UpdateButton" Height="40" Content="Update" Click="UpdateButton_Click" Background="Black"/>
+                    <Button x:Name="DeleteButton" Height="40" Content="Delete" Click="DeleteButton_Click" Background="PaleVioletRed"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0, 0, 8, 0" HorizontalAlignment="Right">
+                    <Button x:Name="EditAllButton" Height="40" Content="Edit all selected above" Click="EditAllButton_Click"  Background="Black"/>
+                    <Button x:Name="RemoveAllButton" Height="40" Content="Remove all selected below" Click="RemoveAllButton_Click" Background="Black"/>
+                </StackPanel>
+
+            </Grid>
+
+            <Grid Grid.Row="7">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                    Grid.Column="0"
+                    Text="Editing Area" Width="Auto" Height="40"
+                    FontSize="28" FontWeight="Bold"
+                    TextAlignment="Left" Margin="16, 16, 0, 0"
+                    />
+            </Grid>
+
+            <controls:QueryableItemDisplayer
+                Grid.Row="8"
+                x:Name="StudentsEnrollmentTable" DataContext="{x:Bind _studentsEnrollmentViewModel}" />
+        </Grid>
+    </ScrollViewer>
+</Page>

@@ -23,12 +23,18 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
-            <TextBlock 
+            <TextBlock
+                Grid.Row="0"
                 Text="Class Detail" Width="Auto" Height="40"
                 FontSize="28" FontWeight="Bold"
                 TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
-                Grid.Row="0"
             />
+            <Button
+                Grid.Row="0"
+                x:Name="BackButton"
+                Content="Back" Click="BackButton_Click"
+                Margin="0, 0, 16, 16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                />
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBlock 
@@ -93,7 +99,8 @@
 
                 <Button
                     Grid.Column="1"
-                    Content="Edit teachers in class"
+                    x:Name="EditTeacherButton"
+                    Content="Edit teachers in class" Click="EditTeacherButton_Click" 
                     Margin="0, 0, 16, 0"
                     />
             </Grid>
@@ -128,7 +135,8 @@
 
                 <Button
                     Grid.Column="1"
-                    Content="Edit students in class"
+                    x:Name="EditStudentsButton"
+                    Content="Edit students in class" Click="EditStudentsButton_Click"
                     Margin="0, 16, 16, 0"
                     />
             </Grid>

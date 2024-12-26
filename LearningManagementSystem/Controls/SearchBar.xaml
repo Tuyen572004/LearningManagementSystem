@@ -15,6 +15,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel
+            x:Name="CheckboxContainer"
             Grid.Column="0"
             Orientation="Horizontal"
             HorizontalAlignment="Left"

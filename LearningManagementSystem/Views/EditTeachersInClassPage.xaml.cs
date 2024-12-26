@@ -14,11 +14,10 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using LearningManagementSystem.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
-using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Controls;
+using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Models;
-using NPOI.Util;
+using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,54 +27,21 @@ namespace LearningManagementSystem.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class EditStudentsEnrollmentInClass : Page, IDisposable
+    public sealed partial class EditTeachersInClassPage : Page
     {
         private SimpleClassViewModel? _simpleClassViewModel = null;
-        private StudentsInClassViewModel? _studentsInClassViewModel = null;
-        private StudentReaderViewModelVer2? _allStudentsViewModel = null;
-        private StudentsInClassCUDViewModel? _studentsEnrollmentViewModel = null;
+        private TeachersInClassViewModel? _teachersInClassViewModel = null;
+        private TeacherReaderViewModel? _allTeachersViewModel = null;
+        private TeachersInClassCUDViewModel? _teachersAssignmentViewModel = null;
         private int _classId = -1;
         private bool disposedValue;
 
-        private TableView InnerStudentsInClassTable => StudentsInClassTable.TableView;
-        private TableView InnerAllStudentsTable => AllStudentsTable.TableView;
-        private TableView InnerStudentsEnrollmentTable => StudentsEnrollmentTable.TableView;
-
-        public EditStudentsEnrollmentInClass()
+        private TableView InnerTeachersInClassTable => TeachersInClassTable.TableView;
+        private TableView InnerAllTeachersTable => AllTeachersTable.TableView;
+        private TableView InnerTeachersAssignmentTable => TeachersAssignmentTable.TableView;
+        public EditTeachersInClassPage()
         {
             this.InitializeComponent();
-
-            //var mockClassId = 14;
-
-            //_studentsInClassViewModel = new StudentsInClassViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
-            //{
-            //    RowsPerPage = 5
-            //};
-            //_studentsInClassViewModel.LoadInitialItems();
-            //_allStudentsViewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>()!)
-            //{
-            //    RowsPerPage = 5
-            //};
-            //_allStudentsViewModel.LoadInitialItems();
-            //_studentsEnrollmentViewModel = new StudentsInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, mockClassId)
-            //{
-            //    RowsPerPage = 5
-            //};
-            //_studentsEnrollmentViewModel.LoadInitialItems();
-
-            //InnerStudentsInClassTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
-            //InnerAllStudentsTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
-
-            //OnSelectedRemoving += _studentsEnrollmentViewModel.ItemsRemoveHandler;
-            //AllSelectedItemsTransferred += _studentsEnrollmentViewModel.ItemsTransferHandler;
-            //ItemsUpdateInitiated += _studentsEnrollmentViewModel.ItemsUpdateHandler;
-            //ItemsDeletionInitiated += _studentsEnrollmentViewModel.ItemsDeleteHandler;
-            //OnItemsErrorsAdded += _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
-
-            //_studentsEnrollmentViewModel.ItemsSelectionChanged += InnerStudentsEnrollmentTable.ItemsReselectionHandler;
-
-            //_studentsEnrollmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
-            //_studentsEnrollmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -90,35 +56,35 @@ namespace LearningManagementSystem.Views
                 _simpleClassViewModel = new SimpleClassViewModel(App.Current.Services.GetService<IDao>()!, classId);
                 _simpleClassViewModel.LoadRequiredInformation();
 
-                _studentsInClassViewModel = new StudentsInClassViewModel(App.Current.Services.GetService<IDao>()!, classId)
+                _teachersInClassViewModel = new TeachersInClassViewModel(App.Current.Services.GetService<IDao>()!, classId)
                 {
                     RowsPerPage = 5
                 };
-                _studentsInClassViewModel.LoadInitialItems();
-                _allStudentsViewModel = new StudentReaderViewModelVer2(App.Current.Services.GetService<IDao>()!)
+                _teachersInClassViewModel.LoadInitialItems();
+                _allTeachersViewModel = new TeacherReaderViewModel(App.Current.Services.GetService<IDao>()!)
                 {
                     RowsPerPage = 5
                 };
-                _allStudentsViewModel.LoadInitialItems();
-                _studentsEnrollmentViewModel = new StudentsInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, classId)
+                _allTeachersViewModel.LoadInitialItems();
+                _teachersAssignmentViewModel = new TeachersInClassCUDViewModel(App.Current.Services.GetService<IDao>()!, classId)
                 {
                     RowsPerPage = 5
                 };
-                _studentsEnrollmentViewModel.LoadInitialItems();
+                _teachersAssignmentViewModel.LoadInitialItems();
 
-                InnerStudentsInClassTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
-                InnerAllStudentsTable.ItemDoubleTapped += _studentsEnrollmentViewModel.ItemTransferHandler;
+                InnerTeachersInClassTable.ItemDoubleTapped += _teachersAssignmentViewModel.ItemTransferHandler;
+                InnerAllTeachersTable.ItemDoubleTapped += _teachersAssignmentViewModel.ItemTransferHandler;
 
-                OnSelectedRemoving += _studentsEnrollmentViewModel.ItemsRemoveHandler;
-                AllSelectedItemsTransferred += _studentsEnrollmentViewModel.ItemsTransferHandler;
-                ItemsUpdateInitiated += _studentsEnrollmentViewModel.ItemsUpdateHandler;
-                ItemsDeletionInitiated += _studentsEnrollmentViewModel.ItemsDeleteHandler;
-                OnItemsErrorsAdded += _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
+                OnSelectedRemoving += _teachersAssignmentViewModel.ItemsRemoveHandler;
+                AllSelectedItemsTransferred += _teachersAssignmentViewModel.ItemsTransferHandler;
+                ItemsUpdateInitiated += _teachersAssignmentViewModel.ItemsUpdateHandler;
+                ItemsDeletionInitiated += _teachersAssignmentViewModel.ItemsDeleteHandler;
+                OnItemsErrorsAdded += _teachersAssignmentViewModel.ItemsErrorsAddedHandler;
 
-                _studentsEnrollmentViewModel.ItemsSelectionChanged += InnerStudentsEnrollmentTable.ItemsReselectionHandler;
+                _teachersAssignmentViewModel.ItemsSelectionChanged += InnerTeachersAssignmentTable.ItemsReselectionHandler;
 
-                _studentsEnrollmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
-                _studentsEnrollmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
+                _teachersAssignmentViewModel.OnItemsUpdated += OnItemsUpdatedHandler;
+                _teachersAssignmentViewModel.OnInvalidItemsTranferred += InvalidItemsTransferredHandler;
             }
         }
 
@@ -126,21 +92,21 @@ namespace LearningManagementSystem.Views
         {
             if (!disposedValue)
             {
-                if (disposing && _studentsEnrollmentViewModel is not null)
+                if (disposing && _teachersAssignmentViewModel is not null)
                 {
-                    InnerStudentsInClassTable.ItemDoubleTapped -= _studentsEnrollmentViewModel.ItemTransferHandler;
-                    InnerAllStudentsTable.ItemDoubleTapped -= _studentsEnrollmentViewModel.ItemDoubleTappedHandler;
+                    InnerTeachersInClassTable.ItemDoubleTapped -= _teachersAssignmentViewModel.ItemTransferHandler;
+                    InnerAllTeachersTable.ItemDoubleTapped -= _teachersAssignmentViewModel.ItemDoubleTappedHandler;
 
-                    OnSelectedRemoving -= _studentsEnrollmentViewModel.ItemsRemoveHandler;
-                    AllSelectedItemsTransferred -= _studentsEnrollmentViewModel.ItemsTransferHandler;
-                    ItemsUpdateInitiated -= _studentsEnrollmentViewModel.ItemsUpdateHandler;
-                    ItemsDeletionInitiated -= _studentsEnrollmentViewModel.ItemsDeleteHandler;
-                    OnItemsErrorsAdded -= _studentsEnrollmentViewModel.ItemsErrorsAddedHandler;
+                    OnSelectedRemoving -= _teachersAssignmentViewModel.ItemsRemoveHandler;
+                    AllSelectedItemsTransferred -= _teachersAssignmentViewModel.ItemsTransferHandler;
+                    ItemsUpdateInitiated -= _teachersAssignmentViewModel.ItemsUpdateHandler;
+                    ItemsDeletionInitiated -= _teachersAssignmentViewModel.ItemsDeleteHandler;
+                    OnItemsErrorsAdded -= _teachersAssignmentViewModel.ItemsErrorsAddedHandler;
 
-                    _studentsEnrollmentViewModel.ItemsSelectionChanged -= InnerStudentsEnrollmentTable.ItemsReselectionHandler;
+                    _teachersAssignmentViewModel.ItemsSelectionChanged -= InnerTeachersAssignmentTable.ItemsReselectionHandler;
 
-                    _studentsEnrollmentViewModel.OnItemsUpdated -= OnItemsUpdatedHandler;
-                    _studentsEnrollmentViewModel.OnInvalidItemsTranferred -= InvalidItemsTransferredHandler;
+                    _teachersAssignmentViewModel.OnItemsUpdated -= OnItemsUpdatedHandler;
+                    _teachersAssignmentViewModel.OnInvalidItemsTranferred -= InvalidItemsTransferredHandler;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -150,7 +116,7 @@ namespace LearningManagementSystem.Views
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~EditStudentsEnrollmentInClass()
+        // ~EditTeachersInClassPage()
         // {
         //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         //     Dispose(disposing: false);
@@ -165,46 +131,46 @@ namespace LearningManagementSystem.Views
 
         private IList<object> GetSelectedItemsInClass()
         {
-            return InnerStudentsInClassTable.GetSelectedItems();
+            return InnerTeachersInClassTable.GetSelectedItems();
         }
         private IList<object> GetSelectedItemsInAll()
         {
-            return InnerAllStudentsTable.GetSelectedItems();
+            return InnerAllTeachersTable.GetSelectedItems();
         }
 
         private IList<object> GetSelectedItemsInCD()
         {
-            return InnerStudentsEnrollmentTable.GetSelectedItems();
+            return InnerTeachersAssignmentTable.GetSelectedItems();
         }
 
         static private (string identifierName, string value)? ProvideIdentityFor(object item)
         {
-            if (item is StudentVer2 student)
+            if (item is Teacher teacher)
             {
-                return ("Id", student.Id.ToString());
+                return ("Id", teacher.Id.ToString());
             }
             return null;
         }
-        private EventHandler<IList<object>>? CDItemsReselectionHandler => InnerStudentsEnrollmentTable.ItemsReselectionHandler;
-        static private string ItemNamePascalCase => "Student";
-        static private string ItemNameCamelCase => "student";
+        private EventHandler<IList<object>>? CDItemsReselectionHandler => InnerTeachersAssignmentTable.ItemsReselectionHandler;
+        static private string ItemNamePascalCase => "Teacher";
+        static private string ItemNameCamelCase => "teacher";
 
         private void ShowInClassInfoBar(InfoBarMessage message)
         {
-            StudentsInClassTable.TableView.ShowInfoBar(message);
+            TeachersInClassTable.TableView.ShowInfoBar(message);
         }
         //private void ShowAllInfoBar(InfoBarMessage message)
         //{
-        //    AllStudentsTable.TableView.ShowInfoBar(message);
+        //    AllTeachersTable.TableView.ShowInfoBar(message);
         //}
         private void ShowCDInfoBar(InfoBarMessage message)
         {
-            StudentsEnrollmentTable.TableView.ShowInfoBar(message);
+            TeachersAssignmentTable.TableView.ShowInfoBar(message);
         }
 
         private void RefreshInClassData()
         {
-            StudentsInClassTable.TableView.RefreshData();
+            TeachersInClassTable.TableView.RefreshData();
         }
 
         // --- The following event handler and methods should not depend on the specific type of the item ---
@@ -264,10 +230,10 @@ namespace LearningManagementSystem.Views
             RefreshInClassData();
         }
 
-        public event EventHandler<IList<(object student, IEnumerable<string> errors)>>? OnItemsErrorsAdded;
+        public event EventHandler<IList<(object teacher, IEnumerable<string> errors)>>? OnItemsErrorsAdded;
         public EventHandler<(
             IList<object> updatedItems,
-            IList<(object item, IEnumerable<string> errors)> invalidStudentsInfo
+            IList<(object item, IEnumerable<string> errors)> invalidTeachersInfo
             )> OnItemsUpdatedHandler => HandleItemsUpdated;
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -286,7 +252,7 @@ namespace LearningManagementSystem.Views
             {
                 return;
             }
-            // var invalidIds = invalidStudents.Select(student => student.Id).ToList();
+            // var invalidIds = invalidTeachers.Select(teacher => teacher.Id).ToList();
 
             List<string> invalidIdentifiers = [];
             string? currentIdentifierName = null;
@@ -359,19 +325,27 @@ namespace LearningManagementSystem.Views
         }
         public EventHandler<IList<object>> ItemsChangedHandler => HandleItemsChanged;
 
-        private void AllStudentsTableToggler_Checked(object sender, RoutedEventArgs e)
+        private void AllTeachersTableToggler_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleButton)
             {
-                AllStudentsTable.Visibility = Visibility.Visible;
+                AllTeachersTable.Visibility = Visibility.Visible;
             }
         }
 
-        private void AllStudentsTableToggler_Unchecked(object sender, RoutedEventArgs e)
+        private void AllTeachersTableToggler_Unchecked(object sender, RoutedEventArgs e)
         {
             if (sender is ToggleButton)
             {
-                AllStudentsTable.Visibility = Visibility.Collapsed;
+                AllTeachersTable.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
             }
         }
     }

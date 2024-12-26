@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="LearningManagementSystem.Views.EditStudentsEnrollmentInClass"
+    x:Class="LearningManagementSystem.Views.EditTeachersInClassPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearningManagementSystem.Views"
@@ -27,11 +27,17 @@
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock 
-                Text="Students Enrollment CRUD" Width="Auto" Height="50"
+                Text="Teachers Assignment CRUD" Width="Auto" Height="50"
                 FontSize="40" FontWeight="Bold"
                 TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
                 Grid.Row="0"
-            />
+                />
+            <Button
+                Grid.Row="0"
+                x:Name="BackButton"
+                Content="Back" Click="BackButton_Click"
+                Margin="0, 0, 16, 16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                />
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16, 0, 0, 4" Spacing="4">
                 <TextBlock 
@@ -55,7 +61,7 @@
 
                 <TextBlock 
                     Grid.Column="0"
-                    Text="Current students in class" Width="Auto" Height="40"
+                    Text="Current teachers in class" Width="Auto" Height="40"
                     FontSize="28" FontWeight="Bold"
                     TextAlignment="Left" 
                     />
@@ -63,7 +69,7 @@
 
             <controls:QueryableItemDisplayer
                 Grid.Row="3"
-                x:Name="StudentsInClassTable" DataContext="{x:Bind _studentsInClassViewModel}" />
+                x:Name="TeachersInClassTable" DataContext="{x:Bind _teachersInClassViewModel}" />
 
             <Grid Grid.Row="4" ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
@@ -74,18 +80,18 @@
 
                 <TextBlock 
                     Grid.Column="0"
-                    Text="All available students" Width="Auto" Height="40"
+                    Text="All available teachers" Width="Auto" Height="40"
                     FontSize="28" FontWeight="Bold"
                     TextAlignment="Left" Margin="16, 16, 0, 0"
                     />
 
                 <CheckBox
                     Grid.Column="1"
-                    x:Name="AllStudentsTableToggler"
+                    x:Name="AllTeachersTableToggler"
                     Content="(show)"
                     IsChecked="False"
-                    Checked="AllStudentsTableToggler_Checked"
-                    Unchecked="AllStudentsTableToggler_Unchecked"
+                    Checked="AllTeachersTableToggler_Checked"
+                    Unchecked="AllTeachersTableToggler_Unchecked"
                     VerticalAlignment="Bottom"
                     />
             </Grid>
@@ -93,8 +99,8 @@
             <controls:QueryableItemDisplayer
                 Grid.Row="5"
                 Visibility="Collapsed"
-                x:Name="AllStudentsTable" DataContext="{x:Bind _allStudentsViewModel}"/>
-            
+                x:Name="AllTeachersTable" DataContext="{x:Bind _allTeachersViewModel}"/>
+
 
             <Grid Grid.Row="6" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -129,7 +135,7 @@
 
             <controls:QueryableItemDisplayer
                 Grid.Row="8"
-                x:Name="StudentsEnrollmentTable" DataContext="{x:Bind _studentsEnrollmentViewModel}" />
+                x:Name="TeachersAssignmentTable" DataContext="{x:Bind _teachersAssignmentViewModel}" />
         </Grid>
     </ScrollViewer>
 </Page>

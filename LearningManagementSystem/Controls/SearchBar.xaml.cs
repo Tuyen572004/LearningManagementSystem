@@ -191,6 +191,7 @@ namespace LearningManagementSystem.Controls
             if (sender is ToggleButton)
             {
                 AdvancedSearchOptionsStackPanel.Visibility = Visibility.Visible;
+                CheckboxContainer.VerticalAlignment = VerticalAlignment.Top;
             }
         }
 
@@ -199,6 +200,7 @@ namespace LearningManagementSystem.Controls
             if (sender is ToggleButton)
             {
                 AdvancedSearchOptionsStackPanel.Visibility = Visibility.Collapsed;
+                CheckboxContainer.VerticalAlignment = VerticalAlignment.Bottom;
             }
         }
     }
