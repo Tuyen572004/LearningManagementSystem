@@ -1,3 +1,4 @@
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Services.UserService;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,10 +31,11 @@ namespace LearningManagementSystem
         private async void InitializeAsync()
         {
             var userRole = await UserService.GetCurrentUserRole();
-            SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole == "admin");
-            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole == "admin" || userRole == "teacher");
-            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole == "admin" || userRole == "teacher");
-            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", userRole == "teacher");
+            SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole.Equals(RoleEnum.GetStringValue(Role.Admin)));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole.Equals(RoleEnum.GetStringValue(Role.Admin)));
+            SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole.Equals(RoleEnum.GetStringValue(Role.Admin)));
+            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage",userRole.Equals(RoleEnum.GetStringValue(Role.Admin)));
+            SetMenuItemVisibility("LearningManagementSystem.Views.EnrollmentClassesPage", !userRole.Equals(RoleEnum.GetStringValue(Role.Admin)));
         }
         private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
         {
