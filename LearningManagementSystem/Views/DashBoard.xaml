@@ -18,6 +18,7 @@
             <NavigationViewItem Content="Home" Tag="LearningManagementSystem.HomePage" Icon="Home" />
             <NavigationViewItem Content="Courses" Tag="LearningManagementSystem.CoursesPage" Icon="Library" />
             <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.Views.EnrollmentClassesPage" Icon="Folder" />
+            <NavigationViewItem Content="Classes" Tag="LearningManagementSystem.Views.ClassesPage" Icon="Folder" />
             <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
             <NavigationViewItem Content="Read Students" Tag="LearningManagementSystem.Views.Admin.StudentQueryPage" Icon="ContactPresence" />
             <NavigationViewItem Content="CRUD Students" Tag="LearningManagementSystem.Views.Admin.StudentCRUDPage" Icon="ContactPresence" />
@@ -25,10 +26,10 @@
         </NavigationView.MenuItems>
 
         <NavigationView.FooterMenuItems>
-            <NavigationViewItem Content="User" Tag="userProfile" Icon="OtherUser" />
-            <NavigationViewItem Content="Admin" Tag="LearningManagementSystem.Views.AdminPage" Icon="Admin"/>
-            <NavigationViewItem Content="Logout" Tag="logout" Icon="Permissions" />
-            <NavigationViewItem Content="Exit" Tag="exit" Icon="ClosePane" />
+            <NavigationViewItem Content="User" Tag="LearningManagementSystem.Views.ProfilePage" Icon="OtherUser" />
+            <NavigationViewItem Content="Management Account" Tag="LearningManagementSystem.Views.AdminPage" Icon="Admin"/>
+            <NavigationViewItem Content="Logout" Tag="LearningManagementSystem.Logout" Icon="Permissions" />
+            <NavigationViewItem Content="Exit" Tag="LearningManagementSystem.Exit" Icon="ClosePane" />
         </NavigationView.FooterMenuItems>
         <Frame x:Name="ContentFrame" />
     </NavigationView>

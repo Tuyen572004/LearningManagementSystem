@@ -24,7 +24,7 @@ namespace LearningManagementSystem
             InitializeAsync();
             HWND = WinRT.Interop.WindowNative.GetWindowHandle(this);
             NavigateByTag("LearningManagementSystem.HomePage");
-
+            MyUserService = new UserService();
             Menu.SelectionChanged += menu_SelectionChanged;
         }
         private async void InitializeAsync()
@@ -33,6 +33,7 @@ namespace LearningManagementSystem
             SetMenuItemVisibilityFooter("LearningManagementSystem.Views.AdminPage", userRole == "admin");
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentQueryPage", userRole == "admin" || userRole == "teacher");
             SetMenuItemVisibility("LearningManagementSystem.Views.Admin.StudentCRUDPage", userRole == "admin" || userRole == "teacher");
+            SetMenuItemVisibility("LearningManagementSystem.Views.ClassesPage", userRole == "teacher");
         }
         private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
         {
@@ -55,12 +56,58 @@ namespace LearningManagementSystem
                 menuItem.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-        private void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private async void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is NavigationViewItem item &&
                 item.Tag is string tag)
             {
-                NavigateByTag(tag);
+                if (tag == "LearningManagementSystem.Logout")
+                {
+                    var dialog = new ContentDialog
+                    {
+                        XamlRoot = this.Content.XamlRoot,
+                        Title = "Log out",
+                        Content = "Are you sure you want to log out?",
+                        PrimaryButtonText = "Yes",
+                        CloseButtonText = "No"
+                    };
+                    var result = await dialog.ShowAsync();
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        MyUserService.Logout();
+                        this.Close();
+                    }
+                    else
+                    {
+                        dialog.Hide();
+                    }
+
+                }
+                else if (tag == "LearningManagementSystem.Exit")
+                {
+                    var dialog = new ContentDialog
+                    {
+                        XamlRoot = this.Content.XamlRoot,
+                        Title = "Exit",
+                        Content = "Are you sure you want to exit?",
+                        PrimaryButtonText = "Yes",
+                        CloseButtonText = "No"
+                    };
+
+                    var result = await dialog.ShowAsync();
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        Application.Current.Exit();
+                    }
+                    else
+                    {
+                        dialog.Hide();
+                    }
+                }
+                else
+                    NavigateByTag(tag);
             }
         }
 

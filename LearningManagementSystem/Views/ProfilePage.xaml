@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LearningManagementSystem.Views.ProfilePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearningManagementSystem.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Margin="0,10,0,0" RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+
+        <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+            <Run Text="Hi, "></Run>
+            <Run Text="{x:Bind ViewModel.UserName}"></Run>
+        </TextBlock>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" >
+            <TextBlock  VerticalAlignment="Center" FontSize="18" FontWeight="Bold">User Name</TextBlock>
+            <StackPanel VerticalAlignment="Center" Spacing="16" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBox Name="UserNameInput" IsReadOnly="True" Height="20" Width="400"></TextBox>
+                <HyperlinkButton Name="EditUserInput" Click="EditUserInput_Click">Edit</HyperlinkButton>
+            </StackPanel>
+
+            <TextBlock VerticalAlignment="Center" FontSize="18" FontWeight="Bold" Text="Email"></TextBlock>
+            <StackPanel Spacing="16" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBox Name="EmailInput" IsReadOnly="True" Height="20" Width="400"></TextBox>
+                <HyperlinkButton Name="EditEmailInput" Click="EditEmailInput_Click">Edit</HyperlinkButton>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" Margin="20,10,0,0" VerticalAlignment="Center" Spacing="20" Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="3" >
+            <Button Name="ChangePasswordBtn" Click="ChangePasswordBtn_Click" ToolTipService.ToolTip="Save file">Change password</Button>
+            <Button Name="Cancel" Click="Cancel_Click">
+                Cancel
+            </Button>
+            <StackPanel Spacing="16" Orientation="Vertical" HorizontalAlignment="Center">
+                <TextBlock></TextBlock>
+                <PasswordBox Name="OldPasswordInput" PlaceholderText="Old password" Width="400"></PasswordBox>
+                <PasswordBox Name="NewPasswordInput" PlaceholderText="New password" Width="400"></PasswordBox>
+                <PasswordBox Name="ConfirmNewPasswordInput" PlaceholderText="Confirm new password" Width="400"></PasswordBox>
+                <Button HorizontalAlignment="Right" Name="SaveNewPassword" Click="SaveNewPassword_Click">
+                    Change password
+                </Button>
+            </StackPanel>
+        </StackPanel>
+        <Button Name="SaveChange" Click="SaveChange_Click" Grid.Row="5" VerticalAlignment="Bottom" Grid.Column="3">Save change</Button>
+    </Grid>
+</Page>
