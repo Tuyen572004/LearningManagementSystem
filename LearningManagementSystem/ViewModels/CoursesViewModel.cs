@@ -66,9 +66,9 @@ namespace LearningManagementSystem.ViewModels
             GetAllCourse();
         }
 
-        public void RemoveCourse(Course course)
+        public int RemoveCourse(Course course)
         {
-            _dao.RemoveCourseByID(course.Id);
+            return _dao.RemoveCourseByID(course.Id);
 
         }
 

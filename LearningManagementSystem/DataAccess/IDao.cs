@@ -15,7 +15,7 @@ namespace LearningManagementSystem.DataAccess
         List<string> GetAllCourseDecriptions();
         int InsertCourse(Course course);
         void UpdateCourse(Course course);
-        void RemoveCourseByID(int courseId);
+        int RemoveCourseByID(int courseId);
 
         int CountCourse();
 

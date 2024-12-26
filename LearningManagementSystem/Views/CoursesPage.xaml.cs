@@ -94,22 +94,35 @@ namespace LearningManagementSystem
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    ViewModel.RemoveCourse(new Course
+                    var check = ViewModel.RemoveCourse(new Course
                     {
                         Id = selectedCourse.ID,
                         CourseCode = selectedCourse.CourseCode,
                         CourseDescription = selectedCourse.CourseDecription,
                         DepartmentId = selectedCourse.DepartmentID
                     });
-                    myCoursesTable.SelectedItem = null;
-                    ViewModel.TableCourses.Remove(selectedCourse);
-                    await new ContentDialog()
+                    if (check == 0)
                     {
-                        XamlRoot = this.XamlRoot,
-                        Content = "Course removed",
-                        Title = "Success",
-                        CloseButtonText = "Ok"
-                    }.ShowAsync();
+                        myCoursesTable.SelectedItem = null;
+                        ViewModel.TableCourses.Remove(selectedCourse);
+                        await new ContentDialog()
+                        {
+                            XamlRoot = this.XamlRoot,
+                            Content = "Course removed",
+                            Title = "Success",
+                            CloseButtonText = "Ok"
+                        }.ShowAsync();
+                    }
+                    else
+                    {
+                        await new ContentDialog()
+                        {
+                            XamlRoot = this.XamlRoot,
+                            Content = "Course cannot be removed",
+                            Title = "Error",
+                            CloseButtonText = "Ok"
+                        }.ShowAsync();
+                    }
                 }
                 else
                 {

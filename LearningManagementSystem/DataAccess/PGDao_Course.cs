@@ -255,17 +255,26 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
-        public void RemoveCourseByID(int id)
+        public int RemoveCourseByID(int id)
         {
             var sql = "DELETE FROM Courses WHERE Id=@Id";
-            using (var connection = GetConnection())
-            using (var command = new NpgsqlCommand(sql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@Id", id);
+                using (var connection = GetConnection())
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
 
-                connection.Open();
-                command.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
             }
+            catch (Exception ex)
+            {
+                return 1;
+                throw;
+            }
+            return 0;
         }
 
         public void UpdateCourse(Course course)
