@@ -39,18 +39,18 @@
                 Margin="0, 0, 16, 16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                 />
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16, 0, 0, 4" Spacing="4">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="16, 0, 0, 4" Spacing="16">
                 <TextBlock 
                     Text="Class Code:" Width="Auto" Height="40"
                     FontSize="24" FontWeight="Bold"
-                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left"
                     />
 
                 <TextBlock
                     Text="{x:Bind _simpleClassViewModel.ClassCode}"
-                    Width="Auto" Height="40"
-                    FontSize="16"
-                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    Width="Auto" Height="Auto"
+                    FontSize="20" FontWeight="SemiBold"
+                    TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 0, 4"
                     />
             </StackPanel>
 

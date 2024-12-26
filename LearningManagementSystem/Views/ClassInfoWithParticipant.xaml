@@ -25,16 +25,28 @@
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock
                 Grid.Row="0"
-                Text="Class Detail" Width="Auto" Height="40"
+                Text="Class Management" Width="Auto" Height="40"
                 FontSize="28" FontWeight="Bold"
                 TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
             />
-            <Button
+
+            <StackPanel
                 Grid.Row="0"
-                x:Name="BackButton"
-                Content="Back" Click="BackButton_Click"
+                Orientation="Horizontal"
                 Margin="0, 0, 16, 16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                />
+                Spacing="16"
+                >
+                <Button
+                    x:Name="SeeClassDetailButton"
+                    Content="See Class Detail" Click="SeeClassDetailButton_Click"
+                    />
+
+                <Button
+                    x:Name="BackButton"
+                    Content="Back" Click="BackButton_Click"
+                    />
+            </StackPanel>
+
 
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <TextBlock 

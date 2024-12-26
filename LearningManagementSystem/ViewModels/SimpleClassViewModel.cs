@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    class SimpleClassViewModel(IDao dao, int classId): BaseViewModel
+    partial class SimpleClassViewModel(IDao dao, int classId): BaseViewModel
     {
         private readonly IDao _dao = dao;
         private readonly int _classId = classId;
@@ -30,11 +30,11 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
-                Class? retrievedClass = null;
+                Class? retrievedClass = _dao.findClassById(_classId);
                 _managingClass = retrievedClass;
             } catch (Exception)
             {
-
+                // No nothing for now
             }
         }
 
@@ -42,11 +42,11 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
-                Course retrievedCourse = _dao.GetCourseById(_managingClass?.CourseId ?? -1);
+                Course retrievedCourse = _dao.findCourseByClassId(_managingClass?.CourseId ?? -1);
                 _associatedCourse = retrievedCourse;
             } catch (Exception)
             {
-
+                // No nothing for now
             }
         }
 

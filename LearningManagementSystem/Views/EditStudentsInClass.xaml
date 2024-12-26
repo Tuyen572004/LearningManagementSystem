@@ -48,9 +48,9 @@
 
                 <TextBlock
                     Text="{x:Bind _simpleClassViewModel.ClassCode}"
-                    Width="Auto" Height="40"
-                    FontSize="16"
-                    TextAlignment="Center" VerticalAlignment="Bottom" HorizontalAlignment="Left" 
+                    Width="Auto" Height="Auto"
+                    FontSize="20" FontWeight="SemiBold"
+                    TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 0, 4"
                     />
             </StackPanel>
 

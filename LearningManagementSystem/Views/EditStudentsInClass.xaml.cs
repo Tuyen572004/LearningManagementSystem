@@ -82,8 +82,8 @@ namespace LearningManagementSystem.Views
         {
             base.OnNavigatedTo(e);
 
-            // if (e.Parameter is int classId)
-            if (14 is int classId)
+            if (e.Parameter is int classId)
+            //if (14 is int classId)
             {
                 _classId = classId;
 

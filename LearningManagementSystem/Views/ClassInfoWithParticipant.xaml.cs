@@ -54,8 +54,8 @@ namespace LearningManagementSystem.Views
         {
             base.OnNavigatedTo(e);
 
-            // if (e.Parameter is int classId)
-            if (14 is int classId)
+            if (e.Parameter is int classId)
+            //if (14 is int classId)
             {
                 _classId = classId;
                 _simpleClassViewModel = new SimpleClassViewModel(App.Current.Services.GetService<IDao>()!, classId);
@@ -90,6 +90,12 @@ namespace LearningManagementSystem.Views
             {
                 Frame.GoBack();
             }
+        }
+
+        // TODO: Tuyen's part to navigate to the ClassDetailPage
+        private void SeeClassDetailButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         //private void TableSelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
