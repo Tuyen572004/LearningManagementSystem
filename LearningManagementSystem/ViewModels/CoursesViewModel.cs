@@ -72,6 +72,14 @@ namespace LearningManagementSystem.ViewModels
 
         }
 
+        public int FindCourseID(string input)
+        {
+            var token = input.Split(" - ");
+
+            return _dao.FindCourseByID(new Course { CourseCode = token[0] });
+
+        }
+
         public void UpdateCourse(Course course)
         {
             _dao.UpdateCourse(course);

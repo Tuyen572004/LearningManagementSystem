@@ -24,6 +24,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\background.png" />
+	  <Content Remove="Assets\backgroundLogin.png" />
 	  <Content Remove="Assets\books.png" />
 	  <Content Remove="Assets\graduated.png" />
 	  <Content Remove="Assets\group.png" />
@@ -47,6 +48,7 @@
 	  <None Remove="LoginWindow.xaml" />
 	  <None Remove="Views\AddAccount.xaml" />
 	  <None Remove="Views\AddAssignment.xaml" />
+	  <None Remove="Views\AddClass.xaml" />
 	  <None Remove="Views\AddCourse.xaml" />
 	  <None Remove="Views\AddNotification.xaml" />
 	  <None Remove="Views\Admin\ClassPreviewPage.xaml" />
@@ -58,7 +60,9 @@
 	  <None Remove="Views\Admin\TeacherQueryPage.xaml" />
 	  <None Remove="Views\AssignmentPage.xaml" />
 	  <None Remove="Views\ClassInfoWithParticipant.xaml" />
+	  <None Remove="Views\ClassesPage.xaml" />
 	  <None Remove="Views\DocumentPage.xaml" />
+	  <None Remove="Views\EditClass.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
 	  <None Remove="Views\EditStudentsInClass.xaml" />
 	  <None Remove="Views\EditTeachersInClassPage.xaml" />
@@ -67,6 +71,7 @@
 	<ItemGroup>
 		<None Remove="Views\EnrollmentClassesPage.xaml" />
 		<None Remove="Views\NotificationPage.xaml" />
+		<None Remove="Views\ProfilePage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
 	</ItemGroup>
 
@@ -120,6 +125,9 @@
 	  <None Update="Assets\background.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Assets\backgroundLogin.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Assets\books.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -157,6 +165,18 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\Admin\TeacherQueryPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\ProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\EditClass.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\ClassesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\AddClass.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\AddNotification.xaml">

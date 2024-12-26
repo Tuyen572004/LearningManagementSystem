@@ -79,6 +79,21 @@ namespace LearningManagementSystem.DataAccess
             return (addedStudents, addedCount, invalidStudents);
         }
 
+        public int CountStudent()
+        {
+            int count = 0;
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var command = new NpgsqlCommand(
+                    """
+                    SELECT COUNT(*) FROM students
+                    """, connection);
+                count = Convert.ToInt32(command.ExecuteScalar() ?? 0);
+            }
+            return count;
+        }
+
         public (
             IList<StudentVer2> updateStudents,
             int updatedCount,

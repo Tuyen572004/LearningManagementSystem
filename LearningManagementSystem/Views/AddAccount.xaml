@@ -37,16 +37,13 @@
         <StackPanel Name="inputPanel" Spacing="20" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="20,50,0,0">
             <TextBlock Name="usernameTB" FontWeight="ExtraBold" FontSize="25">Username</TextBlock>
             <TextBox Name="inputUsername" Width="Auto"></TextBox>
-
-            <TextBlock Name="passwordTB" FontWeight="ExtraBold" FontSize="25">Password</TextBlock>
-            <TextBox Name="inputPassword" Width="Auto"></TextBox>
+            <TextBlock Name="roleTB" FontWeight="ExtraBold" FontSize="25">Role</TextBlock>
+            <ComboBox Name="roleComboBox" Width="Auto" Height="35" ItemsSource="{x:Bind Roles}" SelectedIndex="0"/>
         </StackPanel>
 
         <StackPanel Spacing="20" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2" Margin="20,50,0,0">
             <TextBlock Name="emailTB" FontWeight="ExtraBold" FontSize="25">Email</TextBlock>
             <TextBox Name="inputEmail" Width="Auto"></TextBox>
-            <TextBlock Name="roleTB" FontWeight="ExtraBold" FontSize="25">Role</TextBlock>
-            <ComboBox Name="roleComboBox" Width="Auto" Height="35" ItemsSource="{x:Bind Roles}" SelectedIndex="0"/>
-        </StackPanel>
+            </StackPanel>
     </Grid>
 </Page>

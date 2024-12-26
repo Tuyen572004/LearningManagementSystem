@@ -2,7 +2,7 @@ using System;
 
 namespace LearningManagementSystem.Models
 {
-    public class Class
+    public class Class : ICloneable
     {
         public int Id { get; set; }  // Auto-incrementing Id field
         public int CourseId { get; set; }  // Foreign key to Courses table
@@ -11,6 +11,19 @@ namespace LearningManagementSystem.Models
         public int CycleId { get; set; }   // Foreign key to Cycles table
         public DateTime ClassStartDate { get; set; }
         public DateTime ClassEndDate { get; set; }
+
+        public object Clone()
+        {
+            return new Class
+            {
+                Id = this.Id,
+                CourseId = this.CourseId,
+                ClassCode = this.ClassCode,
+                CycleId = this.CycleId,
+                ClassStartDate = this.ClassStartDate,
+                ClassEndDate = this.ClassEndDate
+            };
+        }
 
         // Navigation properties
         // public Course Course { get; set; }

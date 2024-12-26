@@ -86,7 +86,6 @@
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="ID"  Binding="{Binding ID }" />
                 <controls:DataGridTextColumn Header="Username "  Binding="{Binding Username}" />
-                <controls:DataGridTextColumn Header="Password Hash"  Binding="{Binding PasswordHash}" />
                 <controls:DataGridTextColumn Header="Email"  Binding="{Binding Email}" />
                 <controls:DataGridTextColumn Header="Role"  Binding="{Binding Role}" />
                 <controls:DataGridTextColumn Header="Created At"  Binding="{Binding CreatedAt}" />

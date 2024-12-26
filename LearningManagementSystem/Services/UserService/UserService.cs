@@ -32,6 +32,14 @@ namespace LearningManagementSystem.Services.UserService
 
             return encryptedPasswordBase64;
         }
+
+        public void Logout()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values["Username"] = null;
+            localSettings.Values["Role"] = null;
+            localSettings.Values["Email"] = null;
+        }
         public static async Task<User> GetCurrentUser()
         {
 

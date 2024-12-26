@@ -23,14 +23,13 @@ namespace LearningManagementSystem.Views
             ViewModel = new CourseViewModel();
             DeViewModel = new DepartmentsViewModel();
             departmentComboBox.ItemsSource = DeViewModel.Departments;
-            //departmentComboBox.SelectedIndex = 0;
         }
 
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
             {
-                XamlRoot= this.XamlRoot,
+                XamlRoot = this.XamlRoot,
                 Title = "Course",
                 Content = "Are you sure you want to cancel?",
                 PrimaryButtonText = "Yes",
@@ -59,13 +58,61 @@ namespace LearningManagementSystem.Views
                 DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
             };
 
-            int count=ViewModel.InsertCourse(course);
+            if (course.CourseCode.Length == 0)
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = "Course code is required.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            if (course.CourseCode.Length > 10)
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = "Course code must be less than 10 characters.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            if (course.CourseDescription.Length > 100)
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = "Course description must be less than 100 characters.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            if (course.DepartmentId == 0)
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Course",
+                    Content = "Department is required.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            int count = ViewModel.InsertCourse(course);
 
             await new ContentDialog
             {
                 XamlRoot = this.XamlRoot,
                 Title = "Course",
-                Content = count == 1 ? "Course added successfully" : "Failed to add course",
+                Content = count == 1 ? "Course added successfully." : "Failed to add course.",
                 CloseButtonText = "Ok"
             }.ShowAsync();
 

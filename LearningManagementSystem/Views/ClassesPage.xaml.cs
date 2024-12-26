@@ -1,3 +1,4 @@
+using LearningManagementSystem.Controls;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
 using Microsoft.UI.Xaml;
@@ -13,39 +14,42 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using LearningManagementSystem.Helpers;
-using LearningManagementSystem.DataAccess;
-using System.Threading.Tasks;
-using LearningManagementSystem.Views;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace LearningManagementSystem
+namespace LearningManagementSystem.Views
 {
-    public sealed partial class CoursesPage : Page
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class ClassesPage : Page
     {
-        public TableCoursesViewModel ViewModel { get; set; }
+        public TableClassesViewModel ViewModel { get; set; }
 
-        public CourseViewModel CrsViewModel { get; set; }
+        public ClassViewModel ClsViewModel { get; set; }
 
         public ObservableCollection<string> sortByOptions { get; set; }
 
-        public CoursesPage()
+        public ClassesPage()
         {
             this.InitializeComponent();
-            ViewModel = new TableCoursesViewModel();
-            CrsViewModel = new CourseViewModel();
+            ViewModel = new TableClassesViewModel();
+            ClsViewModel = new ClassViewModel();
             sortByOptions = new ObservableCollection<string>
             {
                 "Default",
                 "ID",
-                "Course Code",
-                "Course Description",
-                "Department ID",
+                "Class Code",
+                "Course ID",
+                "Class Start Date",
+                "Class End Date"
+
             };
-            myCoursesTable.Visibility = Visibility.Collapsed;
+            myClassesTable.Visibility = Visibility.Collapsed;
             pagingNavi.Visibility = Visibility.Collapsed;
             SearchBar.Visibility = Visibility.Collapsed;
             SortPanel.Visibility = Visibility.Collapsed;
@@ -63,29 +67,29 @@ namespace LearningManagementSystem
                     waitingRing.Visibility = Visibility.Collapsed;
                 }
             }
-            myCoursesTable.Visibility = Visibility.Visible;
+            myClassesTable.Visibility = Visibility.Visible;
             pagingNavi.Visibility = Visibility.Visible;
             SearchBar.Visibility = Visibility.Visible;
             SortPanel.Visibility = Visibility.Visible;
-            ViewModel.GetAllCourse();
+            ViewModel.GetAllClass();
             UpdatePagingInfo_bootstrap();
         }
 
 
-        private void addCourses_Click(object sender, RoutedEventArgs e)
+        private void addClass_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(AddCourse));
+            Frame.Navigate(typeof(AddClass));
         }
 
-        private async void deleteCourses_Click(object sender, RoutedEventArgs e)
+        private async void deleteClass_Click(object sender, RoutedEventArgs e)
         {
-            if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
+            if (myClassesTable.SelectedItem is TableClassesView selectedClass)
             {
                 var dialog = new ContentDialog()
                 {
                     XamlRoot = this.XamlRoot,
-                    Title = "Delete Course",
-                    Content = "Are you sure you want to delete this course?",
+                    Title = "Delete Class",
+                    Content = "Are you sure you want to delete this class?",
                     PrimaryButtonText = "Yes",
                     CloseButtonText = "No"
                 };
@@ -94,19 +98,20 @@ namespace LearningManagementSystem
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    ViewModel.RemoveCourse(new Course
+                    ViewModel.RemoveClass(new Class
                     {
-                        Id = selectedCourse.ID,
-                        CourseCode = selectedCourse.CourseCode,
-                        CourseDescription = selectedCourse.CourseDecription,
-                        DepartmentId = selectedCourse.DepartmentID
+                        Id = selectedClass.ID,
+                        ClassCode = selectedClass.ClassCode,
+                        CourseId = selectedClass.CourseID,
+                        ClassStartDate = selectedClass.ClassStartDate,
+                        ClassEndDate = selectedClass.ClassEndDate
                     });
-                    myCoursesTable.SelectedItem = null;
-                    ViewModel.TableCourses.Remove(selectedCourse);
+                    myClassesTable.SelectedItem = null;
+                    ViewModel.TableClasses.Remove(selectedClass);
                     await new ContentDialog()
                     {
                         XamlRoot = this.XamlRoot,
-                        Content = "Course removed",
+                        Content = "Class removed",
                         Title = "Success",
                         CloseButtonText = "Ok"
                     }.ShowAsync();
@@ -122,27 +127,28 @@ namespace LearningManagementSystem
         {
             if (e.Parameter != null)
             {
-                var _oldData = e.Parameter as Course;
-                var oldCourse = new TableCoursesView
+                var _oldData = e.Parameter as Class;
+                var oldClass = new TableClassesView
                 {
                     ID = _oldData.Id,
-                    CourseCode = _oldData.CourseCode,
-                    CourseDecription = _oldData.CourseDescription,
-                    DepartmentID = _oldData.DepartmentId
+                    ClassCode = _oldData.ClassCode,
+                    CourseID = _oldData.CourseId,
+                    ClassStartDate = _oldData.ClassStartDate,
+                    ClassEndDate = _oldData.ClassEndDate
                 };
 
-                ViewModel.SelectedCourse = oldCourse.Clone() as TableCoursesView;
+                ViewModel.SelectedClass = oldClass.Clone() as TableClassesView;
             }
 
             base.OnNavigatedTo(e);
         }
 
-        private void changeCourses_Click(object sender, RoutedEventArgs e)
+        private void changeClass_Click(object sender, RoutedEventArgs e)
         {
-            if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
+            if (myClassesTable.SelectedItem is TableClassesView selectedClass)
             {
-                ViewModel.SelectedCourse = selectedCourse.Clone() as TableCoursesView;
-                Frame.Navigate(typeof(EditCourses), ViewModel.SelectedCourse);
+                ViewModel.SelectedClass = selectedClass.Clone() as TableClassesView;
+                Frame.Navigate(typeof(EditClass), ViewModel.SelectedClass);
             }
         }
 
