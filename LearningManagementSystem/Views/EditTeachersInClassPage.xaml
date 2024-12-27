@@ -27,7 +27,7 @@
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock 
-                Text="Teachers Assignment CRUD" Width="Auto" Height="50"
+                Text="Teachers Assignment CRUD"
                 FontSize="40" FontWeight="Bold"
                 TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
                 Grid.Row="0"

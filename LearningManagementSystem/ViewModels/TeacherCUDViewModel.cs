@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
@@ -12,8 +13,22 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    partial class TeacherCUDViewModel(IDao dao) : CUDViewModel(dao)
+    partial class TeacherCUDViewModel : CUDViewModel, IDisposable
     {
+        public TeacherCUDViewModel(IDao dao): base(dao)
+        {
+            WeakReferenceMessenger.Default.Register<UserAssignmentMessage>(this, (r, m) =>
+            {
+                if (m.Target == UserAssignmentTarget.Teacher && m.IsConfirm)
+                {
+                    RefreshManagingItems();
+                }
+            });
+        }
+        public void Dispose()
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
         public override IEnumerable<string> IgnoringColumns => [];
         public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "TeacherCode", "TeacherName", "Email", "PhoneNo"];
         public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];

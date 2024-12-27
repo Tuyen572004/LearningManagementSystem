@@ -5,6 +5,7 @@ using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services.UserService;
 using Microsoft.UI.Xaml.Data;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,26 @@ namespace LearningManagementSystem.ViewModels
 {
     public interface ITemporaryUserHolder
     {
-        public static int NewlyHoldingUserId = -69000;
+        public static readonly int NewlyHoldingUserId = -69000;
         protected User? HoldingUser { get; set; }
 
         public void SetHoldingUser(User? newUser) => HoldingUser = newUser;
         // Prevent Automatic Column Generation on this property in DataGrid
         public void GetHoldingUserByReference(ref User? user) => user = HoldingUser; 
     }
+    public enum UserAssignmentTarget { Student, Teacher }
+    public class UserAssignmentMessage(bool isConfirmed, UserAssignmentTarget target)
+    {
+        private readonly UserAssignmentTarget _target = target;
+        private readonly bool _isConfirm = isConfirmed;
+        public bool IsConfirm => _isConfirm;
+        public UserAssignmentTarget Target => _target;
+
+    }
     partial class UserAssignmentViewModel(IDao dao, UserService userService): CUDViewModel(dao)
     {
+        public static readonly string AssignmentConfimation = "AssignmentConfirm";
+
         private readonly UserService _userService = userService;
         public override IEnumerable<string> ColumnOrder => ["Username", "Password", "Email"];
         public override IEnumerable<string> IgnoringColumns => ["Id", "Role", "CreatedAt", "PasswordHash"];
@@ -52,11 +64,12 @@ namespace LearningManagementSystem.ViewModels
             return DefaultPassword;
         }
 
-        private List<object> _originalObjects = [];
-        private Dictionary<int, User> _userMapper = [];
+        private readonly List<object> _originalObjects = [];
+        private readonly Dictionary<int, User> _userMapper = [];
         public void ConvertObjectsToUsersThenPopulate(IEnumerable<object> objects)
         {
             List<object> newUsers = [];
+            _userMapper.Clear();
             foreach (var obj in objects)
             {
                 if (obj is StudentVer2 student)

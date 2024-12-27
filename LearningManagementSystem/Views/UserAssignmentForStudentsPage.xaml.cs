@@ -1,3 +1,5 @@
+#nullable enable
+using CommunityToolkit.Mvvm.Messaging;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +12,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-#nullable enable
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,12 +26,12 @@ namespace LearningManagementSystem.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class UserAssignmentPage : Page
+    public sealed partial class UserAssignmentForStudentsPage : Page
     {
         private readonly UserAssignmentViewModel _userAssignmentViewModel;
-        private readonly SimplifiedTeacherHolderViewModel _holderViewModel;
+        private readonly SimplifiedStudentHolderViewModel _holderViewModel;
         internal UserAssignmentViewModel? UserAssignmentViewModel => _userAssignmentViewModel;
-        public UserAssignmentPage()
+        public UserAssignmentForStudentsPage()
         {
             this.InitializeComponent();
 
@@ -47,7 +48,7 @@ namespace LearningManagementSystem.Views
             };
 
             UserTable.PagingOptionsBar.CollapsePagingDetails();
-            TeacherTable.PagingOptionsBar.CollapsePagingDetails();
+            StudentTable.PagingOptionsBar.CollapsePagingDetails();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -57,7 +58,7 @@ namespace LearningManagementSystem.Views
             if (e.Parameter is IEnumerable<object> items)
             {
                 _userAssignmentViewModel.ConvertObjectsToUsersThenPopulate(items);
-                _holderViewModel.PopulateTeachers(items);
+                _holderViewModel.PopulateStudents(items);
             }
         }
 
@@ -66,6 +67,7 @@ namespace LearningManagementSystem.Views
             _userAssignmentViewModel.OnConfirmAssignment();
             if (Frame.CanGoBack)
             {
+                WeakReferenceMessenger.Default.Send(new UserAssignmentMessage(true, UserAssignmentTarget.Student));
                 Frame.GoBack();
             }
         }

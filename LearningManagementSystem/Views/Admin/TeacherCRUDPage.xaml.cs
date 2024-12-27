@@ -180,10 +180,10 @@ namespace LearningManagementSystem.Views.Admin
             //        CloseButtonText = "Cancel"
             //    };
             //    Frame DialogFrame = new();
-            //    DialogFrame.Navigate(typeof(UserAssignmentPage), selectedItems);
+            //    DialogFrame.Navigate(typeof(UserAssignmentForTeachersPage), selectedItems);
             //    ContentDialog.PrimaryButtonClick += (s, args) =>
             //    {
-            //        if (DialogFrame.Content is UserAssignmentPage userAssignmentPage)
+            //        if (DialogFrame.Content is UserAssignmentForTeachersPage userAssignmentPage)
             //        {
             //            userAssignmentPage.UserAssignmentViewModel?.OnConfirmAssignment();
             //        }
@@ -196,7 +196,7 @@ namespace LearningManagementSystem.Views.Admin
             var selectedItems = GetSelectedItemsInCUD();
             if (selectedItems.Count != 0)
             {
-                Frame.Navigate(typeof(UserAssignmentPage), selectedItems);
+                Frame.Navigate(typeof(UserAssignmentForTeachersPage), selectedItems);
             }
             else
             {
