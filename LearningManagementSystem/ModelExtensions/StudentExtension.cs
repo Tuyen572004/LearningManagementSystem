@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Models
 {
-    public partial class StudentVer2 : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged
+    public partial class StudentVer2 : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged, ITemporaryUserHolder
     {
         public static readonly int MAX_STUDENT_CODE_LENGTH = 10;
         public static readonly int MAX_STUDENT_NAME_LENGTH = 100;
@@ -356,6 +356,9 @@ namespace LearningManagementSystem.Models
                 GraduationYear = null
             };
         }
+
+        private User? _holdingUser = null;
+        User? ITemporaryUserHolder.HoldingUser { get => _holdingUser; set => _holdingUser = value; }
 
         //static public (bool result, IEnumerable<String> errors) FieldsCheck(StudentVer2 student)
         //{

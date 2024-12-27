@@ -39,6 +39,7 @@
                     <Button x:Name="CreateButton" Height="40" Content="Create" Click="CreateButton_Click" Background="Black"/>
                     <Button x:Name="UpdateButton" Height="40" Content="Update" Click="UpdateButton_Click" Background="Black"/>
                     <Button x:Name="DeleteButton" Height="40" Content="Delete" Click="DeleteButton_Click" Background="PaleVioletRed"/>
+                    <Button x:Name="AssignUserButton" Height="40" Content="Assign User" Click="AssignUserButton_Click" Background="Black" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0, 0, 8, 0" HorizontalAlignment="Right">

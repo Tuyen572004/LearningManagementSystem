@@ -19,6 +19,7 @@ namespace LearningManagementSystem.ViewModels
         public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
+            ("UserId", new NegativeIntToNewMarkerConverter()),
             ];
 
         // Required override from CUDViewModel

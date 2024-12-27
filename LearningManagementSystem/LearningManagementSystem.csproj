@@ -73,6 +73,7 @@
 		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\ProfilePage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
+		<None Remove="Views\UserAssignmentPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -152,6 +153,9 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\UserAssignmentPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\EditTeachersInClassPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

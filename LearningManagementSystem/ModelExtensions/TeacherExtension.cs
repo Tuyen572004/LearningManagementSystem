@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Models
 {
-    public partial class Teacher : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged
+    public partial class Teacher : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged, ITemporaryUserHolder
     {
         public static readonly int MAX_TEACHER_CODE_LENGTH = 10;
         public static readonly int MAX_TEACHER_NAME_LENGTH = 100;
@@ -137,6 +137,10 @@ namespace LearningManagementSystem.Models
                 UserId = null
             };
         }
+
+        private User? _holdingUser = null;
+        User? ITemporaryUserHolder.HoldingUser { get => _holdingUser; set => _holdingUser = value; }
+
 
         [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
         private static partial Regex EmailRegex();

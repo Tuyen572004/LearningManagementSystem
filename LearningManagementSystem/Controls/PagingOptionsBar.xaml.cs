@@ -113,6 +113,12 @@ namespace LearningManagementSystem.Controls
             RowSizeSelector.SelectedItem = null;
             RowSizeSelector.PlaceholderText = ContextProvider.RowsPerPage.ToString();
         }
+
+        public void CollapsePagingDetails()
+        {
+            PagingOptionsGrid.Visibility = Visibility.Collapsed;
+        }
+
         private void CreatePageButtons()
         {
             // This function was meant to created the paging buttons

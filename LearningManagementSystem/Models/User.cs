@@ -11,7 +11,7 @@ namespace LearningManagementSystem.Models
     //    Teacher,
     //    Student,
     //}
-    public class User : INotifyPropertyChanged, ICloneable
+    public partial class User : INotifyPropertyChanged, ICloneable
     {
         public int Id { get; set; }
         public string Username { get; set; }

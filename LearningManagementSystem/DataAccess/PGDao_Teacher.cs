@@ -2,6 +2,7 @@
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.ViewModels;
 using Npgsql;
 using NpgsqlTypes;
 using System;
@@ -101,6 +102,41 @@ namespace LearningManagementSystem.DataAccess
                             continue;
                         }
 
+                        if (teacher.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
+                        {
+                            User holdingUser = null;
+                            (teacher as ITemporaryUserHolder).GetHoldingUserByReference(ref holdingUser);
+                            if (holdingUser is null)
+                            {
+                                teacher.UserId = null;
+                            }
+                            else
+                            {
+                                var insertUserCommand = new NpgsqlCommand(
+                                    """
+                                    INSERT INTO "users" ("username", "passwordhash", "role", "email", "createdat")
+                                    VALUES (@Username, @PasswordHash, @Role, @Email, @CreatedAt)
+                                    RETURNING "id"
+                                    """, connection, transaction);
+                                insertUserCommand.Parameters.AddWithValue("@Username", holdingUser.Username);
+                                insertUserCommand.Parameters.AddWithValue("@PasswordHash", holdingUser.PasswordHash);
+                                insertUserCommand.Parameters.AddWithValue("@Role", holdingUser.Role);
+                                insertUserCommand.Parameters.AddWithValue("@Email", holdingUser.Email);
+                                insertUserCommand.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                                var userId = insertUserCommand.ExecuteScalar();
+                                if (userId != null)
+                                {
+                                    teacher.UserId = Convert.ToInt32(userId);
+                                }
+                                else
+                                {
+                                    invalidTeachers.Add((teacher, new List<string> { "Failed to insert holding user." }));
+                                    continue;
+                                }
+                            }
+                        }
+
                         // Insert the new teacher
                         var insertCommand = new NpgsqlCommand(
                             """
@@ -162,6 +198,7 @@ namespace LearningManagementSystem.DataAccess
                 {
                     try
                     {
+
                         // Check if Teacher exists
                         var checkExistenceCommand = new NpgsqlCommand(
                             """
@@ -178,7 +215,41 @@ namespace LearningManagementSystem.DataAccess
                         }
 
                         // Check if UserId exists
-                        if (teacher.UserId is not null)
+                        if (teacher.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
+                        {
+                            User holdingUser = null;
+                            (teacher as ITemporaryUserHolder).GetHoldingUserByReference(ref holdingUser);
+                            if (holdingUser is null)
+                            {
+                                teacher.UserId = null;
+                            }
+                            else
+                            {
+                                var insertUserCommand = new NpgsqlCommand(
+                                    """
+                                    INSERT INTO "users" ("username", "passwordhash", "role", "email", "createdat")
+                                    VALUES (@Username, @PasswordHash, @Role, @Email, @CreatedAt)
+                                    RETURNING "id"
+                                    """, connection, transaction);
+                                insertUserCommand.Parameters.AddWithValue("@Username", holdingUser.Username);
+                                insertUserCommand.Parameters.AddWithValue("@PasswordHash", holdingUser.PasswordHash);
+                                insertUserCommand.Parameters.AddWithValue("@Role", holdingUser.Role);
+                                insertUserCommand.Parameters.AddWithValue("@Email", holdingUser.Email);
+                                insertUserCommand.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                                var userId = insertUserCommand.ExecuteScalar();
+                                if (userId != null)
+                                {
+                                    teacher.UserId = Convert.ToInt32(userId);
+                                }
+                                else
+                                {
+                                    invalidTeachers.Add((teacher, new List<string> { "Failed to insert holding user." }));
+                                    continue;
+                                }
+                            }
+                        }
+                        else if (teacher.UserId is not null)
                         {
                             var checkUserIdCommand = new NpgsqlCommand(
                             """
@@ -299,6 +370,22 @@ namespace LearningManagementSystem.DataAccess
                             continue;
                         }
 
+                        // Delete the Teacher record
+                        var deletingTeacherCommand = new NpgsqlCommand(
+                            """
+                            DELETE FROM "teachers" 
+                            WHERE "id" = @Id
+                            """, connection, transaction);
+                        deletingTeacherCommand.Parameters.AddWithValue("@Id", teacher.Id);
+
+                        int queryResult = deletingTeacherCommand.ExecuteNonQuery();
+                        if (queryResult > 0)
+                        {
+                            deletedTeachers.Add(teacher);
+                            deletedCount++;
+                        }
+
+                        // Teacher contains the user's reference, so teacher should be delete first!
                         // Delete the associated User if applicable
                         if (teacher.UserId > 0)
                         {
@@ -315,21 +402,6 @@ namespace LearningManagementSystem.DataAccess
                                 invalidTeachers.Add((teacher, new[] { $"User with Id {teacher.UserId} referenced by this teacher not found." }));
                                 continue;
                             }
-                        }
-
-                        // Delete the Teacher record
-                        var deletingTeacherCommand = new NpgsqlCommand(
-                            """
-                            DELETE FROM "teachers" 
-                            WHERE "id" = @Id
-                            """, connection, transaction);
-                        deletingTeacherCommand.Parameters.AddWithValue("@Id", teacher.Id);
-
-                        int queryResult = deletingTeacherCommand.ExecuteNonQuery();
-                        if (queryResult > 0)
-                        {
-                            deletedTeachers.Add(teacher);
-                            deletedCount++;
                         }
                     }
                     catch (Exception ex)

@@ -217,6 +217,13 @@ namespace LearningManagementSystem.ViewModels
         // ----------------------------------------------------------------------------------------
         // Useful properties and methods
 
+        public void PopulateItems(IEnumerable<object> items)
+        {
+            AllItems = new ObservableCollection<object>(items);
+            RefreshItemCount();
+            RefreshManagingItems();
+        }
+
         // ----------------------------------------------------------------------------------------
         // Overrides from ReaderViewModel
 
