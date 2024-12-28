@@ -57,7 +57,6 @@ namespace LearningManagementSystem.Views
             ViewModel.SelectedUser = oldUser.Clone() as User;
 
             inputEmail.Text = ViewModel.SelectedUser.Email;
-            roleComboBox.SelectedIndex = Roles.IndexOf(ViewModel.SelectedUser.Role);
             inputUsername.Text = ViewModel.SelectedUser.Username;
 
             base.OnNavigatedTo(e);
@@ -107,7 +106,7 @@ namespace LearningManagementSystem.Views
                     Username = inputUsername.Text,
                     Email = inputEmail.Text,
                     PasswordHash = ViewModel.resetPassword ? ViewModel.MyUserService.EncryptPassword("12345") : ViewModel.SelectedUser.PasswordHash,
-                    Role = roleComboBox.SelectedValue.ToString(),
+                    Role = ViewModel.SelectedUser.Role,
                     Id = ViewModel.SelectedUser.Id,
                 };
 
