@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
-    partial class SimpleClassViewModel(IDao dao, int classId): BaseViewModel
+    partial class SimpleClassViewModel(IDao dao, int classId) : BaseViewModel
     {
         private readonly IDao _dao = dao;
         private readonly int _classId = classId;
         private Class? _managingClass = null;
         private Course? _associatedCourse = null;
+        private Department? _associatedDepartment = null;
 
         public void LoadRequiredInformation()
         {
@@ -23,6 +24,10 @@ namespace LearningManagementSystem.ViewModels
             if (_managingClass is not null)
             {
                 GetCourseInformation();
+            }
+            if (_associatedCourse is not null)
+            {
+                GetDepartmentInformation();
             }
         }
 
@@ -50,7 +55,34 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        private void GetDepartmentInformation()
+        {
+            try
+            {
+                Department retrievedDepartment = _dao.GetDepartmentById(_associatedCourse?.DepartmentId ?? -1);
+                _associatedDepartment = retrievedDepartment;
+            }
+            catch (Exception)
+            {
+                // No nothing for now
+            }
+        }
+
         public string ClassCode => _managingClass?.ClassCode ?? "";
         public string CourseName => _associatedCourse?.CourseDescription ?? "";
+
+        public EnrollmentClassViewModel? DetailPageNavigatingParameter() 
+        {
+            if (_managingClass is not null && _associatedCourse is not null && _associatedDepartment is not null)
+            {
+                return new EnrollmentClassViewModel()
+                {
+                    Class = _managingClass,
+                    Course = _associatedCourse,
+                    Department = _associatedDepartment
+                };
+            }
+            return null;
+        }
     }
 }

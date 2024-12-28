@@ -105,9 +105,46 @@ namespace LearningManagementSystem.Views.Admin
             GC.SuppressFinalize(this);
         }
 
+        private IList<object> GetSelectedItemsInCUD()
+        {
+            return StudentCUDDisplayer.TableView.GetSelectedItems();
+        }
+        private void ShowCUDInfoBar(InfoBarMessage message)
+        {
+            StudentCUDDisplayer.TableView.ShowInfoBar(message);
+        }
+
+        // ---
+
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private bool _isAssigningUser = false;
+        private void AssignUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isAssigningUser)
+            {
+                return;
+            }
+            _isAssigningUser = true;
+
+            var selectedItems = GetSelectedItemsInCUD();
+            if (selectedItems.Count != 0)
+            {
+                Frame.Navigate(typeof(UserAssignmentForStudentsPage), selectedItems);
+            }
+            else
+            {
+                ShowCUDInfoBar(new()
+                {
+                    Title = "User Assignment Warning",
+                    Message = "Please select the student(s) to be assigned!",
+                    Severity = InfoBarMessageSeverity.Warning
+                });
+            }
+            _isAssigningUser = false;
         }
 
         public event EventHandler? StudentsCreationInitiated;

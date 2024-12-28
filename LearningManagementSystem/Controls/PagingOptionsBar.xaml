@@ -79,7 +79,9 @@
 
     </Grid>-->
 
-    <Grid>
+    <Grid
+        x:Name="PagingOptionsGrid"
+        >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

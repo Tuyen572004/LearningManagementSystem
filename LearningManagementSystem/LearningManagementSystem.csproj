@@ -64,7 +64,7 @@
 	  <None Remove="Views\DocumentPage.xaml" />
 	  <None Remove="Views\EditClass.xaml" />
 	  <None Remove="Views\EditCourses.xaml" />
-	  <None Remove="Views\EditStudentsInClass.xaml" />
+	  <None Remove="Views\EditStudentsInClassPage.xaml" />
 	  <None Remove="Views\EditTeachersInClassPage.xaml" />
 	</ItemGroup>
 
@@ -73,6 +73,8 @@
 		<None Remove="Views\NotificationPage.xaml" />
 		<None Remove="Views\ProfilePage.xaml" />
 		<None Remove="Views\StackPanelTime.xaml" />
+		<None Remove="Views\UserAssignmentForStudentsPage.xaml" />
+		<None Remove="Views\UserAssignmentForTeachersPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -152,10 +154,16 @@
 	  <None Update="Assets\teacher.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="Views\UserAssignmentForStudentsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Views\UserAssignmentForTeachersPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Views\EditTeachersInClassPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <Page Update="Views\EditStudentsInClass.xaml">
+	  <Page Update="Views\EditStudentsInClassPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	  <Page Update="Views\ClassInfoWithParticipant.xaml">

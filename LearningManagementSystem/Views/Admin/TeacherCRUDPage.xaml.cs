@@ -160,6 +160,56 @@ namespace LearningManagementSystem.Views.Admin
 
         }
 
+        private bool _isAssigningUser = false;
+        private void AssignUserButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isAssigningUser)
+            {
+                return;
+            }
+            _isAssigningUser = true;
+
+            //var selectedItems = GetSelectedItemsInCUD();
+            //if (selectedItems.Count != 0)
+            //{
+            //    var ContentDialog = new ContentDialog
+            //    {
+            //        XamlRoot = this.XamlRoot,
+            //        Title = "Assign User",
+            //        PrimaryButtonText = "Assign",
+            //        CloseButtonText = "Cancel"
+            //    };
+            //    Frame DialogFrame = new();
+            //    DialogFrame.Navigate(typeof(UserAssignmentForTeachersPage), selectedItems);
+            //    ContentDialog.PrimaryButtonClick += (s, args) =>
+            //    {
+            //        if (DialogFrame.Content is UserAssignmentForTeachersPage userAssignmentPage)
+            //        {
+            //            userAssignmentPage.UserAssignmentViewModel?.OnConfirmAssignment();
+            //        }
+            //    };
+            //    ContentDialog.Content = DialogFrame;
+            //    await ContentDialog.ShowAsync();
+            //    _isAssigningUser = false;
+            //}
+
+            var selectedItems = GetSelectedItemsInCUD();
+            if (selectedItems.Count != 0)
+            {
+                Frame.Navigate(typeof(UserAssignmentForTeachersPage), selectedItems);
+            }
+            else
+            {
+                ShowCUDInfoBar(new()
+                {
+                    Title = "User Assignment Warning",
+                    Message = "Please select the teacher(s) to be assigned!",
+                    Severity = InfoBarMessageSeverity.Warning
+                });
+            }
+            _isAssigningUser = false;
+        }
+
         public event EventHandler? ItemCreationInitiated;
         private void CreateButton_Click(object sender, RoutedEventArgs e)
         {

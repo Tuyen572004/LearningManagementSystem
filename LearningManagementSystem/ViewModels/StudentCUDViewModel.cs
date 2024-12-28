@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Controls; // DataGridSortDirection
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
@@ -13,10 +14,27 @@ using System.Linq;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class StudentCUDViewModel(IDao dao): BaseViewModel, ITableItemProvider, IPagingProvider, IInfoProvider, IRowStatusDeterminer
+    public partial class StudentCUDViewModel: BaseViewModel, ITableItemProvider, IPagingProvider, IInfoProvider, IRowStatusDeterminer, IDisposable
     {
+        public StudentCUDViewModel(IDao dao)
+        {
+            _dao = dao;
+            WeakReferenceMessenger.Default.Register<UserAssignmentMessage>(this, (r, m) =>
+            {
+                if (m.Target == UserAssignmentTarget.Student && m.IsConfirm)
+                {
+                    RefreshManagingStudents();
+                }
+            });
+        }
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
+
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
-        private readonly IDao _dao = dao;
+        private readonly IDao _dao;
 
         /// <summary>
         /// Should be non-zero all the time
@@ -47,6 +65,7 @@ namespace LearningManagementSystem.ViewModels
         public IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
+            ("UserId", new NegativeIntToNewMarkerConverter()),
             ("GraduationYear", new NullableIntToStringConverter()),
             ("BirthDate", new DateTimeToStringConverter()),
             ];

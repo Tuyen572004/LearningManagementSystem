@@ -33,7 +33,6 @@ namespace LearningManagementSystem.Views
         private TeachersInClassViewModel? _teachersInClassViewModel = null;
         private TeacherReaderViewModel? _allTeachersViewModel = null;
         private TeachersInClassCUDViewModel? _teachersAssignmentViewModel = null;
-        private int _classId = -1;
         private bool disposedValue;
 
         private TableView InnerTeachersInClassTable => TeachersInClassTable.TableView;
@@ -51,8 +50,6 @@ namespace LearningManagementSystem.Views
             if (e.Parameter is int classId)
             //if (14 is int classId)
             {
-                _classId = classId;
-
                 _simpleClassViewModel = new SimpleClassViewModel(App.Current.Services.GetService<IDao>()!, classId);
                 _simpleClassViewModel.LoadRequiredInformation();
 

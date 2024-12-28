@@ -41,17 +41,19 @@
             <!-- TODO: Change to Grid-->
             <Grid Grid.Row="2" Background="ForestGreen" ColumnSpacing="12" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="7*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="8, 0, 0, 0">
                     <Button x:Name="CreateButton" Height="40" Content="Create" Click="CreateButton_Click" Background="Black"/>
                     <Button x:Name="UpdateButton" Height="40" Content="Update" Click="UpdateButton_Click" Background="Black"/>
                     <Button x:Name="DeleteButton" Height="40" Content="Delete" Click="DeleteButton_Click" Background="PaleVioletRed"/>
+                    <Button x:Name="AssignUserButton" Height="40" Content="Assign User" Click="AssignUserButton_Click" Background="Black" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="0, 0, 8, 0" HorizontalAlignment="Right">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" Margin="0, 0, 8, 0" HorizontalAlignment="Right">
                     <Button x:Name="EditAllButton" Height="40" Content="Edit all selected above" Click="EditAllButton_Click"  Background="Black"/>
                     <Button x:Name="RemoveAllButton" Height="40" Content="Remove all selected below" Click="RemoveAllButton_Click" Background="Black"/>
                     <Button x:Name="ImportButton" Height="40" Content="Import from file" Click="ImportButton_Click" IsEnabled="False" Background="Black"/>

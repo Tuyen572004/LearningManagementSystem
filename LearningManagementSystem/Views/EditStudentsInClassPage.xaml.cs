@@ -34,7 +34,6 @@ namespace LearningManagementSystem.Views
         private StudentsInClassViewModel? _studentsInClassViewModel = null;
         private StudentReaderViewModelVer2? _allStudentsViewModel = null;
         private StudentsInClassCUDViewModel? _studentsEnrollmentViewModel = null;
-        private int _classId = -1;
         private bool disposedValue;
 
         private TableView InnerStudentsInClassTable => StudentsInClassTable.TableView;
@@ -85,8 +84,6 @@ namespace LearningManagementSystem.Views
             if (e.Parameter is int classId)
             //if (14 is int classId)
             {
-                _classId = classId;
-
                 _simpleClassViewModel = new SimpleClassViewModel(App.Current.Services.GetService<IDao>()!, classId);
                 _simpleClassViewModel.LoadRequiredInformation();
 

@@ -47,6 +47,41 @@ namespace LearningManagementSystem.DataAccess
                             continue;
                         }
 
+                        if (student.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
+                        {
+                            User holdingUser = null;
+                            (student as ITemporaryUserHolder).GetHoldingUserByReference(ref holdingUser);
+                            if (holdingUser is null)
+                            {
+                                student.UserId = null;
+                            }
+                            else
+                            {
+                                var insertUserCommand = new NpgsqlCommand(
+                                    """
+                                    INSERT INTO "users" ("username", "passwordhash", "role", "email", "createdat")
+                                    VALUES (@Username, @PasswordHash, @Role, @Email, @CreatedAt)
+                                    RETURNING "id"
+                                    """, connection, transaction);
+                                insertUserCommand.Parameters.AddWithValue("@Username", holdingUser.Username);
+                                insertUserCommand.Parameters.AddWithValue("@PasswordHash", holdingUser.PasswordHash);
+                                insertUserCommand.Parameters.AddWithValue("@Role", holdingUser.Role);
+                                insertUserCommand.Parameters.AddWithValue("@Email", holdingUser.Email);
+                                insertUserCommand.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                                var userId = insertUserCommand.ExecuteScalar();
+                                if (userId != null)
+                                {
+                                    student.UserId = Convert.ToInt32(userId);
+                                }
+                                else
+                                {
+                                    invalidStudents.Add((student, new List<string> { "Failed to insert holding user." }));
+                                    continue;
+                                }
+                            }
+                        }
+
                         var insertCommand = new NpgsqlCommand(
                             """
                             INSERT INTO "students" ("studentcode", "studentname", "email", "birthdate", "phoneno", "userid", "enrollmentyear", "graduationyear")
@@ -126,7 +161,40 @@ namespace LearningManagementSystem.DataAccess
                             continue;
                         }
 
-                        if (student.UserId is not null)
+                        if (student.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
+                        {
+                            User holdingUser = null;
+                            (student as ITemporaryUserHolder).GetHoldingUserByReference(ref holdingUser);
+                            if (holdingUser is null)
+                            {
+                                student.UserId = null;
+                            }
+                            else
+                            {
+                                var insertUserCommand = new NpgsqlCommand(
+                                    """
+                                    INSERT INTO "users" ("username", "passwordhash", "role", "email", "createdat")
+                                    VALUES (@Username, @PasswordHash, @Role, @Email, @CreatedAt)
+                                    RETURNING "id"
+                                    """, connection, transaction);
+                                insertUserCommand.Parameters.AddWithValue("@Username", holdingUser.Username);
+                                insertUserCommand.Parameters.AddWithValue("@PasswordHash", holdingUser.PasswordHash);
+                                insertUserCommand.Parameters.AddWithValue("@Role", holdingUser.Role);
+                                insertUserCommand.Parameters.AddWithValue("@Email", holdingUser.Email);
+                                insertUserCommand.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                                var userId = insertUserCommand.ExecuteScalar();
+                                if (userId != null)
+                                {
+                                    student.UserId = Convert.ToInt32(userId);
+                                }
+                                else
+                                {
+                                    invalidStudents.Add((student, new List<string> { "Failed to insert holding user." }));
+                                    continue;
+                                }
+                            }
+                        } else if (student.UserId is not null)
                         {
                             var checkUserIdCommand = new NpgsqlCommand(
                             """
@@ -246,6 +314,21 @@ namespace LearningManagementSystem.DataAccess
                             continue;
                         }
 
+                        var deletingStudentCommand = new NpgsqlCommand(
+                            """
+                            DELETE FROM "students" 
+                            WHERE "id" = @Id
+                            """, connection, transaction);
+                        deletingStudentCommand.Parameters.AddWithValue("@Id", student.Id);
+
+                        int queryResult = deletingStudentCommand.ExecuteNonQuery();
+                        if (queryResult > 0)
+                        {
+                            deletedStudents.Add(student);
+                            deletedCount++;
+                        }
+
+                        // Student contains the user's reference, so student should be deleted first!
                         if (student.UserId is not null)
                         {
                             var deletingUserCommand = new NpgsqlCommand(
@@ -261,20 +344,6 @@ namespace LearningManagementSystem.DataAccess
                                 invalidStudents.Add((student, new[] { $"User with Id {student.UserId} referenced by this student not found" }));
                                 continue;
                             }
-                        }
-
-                        var deletingStudentCommand = new NpgsqlCommand(
-                            """
-                            DELETE FROM "students" 
-                            WHERE "id" = @Id
-                            """, connection, transaction);
-                        deletingStudentCommand.Parameters.AddWithValue("@Id", student.Id);
-
-                        int queryResult = deletingStudentCommand.ExecuteNonQuery();
-                        if (queryResult > 0)
-                        {
-                            deletedStudents.Add(student);
-                            deletedCount++;
                         }
                     }
                     catch (Exception ex)

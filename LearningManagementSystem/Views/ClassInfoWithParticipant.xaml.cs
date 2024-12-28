@@ -14,7 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -92,10 +94,46 @@ namespace LearningManagementSystem.Views
             }
         }
 
-        // TODO: Tuyen's part to navigate to the ClassDetailPage
-        private void SeeClassDetailButton_Click(object sender, RoutedEventArgs e)
-        {
 
+        private bool _isProcessingNavigation = false;
+
+        // TODO: Tuyen's part to navigate to the ClassDetailPage
+        private async void SeeClassDetailButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isProcessingNavigation)
+            {
+                return;
+            }
+            _isProcessingNavigation = true;
+            var navigationParam = _simpleClassViewModel?.DetailPageNavigatingParameter();
+            if (navigationParam is not null)
+            {
+                Frame.Navigate(typeof(ClassDetailPage), navigationParam);
+            }
+            else
+            {
+                await ShowErrorDialog(
+                    "Failed to navigate to the detail page of the class",
+                    """
+                    The page fails to get sufficient data to navigate!
+                    (The Class, the Course, or the Department of the current class may be not correct)
+                    """
+                    );
+            }
+            _isProcessingNavigation = false;
+        }
+
+        private async Task ShowErrorDialog(string title, string message)
+        {
+            ContentDialog errorDialog = new()
+            {
+                XamlRoot = this.XamlRoot,
+                Title = title,
+                Content = message,
+                CloseButtonText = "Ok"
+            };
+
+            await errorDialog.ShowAsync();
         }
 
         //private void TableSelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
