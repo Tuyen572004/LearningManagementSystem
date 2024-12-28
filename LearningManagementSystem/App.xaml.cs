@@ -5,6 +5,8 @@ using LearningManagementSystem.Services.ConfigService;
 using LearningManagementSystem.Services.EmailService;
 using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Windowing;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using System;
 
@@ -32,7 +34,7 @@ namespace LearningManagementSystem
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<IConfigService,ConfigFileService>();
+            services.AddSingleton<IConfigService, ConfigFileService>();
             // Register SqlDao
             services.AddSingleton<IDao, SqlDao>();
 
@@ -52,10 +54,16 @@ namespace LearningManagementSystem
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-
             MainWindow = new LoginWindow();
-
             MainWindow.Activate();
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow);
+            var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
+            appWindow.SetPresenter(AppWindowPresenterKind.Default);
+            appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1280, Height = 720 });
+
+            base.OnLaunched(args);
         }
 
         public Window MainWindow;
