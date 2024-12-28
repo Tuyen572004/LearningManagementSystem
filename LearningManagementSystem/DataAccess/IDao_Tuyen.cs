@@ -1,5 +1,6 @@
 ﻿using LearningManagementSystem.Models;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace LearningManagementSystem.DataAccess
 {
@@ -18,5 +19,7 @@ namespace LearningManagementSystem.DataAccess
 
         List<StudentVer2> findStudentsByIdIn(List<int> ids);
         User findUserById(int? userId);
+        Teacher GetTeacherByUserId(int id);
+        ObservableCollection<Class> GetEnrolledClassesByTeacherId(int id);
     }
 }

@@ -34,14 +34,18 @@
                         <ColumnDefinition Width="10"/>
                     </Grid.ColumnDefinitions>
 
-                    <Rectangle RadiusX="10" RadiusY="10" Fill="ForestGreen" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
+                    <Rectangle RadiusX="10" RadiusY="10" Margin="10,0,0,0" Fill="ForestGreen" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="3" Height="Auto" Width="Auto"/>
 
                     <TextBlock Text="{x:Bind NotificationViewModel.Notification.Title, Mode=OneWay}" 
-                               FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                               Style="{StaticResource HeaderTextBlockStyle}"
+                               Margin="20,0,0,0"
+                               FontWeight="ExtraBold"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
                                Visibility="{x:Bind NotificationViewModel.IsNotEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <TextBox Text="{x:Bind NotificationViewModel.Notification.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                             FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                             Style="{StaticResource HeaderTextBlockStyle}"
+                             Margin="20,0,0,0" 
+                             FontWeight="ExtraBold" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
                              Visibility="{x:Bind NotificationViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <Button Content="{x:Bind NotificationViewModel.EditButtonText, Mode=OneWay}" 

@@ -21,6 +21,7 @@ namespace LearningManagementSystem.Services.UserService
             localSettings.Values["Username"] = user.Username;
             localSettings.Values["Role"] = user.Role;
             localSettings.Values["Email"] = user.Email;
+            localSettings.Values["Id"] = user.Id;
         }
 
         public string EncryptPassword(string password)
@@ -39,11 +40,13 @@ namespace LearningManagementSystem.Services.UserService
             localSettings.Values["Username"] = null;
             localSettings.Values["Role"] = null;
             localSettings.Values["Email"] = null;
+            localSettings.Values["Id"] = null;
         }
         public static async Task<User> GetCurrentUser()
         {
 
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            var id = localSettings.Values["Id"] as int?;
             var username = localSettings.Values["Username"] as string;
             var role = localSettings.Values["Role"] as string;
             var email = localSettings.Values["Email"] as string;
@@ -55,7 +58,7 @@ namespace LearningManagementSystem.Services.UserService
                     Username = username,
                     Role = role,
                     Email = email,
-                    Id = 1,
+                    Id = (int)id,
                     CreatedAt = DateTime.Parse("1000-01-01 00:00:00"),
                     PasswordHash = "YWRtaW5zdHVkZW50",
                 });

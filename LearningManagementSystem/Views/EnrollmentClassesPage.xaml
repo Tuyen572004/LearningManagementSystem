@@ -7,32 +7,47 @@
     xmlns:vm="using:LearningManagementSystem.ViewModels"
     xmlns:m="using:LearningManagementSystem.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
         <DataTemplate x:Key="ClassTemplate" x:DataType="vm:EnrollmentClassViewModel">
-            <Border BorderBrush="Gray" BorderThickness="1" Margin="10" Width="{Binding ElementName=Top, Path=ActualWidth}"
->
-                <StackPanel HorizontalAlignment="Left">
-                    <TextBlock Text="{x:Bind DepartmentName}" Foreground="White" FontSize="20" FontWeight="Bold" Margin="10,5,0,5"/>
-                    <TextBlock Text="{x:Bind ClassTitle}" Foreground="White" FontSize="15" Margin="10,5,0,5"/>
-                    <ItemsRepeater ItemsSource="{x:Bind Teachers}">
-                        <ItemsRepeater.Layout>
-                            <StackLayout Orientation="Vertical"/>
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="m:Teacher">
-                                <TextBlock Text="{x:Bind TeacherName}" Foreground="White" FontSize="15" Margin="10,5,0,5"/>
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
-                    <Button Content="Enter" x:Name="EnterButton" Foreground="White" 
-                            HorizontalAlignment="Center"  Background="LawnGreen" 
-                            Click="EnterButton_Click" CommandParameter="{x:Bind}"></Button>
+            <Border BorderBrush="Gray" BorderThickness="1" Margin="10" 
+                    Width="{Binding ElementName=Top, Path=ActualWidth}" MaxWidth="550">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                </StackPanel>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="{x:Bind DepartmentName}" 
+                   Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <TextBlock Text="{x:Bind ClassTitle}" 
+                   Foreground="White" FontSize="15" Margin="0,0,0,5"/>
+                    </StackPanel>
+
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                        <controls:DataGrid ItemsSource="{x:Bind Teachers, Mode=OneWay}" 
+                       AutoGenerateColumns="False" HeadersVisibility="Column" 
+                       CanUserResizeColumns="True" Background="Transparent" 
+                       Foreground="White">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Teachers" Binding="{Binding TeacherName}" 
+                                         Width="*" IsReadOnly="True"/>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </ScrollViewer>
+
+
+                    <Button Grid.Row="2" Content="Enter" x:Name="EnterButton" 
+            Foreground="White" Background="LawnGreen" HorizontalAlignment="Center" 
+            Margin="0,10,0,0" Click="EnterButton_Click" CommandParameter="{x:Bind}"/>
+                </Grid>
+
             </Border>
         </DataTemplate>
     </Page.Resources>
@@ -59,7 +74,7 @@
         <TextBlock FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">My Classes</TextBlock>
 
 
-        <ScrollViewer IsTabStop="True" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"  HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black">
+        <ScrollViewer Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"  HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="Black">
             <ItemsRepeater ItemsSource="{x:Bind ViewModel.enrolledClassesViewModel}" ItemTemplate="{StaticResource ClassTemplate}">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout MinColumnSpacing="10" MinRowSpacing="10" MaximumRowsOrColumns="2" />

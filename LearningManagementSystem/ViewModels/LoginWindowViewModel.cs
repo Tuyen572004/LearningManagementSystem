@@ -20,7 +20,6 @@ namespace LearningManagementSystem.ViewModels
         public bool CheckUserInfo()
         {
             return _dao.CheckUserInfo(UserLogin);
-            //return true;
         }
 
         public void GetUser()

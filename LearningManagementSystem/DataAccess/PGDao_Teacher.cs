@@ -18,49 +18,117 @@ namespace LearningManagementSystem.DataAccess
     {
         public Teacher GetTeacherById(int teacherId)
         {
-            return new Teacher
+            Teacher result = null;
+            using (var connection = GetConnection())
             {
-                Id = teacherId,
-                TeacherCode = "T001",
-                TeacherName = "John Doe",
-                Email = "johndoe@example.com",
-                PhoneNo = "1234567890",
-                UserId = 1
-            };
+                connection.Open();
+                var command = new NpgsqlCommand(
+                    """
+                    select "id", "teachercode", "teachername", "email", "phoneno", "userid"
+                    from "teachers"
+                    where "id" = @Id
+                    """, connection);
+                command.Parameters.AddWithValue("@Id", teacherId);
+
+                var queryResultReader = command.ExecuteReader();
+                if (queryResultReader.Read())
+                {
+                    int userIdColumn = queryResultReader.GetOrdinal("userid");
+                    result = new Teacher
+                    {
+                        Id = queryResultReader.GetInt32("id"),
+                        TeacherCode = queryResultReader.GetString("teachercode"),
+                        TeacherName = queryResultReader.GetString("teachername"),
+                        Email = queryResultReader.GetString("email"),
+                        PhoneNo = queryResultReader.IsDBNull("phoneno")
+                            ? null
+                            : queryResultReader.GetString("phoneno"),
+                        UserId = queryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : queryResultReader.GetInt32("userid")
+                    };
+                }
+            }
+            if (result is null)
+            {
+                throw new Exception("Teacher not found.");
+            }
+            return result;
+        }
+
+        public Teacher GetTeacherByUserId(int userId)
+        {
+            Teacher result = null;
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var command = new NpgsqlCommand(
+                    """
+                    select "id", "teachercode", "teachername", "email", "phoneno", "userid"
+                    from "teachers"
+                    where "userid" = @UserId
+                    """, connection);
+                command.Parameters.AddWithValue("@UserId", userId);
+
+                var queryResultReader = command.ExecuteReader();
+                if (queryResultReader.Read())
+                {
+                    int userIdColumn = queryResultReader.GetOrdinal("userid");
+                    result = new Teacher
+                    {
+                        Id = queryResultReader.GetInt32("id"),
+                        TeacherCode = queryResultReader.GetString("teachercode"),
+                        TeacherName = queryResultReader.GetString("teachername"),
+                        Email = queryResultReader.GetString("email"),
+                        PhoneNo = queryResultReader.IsDBNull("phoneno")
+                            ? null
+                            : queryResultReader.GetString("phoneno"),
+                        UserId = queryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : queryResultReader.GetInt32("userid")
+                    };
+                }
+            }
+            return result;
         }
 
         public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
-            return new FullObservableCollection<Teacher>
+            FullObservableCollection<Teacher> result = new();
+            using (var connection = GetConnection())
             {
-                new Teacher
+                connection.Open();
+                var command = new NpgsqlCommand(
+                    """
+                    select "teachers"."id", "teachercode", "teachername", "email", "phoneno", "userid"
+                    from "teachers"
+                    join "teachersperclass" on "teachers"."id" = "teachersperclass"."teacherid"
+                    where "classid" = @ClassId
+                    """, connection);
+                command.Parameters.AddWithValue("@ClassId", classId);
+
+                var queryResultReader = command.ExecuteReader();
+                while (queryResultReader.Read())
                 {
-                    Id = 1,
-                    TeacherCode = "T001",
-                    TeacherName = "John Doe",
-                    Email = "johndoe@example.com",
-                    PhoneNo = "1234567890",
-                    UserId = 1
-                },
-                new Teacher
-                {
-                    Id = 2,
-                    TeacherCode = "T002",
-                    TeacherName = "Jane Smith",
-                    Email = "janesmith@example.com",
-                    PhoneNo = "9876543210",
-                    UserId = 2
-                },
-                new Teacher
-                {
-                    Id = 3,
-                    TeacherCode = "T003",
-                    TeacherName = "Alice Johnson",
-                    Email = "janesmith@example.com",
-                    PhoneNo = "9876543210",
-                    UserId = 3
+                    int userIdColumn = queryResultReader.GetOrdinal("userid");
+                    Teacher newTeacher = new()
+                    {
+                        Id = queryResultReader.GetInt32("id"),
+                        TeacherCode = queryResultReader.GetString("teachercode"),
+                        TeacherName = queryResultReader.GetString("teachername"),
+                        Email = queryResultReader.GetString("email"),
+                        PhoneNo = queryResultReader.IsDBNull("phoneno")
+                            ? null
+                            : queryResultReader.GetString("phoneno"),
+                        UserId = queryResultReader.IsDBNull(userIdColumn)
+                            ? null
+                            : queryResultReader.GetInt32("userid")
+                    };
+
+                    result.Add(newTeacher);
                 }
-            };
+            }
+            return result;
         }
 
         public (
@@ -72,7 +140,7 @@ namespace LearningManagementSystem.DataAccess
             var addedTeachers = new List<Teacher>();
             int addedCount = 0;
             var invalidTeachers = new List<(Teacher teacher, IEnumerable<string> errors)>();
-                
+
             using var connection = GetConnection();
             connection.Open();
 

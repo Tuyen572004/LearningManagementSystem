@@ -1,6 +1,9 @@
-﻿using Npgsql;
+﻿using LearningManagementSystem.Models;
+using Npgsql;
+using NPOI.OpenXmlFormats.Dml.ChartDrawing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +12,6 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
-        //------------------------ TUYEN ------------
         public List<int> findStudentIdByClassId(int id)
         {
             List<int> result = new List<int>();
@@ -33,5 +35,7 @@ namespace LearningManagementSystem.DataAccess
             }
             return result;
         }
+
+       
     }
 }

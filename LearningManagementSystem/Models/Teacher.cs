@@ -12,8 +12,5 @@ namespace LearningManagementSystem.Models
         required public string Email { get; set; }
         public string? PhoneNo { get; set; } = null;
         public int? UserId { get; set; } = null;  // Foreign key to Users table
-
-        // Navigation property
-        // public User User { get; set; }
     }
 }

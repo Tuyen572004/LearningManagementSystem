@@ -28,8 +28,8 @@
                 <!--<StackPanel >-->
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="80"/>
-                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="100"/>
                         <RowDefinition Height="80"/>
                     </Grid.RowDefinitions>
 
@@ -47,11 +47,15 @@
 
 
                     <TextBlock  Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=OneWay}" 
-                                FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                                Style="{StaticResource HeaderTextBlockStyle}"
+                                Margin="20,0,0,0"
+                                FontWeight="ExtraBold" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
                                 Visibility="{x:Bind AssignmentViewModel.IsNotEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <TextBox Text="{x:Bind AssignmentViewModel.Assignment.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                             FontWeight="Black" Margin="20,0,0,0" FontSize="40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                             FontWeight="ExtraBold" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                             Margin="20,0,0,0"
+                             Style="{StaticResource HeaderTextBlockStyle}"
                                 Visibility="{x:Bind AssignmentViewModel.IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <Button Content="{x:Bind AssignmentViewModel.EditButtonText, Mode=OneWay}" 

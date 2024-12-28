@@ -170,6 +170,7 @@ namespace LearningManagementSystem.DataAccess
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
+                    user.Id = reader.GetInt32(reader.GetOrdinal("Id"));
                     user.Username = reader.GetString(reader.GetOrdinal("Username"));
                     user.PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash"));
                     user.Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email"));

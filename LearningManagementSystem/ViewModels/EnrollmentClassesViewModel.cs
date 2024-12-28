@@ -1,6 +1,8 @@
 ﻿using LearningManagementSystem.DataAccess;
+using LearningManagementSystem.Enums;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
+using LearningManagementSystem.Services.UserService;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 
@@ -12,6 +14,7 @@ namespace LearningManagementSystem.ViewModels
         private IDao _dao; // Private field to hold the dao instance
         public ObservableCollection<EnrollmentClassViewModel> enrolledClassesViewModel { get; set; }
 
+        private UserService userService;
         public EnrollmentClassesViewModel() 
         {
             enrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
@@ -25,8 +28,20 @@ namespace LearningManagementSystem.ViewModels
 
         public void LoadEnrolledClasses()
         {
-            var studentId = 1; // Example student ID
-            var enrolledClasses = _dao.GetEnrolledClassesByStudentId(studentId);
+            var user = UserService.GetCurrentUser().Result;
+            var role = user.Role;
+
+            var enrolledClasses = new ObservableCollection<Class>();
+
+            if (role.Equals(RoleEnum.GetStringValue(Role.Student))){
+                var student = _dao.GetStudentByUserId(user.Id);
+                enrolledClasses = _dao.GetEnrolledClassesByStudentId(student.Id);
+            }
+            else if (role.Equals(RoleEnum.GetStringValue(Role.Teacher)))
+            {
+                var teacher = _dao.GetTeacherByUserId(user.Id);
+                enrolledClasses = _dao.GetEnrolledClassesByTeacherId(teacher.Id);
+            }
 
             foreach (var enrolledClass in enrolledClasses)
             {
