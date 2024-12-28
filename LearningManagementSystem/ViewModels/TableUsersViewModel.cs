@@ -49,7 +49,7 @@ namespace LearningManagementSystem.ViewModels
         public TableUsersViewModel()
         {
             TableUsers = new FullObservableCollection<TableUsersView>();
-            _dao = App.Current.Services.GetService<IDao>();;
+            _dao = App.Current.Services.GetService<IDao>(); ;
             SelectedUser = new TableUsersView();
             Suggestion = _dao.GetAllUsernames();
         }
@@ -96,9 +96,9 @@ namespace LearningManagementSystem.ViewModels
             GetAllUser();
         }
 
-        public void RemoveUser(User user)
+        public int RemoveUser(User user)
         {
-            _dao.RemoveUserByID(user.Id);
+            return _dao.RemoveUserByID(user.Id);
 
         }
     }

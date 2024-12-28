@@ -38,7 +38,7 @@ namespace LearningManagementSystem.DataAccess
         List<string> GetAllUsernames();
         int InsertUser(User user);
         void UpdateUser(User user);
-        void RemoveUserByID(int userId);
+        int RemoveUserByID(int userId);
 
         int CountUser();
 

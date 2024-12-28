@@ -122,17 +122,25 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
-        public void RemoveUserByID(int userId)
+        public int RemoveUserByID(int userId)
         {
             var sql = "DELETE FROM Users WHERE Id=@Id";
-            using (var connection = GetConnection())
-            using (var command = new NpgsqlCommand(sql, connection))
+            try
             {
-                command.Parameters.AddWithValue("@Id", userId);
+                using (var connection = GetConnection())
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", userId);
 
-                connection.Open();
-                command.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
             }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+            return 1;
         }
 
         public int CountUser()
