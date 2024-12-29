@@ -236,13 +236,26 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        private string getName(User user)
+        {
+            if (IsTeacher)
+            {
+                return _dao.GetTeacherByUserId(user.Id).TeacherName;
+            }
+            if (!IsStudent)
+            {
+                return "Administator";
+            }
+            return user.Username;
+        }
+
 
         private EmailRequest CreateEmailRequest()
         {
             User user = UserService.GetCurrentUser().Result;
             Account sender = new Account
             {
-                name = user.Username,
+                name = getName(user),
                 email = user.Email
             };
             List<int> studentIds = _dao.findStudentIdByClassId(Notification.ClassId);
@@ -251,7 +264,8 @@ namespace LearningManagementSystem.ViewModels
             foreach (StudentVer2 student in students)
             {
                 User studentUser = _dao.findUserById(student.UserId);
-                if (studentUser != null) {
+                if (studentUser != null)
+                {
                     Account receiver = new Account
                     {
                         name = studentUser.Username,
@@ -268,7 +282,7 @@ namespace LearningManagementSystem.ViewModels
                 subject = Notification.Title,
                 htmlContent = $"<p>New notification posted by {user.Username}</p><p>{Notification.Description}</p>"
             };
-            
+
         }
 
         private async Task SendEmail()
