@@ -50,16 +50,31 @@ namespace LearningManagementSystem.ViewModels
         {
             return input.ToLower().Replace(" ", "");
         }
+        public static string GetEmailLocalPart(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return string.Empty;
+            }
+
+            var parts = email.Split('@');
+            if (parts.Length < 2)
+            {
+                return string.Empty;
+            }
+
+            return parts[0];
+        }
         static public string DefaultPassword => "passwordUwU";
         static private string GeneratePasswordForObject(object obj)
         {
             if (obj is StudentVer2 student)
             {
-                return ToLowerCaseNoSpaces(student.StudentName) + student.StudentCode;
+                return ToLowerCaseNoSpaces(GetEmailLocalPart(student.Email)) + ToLowerCaseNoSpaces(student.StudentCode);
             }
             else if (obj is Teacher teacher)
             {
-                return ToLowerCaseNoSpaces(teacher.TeacherName) + teacher.TeacherCode;
+                return ToLowerCaseNoSpaces(GetEmailLocalPart(teacher.Email)) + ToLowerCaseNoSpaces(teacher.TeacherCode);
             }
             return DefaultPassword;
         }
@@ -75,28 +90,58 @@ namespace LearningManagementSystem.ViewModels
                 if (obj is StudentVer2 student)
                 {
                     var password = GeneratePasswordForObject(student);
-                    User newUser = new()
+                    User newUser;
+                    if (student.UserId == null)
                     {
-                        Username = student.StudentName,
-                        PasswordHash = _userService.EncryptPassword(password),
-                        Password = password,
-                        Role = "student",
-                        Email = student.Email,
-                    };
+                        newUser = new()
+                        {
+                            Username = student.StudentName,
+                            PasswordHash = _userService.EncryptPassword(password),
+                            Password = password,
+                            Role = "student",
+                            Email = student.Email,
+                        };
+                    }
+                    else
+                    {
+                        newUser = new()
+                        {
+                            Username = "",
+                            PasswordHash = "",
+                            Password = "",
+                            Role = "student",
+                            Email = "",
+                        };
+                    }
                     newUsers.Add(newUser);
                     _userMapper.Add(student.Id, newUser);
                 }
                 else if (obj is Teacher teacher)
                 {
                     var password = GeneratePasswordForObject(teacher);
-                    User newUser = new()
+                    User newUser;
+                    if (teacher.UserId == null)
                     {
-                        Username = teacher.TeacherName,
-                        PasswordHash = _userService.EncryptPassword(password),
-                        Password = password,
-                        Role = "teacher",
-                        Email = teacher.Email,
-                    };
+                        newUser = new()
+                        {
+                            Username = teacher.TeacherName,
+                            PasswordHash = _userService.EncryptPassword(password),
+                            Password = password,
+                            Role = "teacher",
+                            Email = teacher.Email,
+                        };
+                    }
+                    else
+                    {
+                        newUser = new()
+                        {
+                            Username = "",
+                            PasswordHash = "",
+                            Password = "",
+                            Role = "teacher",
+                            Email = "",
+                        };
+                    }
                     newUsers.Add(newUser);
                     _userMapper.Add(teacher.Id, newUser);
                 }

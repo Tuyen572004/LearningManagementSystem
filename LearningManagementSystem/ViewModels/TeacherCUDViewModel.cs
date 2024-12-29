@@ -35,6 +35,7 @@ namespace LearningManagementSystem.ViewModels
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
             ("UserId", new NegativeIntToNewMarkerConverter()),
+            ("PhoneNo", new NullableStringToStringConverter()),
             ];
 
         // Required override from CUDViewModel
