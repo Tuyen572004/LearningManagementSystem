@@ -15,6 +15,9 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.ViewModels;
+using System.Text.RegularExpressions;
+using Windows.System;
+using User = LearningManagementSystem.Models.User;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -88,6 +91,19 @@ namespace LearningManagementSystem.Views
 
         private async void save_Click(object sender, RoutedEventArgs e)
         {
+            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            if (!emailRegex.IsMatch(inputEmail.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Invalid email",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
             var dialog = new ContentDialog
             {
                 XamlRoot = this.XamlRoot,
@@ -96,6 +112,8 @@ namespace LearningManagementSystem.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No"
             };
+
+
 
             var result = await dialog.ShowAsync();
 

@@ -92,7 +92,29 @@ namespace LearningManagementSystem.Views
 
                 if (result == ContentDialogResult.Primary)
                 {
-                    int check = ViewModel.RemoveUser(new User
+                    int check = ViewModel.SetNullUserID(new User
+                    {
+                        Id = selectedUser.ID,
+                        Username = selectedUser.Username,
+                        PasswordHash = selectedUser.PasswordHash,
+                        Email = selectedUser.Email,
+                        Role = selectedUser.Role,
+                        CreatedAt = selectedUser.CreatedAt
+                    });
+
+                    if (check == 0)
+                    {
+                        await new ContentDialog()
+                        {
+                            XamlRoot = this.XamlRoot,
+                            Content = "Failed to remove user.",
+                            Title = "Error",
+                            CloseButtonText = "Ok"
+                        }.ShowAsync();
+                        return;
+                    }
+
+                    check = ViewModel.RemoveUser(new User
                     {
                         Id = selectedUser.ID,
                         Username = selectedUser.Username,
@@ -106,12 +128,15 @@ namespace LearningManagementSystem.Views
                         await new ContentDialog()
                         {
                             XamlRoot = this.XamlRoot,
-                            Content = "Failed to remove user. Please remove user at the teacher table first !",
+                            Content = "Failed to remove user.",
                             Title = "Error",
                             CloseButtonText = "Ok"
                         }.ShowAsync();
                         return;
                     }
+
+
+
                     myUsersTable.SelectedItem = null;
                     ViewModel.TableUsers.Remove(selectedUser);
                     await new ContentDialog()

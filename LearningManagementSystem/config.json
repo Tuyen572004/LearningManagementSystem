@@ -1,9 +1,9 @@
 ﻿{
-    "Cloudinary": {
+  "Cloudinary": {
     "CloudName": "ddw1pv5un",
     "ApiKey": "513955292673775",
     "ApiSecret": "Qs1OEpFUNzzKU39-mHVq3NDCszw"
-    },
+  },
   "PG_Database": {
     "DB_HOST": "dpg-cto036t2ng1s73bfkflg-a.singapore-postgres.render.com",
     "DB_DATABASE": "student_lms_official",

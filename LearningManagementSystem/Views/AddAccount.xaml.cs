@@ -17,6 +17,7 @@ using LearningManagementSystem.ViewModels;
 using LearningManagementSystem.Helpers;
 using System.Collections.ObjectModel;
 using LearningManagementSystem.Services.UserService;
+using System.Text.RegularExpressions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -82,6 +83,19 @@ namespace LearningManagementSystem.Views
                 Role = roleComboBox.SelectedValue.ToString(),
                 CreatedAt = DateTime.Now
             };
+
+            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            if (!emailRegex.IsMatch(user.Email))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Invalid email",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
 
             int count = ViewModel.InsertUser(user);
 
