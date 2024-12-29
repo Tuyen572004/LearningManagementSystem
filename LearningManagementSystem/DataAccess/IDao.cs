@@ -42,7 +42,8 @@ namespace LearningManagementSystem.DataAccess
 
         int CountUser();
 
-
+        public int SetNullUserIDInTeacher(User user);
+        public int SetNullUserIDInStudent(User user);
         int CountDepartments();
         int FindDepartmentID(Department department);
         int FindCourseByID(Course course);

@@ -242,6 +242,46 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        public int SetNullUserIDInTeacher(User user)
+        {
+            var sql = "UPDATE Teachers SET UserId=null WHERE UserId=@Id";
+            try
+            {
+                using (var connection = GetConnection())
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", user.Id);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+            return 1;
+        }
+
+        public int SetNullUserIDInStudent(User user)
+        {
+            var sql = "UPDATE Students SET UserId=null WHERE UserId=@Id";
+            try
+            {
+                using (var connection = GetConnection())
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", user.Id);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+            return 1;
+        }
+
         public User findUserById(int? id)
         {
             var result = new User();
