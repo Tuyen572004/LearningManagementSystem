@@ -101,5 +101,12 @@ namespace LearningManagementSystem.ViewModels
             return _dao.RemoveUserByID(user.Id);
 
         }
+
+        public int SetNullUserID(User user)
+        {
+            if (user.Role == "teacher")
+                return _dao.SetNullUserIDInTeacher(user);
+            return _dao.SetNullUserIDInStudent(user);
+        }
     }
 }
