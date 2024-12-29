@@ -1,5 +1,6 @@
 ﻿using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Services.UserService;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
 
@@ -7,6 +8,7 @@ namespace LearningManagementSystem.ViewModels
 {
     public class HomePageViewModel
     {
+        private IDao _dao;
         public DateTime datetime { get; set; }
         public string cultureNames { get; set; }
 
@@ -17,7 +19,6 @@ namespace LearningManagementSystem.ViewModels
         public int TotalStudents { get; set; }
         public int TotalDepartments { get; set; }
         public CourseViewModel CrsViewModel { get; set; }
-
         public DepartmentsViewModel DpmViewModel { get; set; }
 
         public ClassViewModel ClsViewModel { get; set; }
@@ -27,9 +28,11 @@ namespace LearningManagementSystem.ViewModels
         {
             datetime = new DateTime();
             cultureNames = "";
+            _dao = App.Current.Services.GetService<IDao>();
             DpmViewModel = new DepartmentsViewModel();
             CrsViewModel = new CourseViewModel();
             ClsViewModel = new ClassViewModel();
+            TotalStudents = _dao.CountStudent();
             var rawRole = UserService.GetCurrentUserRole().Result;
             if (rawRole == "admin")
             {
