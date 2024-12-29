@@ -123,6 +123,8 @@ namespace LearningManagementSystem
 
         private void NavigateByTag(string tag)
         {
+            if (tag == null)
+                return;
             var item = this.Menu.MenuItems
                 .OfType<NavigationViewItem>()
                 .FirstOrDefault(x => x.Tag.Equals(tag))
