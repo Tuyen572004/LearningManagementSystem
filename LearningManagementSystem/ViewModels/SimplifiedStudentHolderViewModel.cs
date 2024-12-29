@@ -13,8 +13,8 @@ namespace LearningManagementSystem.ViewModels
 {
     partial class SimplifiedStudentHolderViewModel(IDao dao): CUDViewModel(dao)
     {
-        public override IEnumerable<string> ColumnOrder => ["StudentCode", "StudentName"];
-        public override IEnumerable<string> IgnoringColumns => ["Id", "UserId", "IsValid", "Email", "PhoneNo", "BirthDate", "GraduationYear", "EnrollmentYear"];
+        public override IEnumerable<string> ColumnOrder => ["StudentCode", "StudentName", "Email"];
+        public override IEnumerable<string> IgnoringColumns => ["Id", "UserId", "IsValid", "PhoneNo", "BirthDate", "GraduationYear", "EnrollmentYear"];
         public override InfoBarMessage? GetMessageOf(object item) => null;
         public override RowStatus? GetRowStatus(object item) => null;
 

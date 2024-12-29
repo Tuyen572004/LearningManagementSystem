@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Azure.Identity;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
@@ -66,52 +67,91 @@ namespace LearningManagementSystem.ViewModels
             return parts[0];
         }
         static public string DefaultPassword => "passwordUwU";
+        static public readonly string InvalidContent = "INVALID";
+        static public readonly string ExistedContent = "EXISTED";
         static private string GeneratePasswordForObject(object obj)
         {
             if (obj is StudentVer2 student)
             {
-                return ToLowerCaseNoSpaces(GetEmailLocalPart(student.Email)) + ToLowerCaseNoSpaces(student.StudentCode);
+                return ToLowerCaseNoSpaces(student.StudentCode) + ToLowerCaseNoSpaces(GetEmailLocalPart(student.Email));
             }
             else if (obj is Teacher teacher)
             {
-                return ToLowerCaseNoSpaces(GetEmailLocalPart(teacher.Email)) + ToLowerCaseNoSpaces(teacher.TeacherCode);
+                return ToLowerCaseNoSpaces(teacher.TeacherCode) + ToLowerCaseNoSpaces(GetEmailLocalPart(teacher.Email));
             }
             return DefaultPassword;
         }
 
         private readonly List<object> _originalObjects = [];
         private readonly Dictionary<int, User> _userMapper = [];
+        private readonly HashSet<User> _invalidUsers = [];
+        // Note that students and teachers should not both in the same list, as their ids may conflict.
         public void ConvertObjectsToUsersThenPopulate(IEnumerable<object> objects)
         {
             List<object> newUsers = [];
             _userMapper.Clear();
+            _invalidUsers.Clear();
+
+            INotifyDataErrorInfoExtended? objectAsErrorNotifier;
+            bool isUserNameValid;
+            bool isEmailValid;
             foreach (var obj in objects)
             {
+                
+                //if (obj is INotifyDataErrorInfoExtended errorNotifier)
+                //{
+                //    errorNotifier.RevalidateAllProperties();
+                //    if (errorNotifier.HasErrors)
+                //    {
+                //        User newUser = new()
+                //        {
+                //            Username = InvalidContent,
+                //            PasswordHash = "",
+                //            Password = InvalidContent,
+                //            Role = "student",
+                //            Email = InvalidContent,
+                //        };
+                //        newUsers.Add(newUser);
+                //        _invalidUsers.Add(newUser);
+                //        continue;
+                //    }
+                //}
+                objectAsErrorNotifier = obj as INotifyDataErrorInfoExtended;
+                
                 if (obj is StudentVer2 student)
                 {
                     var password = GeneratePasswordForObject(student);
                     User newUser;
-                    if (student.UserId == null)
+                    if (student.UserId == null || student.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
                     {
+                        isUserNameValid = objectAsErrorNotifier is null 
+                            || objectAsErrorNotifier.GetErrorsOfSingleProperty("StudentName").ToList().Count == 0;
+                        isEmailValid = objectAsErrorNotifier is null
+                            || objectAsErrorNotifier.GetErrorsOfSingleProperty("Email").ToList().Count == 0;
                         newUser = new()
                         {
-                            Username = student.StudentName,
+                            Username = isUserNameValid ? student.StudentName : InvalidContent,
                             PasswordHash = _userService.EncryptPassword(password),
                             Password = password,
                             Role = "student",
-                            Email = student.Email,
+                            Email = isEmailValid ? student.Email : InvalidContent,
                         };
+                        if (!isEmailValid || !isEmailValid)
+                        {
+                            _invalidUsers.Add(newUser);
+                        }
                     }
                     else
                     {
                         newUser = new()
                         {
-                            Username = "",
+                            Username = ExistedContent,
                             PasswordHash = "",
-                            Password = "",
+                            Password = ExistedContent,
                             Role = "student",
-                            Email = "",
+                            Email = ExistedContent,
                         };
+                        _invalidUsers.Add(newUser);
                     }
                     newUsers.Add(newUser);
                     _userMapper.Add(student.Id, newUser);
@@ -120,27 +160,36 @@ namespace LearningManagementSystem.ViewModels
                 {
                     var password = GeneratePasswordForObject(teacher);
                     User newUser;
-                    if (teacher.UserId == null)
+                    if (teacher.UserId == null || teacher.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
                     {
+                        isUserNameValid = objectAsErrorNotifier is null
+                            || objectAsErrorNotifier.GetErrorsOfSingleProperty("TeacherName").ToList().Count == 0;
+                        isEmailValid = objectAsErrorNotifier is null
+                            || objectAsErrorNotifier.GetErrorsOfSingleProperty("Email").ToList().Count == 0;
                         newUser = new()
                         {
-                            Username = teacher.TeacherName,
+                            Username = isUserNameValid ? teacher.TeacherName : InvalidContent,
                             PasswordHash = _userService.EncryptPassword(password),
                             Password = password,
                             Role = "teacher",
-                            Email = teacher.Email,
+                            Email = isEmailValid ? teacher.Email : InvalidContent,
                         };
+                        if (!isEmailValid || !isEmailValid)
+                        {
+                            _invalidUsers.Add(newUser);
+                        }
                     }
                     else
                     {
                         newUser = new()
                         {
-                            Username = "",
+                            Username = ExistedContent,
                             PasswordHash = "",
-                            Password = "",
+                            Password = ExistedContent,
                             Role = "teacher",
-                            Email = "",
+                            Email = ExistedContent,
                         };
+                        _invalidUsers.Add(newUser);
                     }
                     newUsers.Add(newUser);
                     _userMapper.Add(teacher.Id, newUser);
@@ -166,6 +215,10 @@ namespace LearningManagementSystem.ViewModels
                 if (originalObject is StudentVer2 student)
                 {
                     _userMapper.TryGetValue(student.Id, out var matchingUser);
+                    if (matchingUser is null || _invalidUsers.Contains(matchingUser))
+                    {
+                        continue;
+                    }
                     userHolder.SetHoldingUser(matchingUser);
 
                     student.UserId ??= ITemporaryUserHolder.NewlyHoldingUserId;
@@ -173,6 +226,10 @@ namespace LearningManagementSystem.ViewModels
                 else if (originalObject is Teacher teacher)
                 {
                     _userMapper.TryGetValue(teacher.Id, out var matchingUser);
+                    if (matchingUser is null || _invalidUsers.Contains(matchingUser))
+                    {
+                        continue;
+                    }
                     userHolder.SetHoldingUser(matchingUser);
 
                     teacher.UserId ??= ITemporaryUserHolder.NewlyHoldingUserId;

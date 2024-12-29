@@ -6,6 +6,7 @@ using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using Microsoft.UI.Xaml.Data;
+using NPOI.SS.Formula.Functions;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -333,7 +334,10 @@ namespace LearningManagementSystem.ViewModels
             foreach (var (student, errors) in e)
             {
                 var foundReference = AllStudents.FirstOrDefault(s => ReferenceEquals(student, s), null);
-                foundReference?.ChangeErrors("database", errors.ToList() ?? []);
+                if (errors is not null && errors.ToList().Count > 0)
+                {
+                    foundReference?.ChangeErrors("database", errors.ToList());
+                }
             }
             RefreshManagingStudents();
         }
