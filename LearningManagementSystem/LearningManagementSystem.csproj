@@ -27,6 +27,11 @@
 	  <Content Remove="Assets\backgroundLogin.png" />
 	  <Content Remove="Assets\books.png" />
 	  <Content Remove="Assets\graduated.png" />
+	  <Content Remove="Assets\graduating-student.scale-100.png" />
+	  <Content Remove="Assets\graduating-student.scale-125.png" />
+	  <Content Remove="Assets\graduating-student.scale-150.png" />
+	  <Content Remove="Assets\graduating-student.scale-200.png" />
+	  <Content Remove="Assets\graduating-student.scale-400.png" />
 	  <Content Remove="Assets\group.png" />
 	  <Content Remove="Assets\it-department.png" />
 	  <Content Remove="Assets\key.png" />
@@ -122,6 +127,11 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Update="Assets\graduating-student.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Assets\background.png">

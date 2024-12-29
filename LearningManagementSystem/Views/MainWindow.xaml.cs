@@ -34,6 +34,7 @@ namespace LearningManagementSystem
 
         public MainWindow()
         {
+            Title = "Learning Management System";
             this.InitializeComponent();
         }
 

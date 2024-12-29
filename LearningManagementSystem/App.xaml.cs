@@ -9,6 +9,8 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using System;
+using MathNet.Numerics;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -63,9 +65,11 @@ namespace LearningManagementSystem
             appWindow.SetPresenter(AppWindowPresenterKind.Default);
             appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 1280, Height = 720 });
 
+            MainWindow.Title = "Learning Management System";
+
             base.OnLaunched(args);
         }
 
-        public Window MainWindow;
+        public Microsoft.UI.Xaml.Window MainWindow;
     }
 }

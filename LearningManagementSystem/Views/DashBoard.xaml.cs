@@ -21,6 +21,7 @@ namespace LearningManagementSystem
         public static IntPtr HWND { get; set; }
         public DashBoard()
         {
+            Title = "Learning Management System";
             this.InitializeComponent();
             InitializeAsync();
             HWND = WinRT.Interop.WindowNative.GetWindowHandle(this);
