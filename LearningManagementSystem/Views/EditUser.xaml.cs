@@ -104,6 +104,18 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
+            if (string.IsNullOrEmpty(inputUsername.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Username cannot be empty",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
             var dialog = new ContentDialog
             {
                 XamlRoot = this.XamlRoot,
@@ -112,8 +124,6 @@ namespace LearningManagementSystem.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No"
             };
-
-
 
             var result = await dialog.ShowAsync();
 

@@ -84,6 +84,18 @@ namespace LearningManagementSystem.Views
                 CreatedAt = DateTime.Now
             };
 
+            if (string.IsNullOrEmpty(inputUsername.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Username cannot be empty",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
             Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             if (!emailRegex.IsMatch(user.Email))
             {

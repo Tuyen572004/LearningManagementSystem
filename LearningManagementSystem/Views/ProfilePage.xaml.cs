@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -69,6 +70,19 @@ namespace LearningManagementSystem.Views
             var newPassword = NewPasswordInput.Password;
             var confirmNewPassword = ConfirmNewPasswordInput.Password;
 
+            if (newPassword.Length == 0)
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Password Required",
+                    Content = "Please enter a new password.",
+                    CloseButtonText = "Ok"
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
             if (newPassword != confirmNewPassword)
             {
                 var dialog = new ContentDialog
@@ -79,6 +93,7 @@ namespace LearningManagementSystem.Views
                     CloseButtonText = "Ok"
                 };
                 await dialog.ShowAsync();
+                return;
             }
             else if (ViewModel.MyUserService.EncryptPassword(oldPassword) != ViewModel.Password)
             {
@@ -111,6 +126,43 @@ namespace LearningManagementSystem.Views
 
         private async void SaveChange_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(UserNameInput.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Username Required",
+                    Content = "Please enter a username.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(EmailInput.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Email Required",
+                    Content = "Please enter an email address.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
+            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            if (!emailRegex.IsMatch(EmailInput.Text))
+            {
+                await new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "User",
+                    Content = "Invalid email.",
+                    CloseButtonText = "Ok"
+                }.ShowAsync();
+                return;
+            }
+
             ViewModel.UserName = UserNameInput.Text;
             ViewModel.Email = EmailInput.Text;
             ViewModel.UpdateProfile();
