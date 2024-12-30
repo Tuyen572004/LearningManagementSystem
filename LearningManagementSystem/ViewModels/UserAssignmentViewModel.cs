@@ -1,12 +1,10 @@
 ﻿#nullable enable
-using Azure.Identity;
 using LearningManagementSystem.Controls;
 using LearningManagementSystem.DataAccess;
 using LearningManagementSystem.Helpers;
 using LearningManagementSystem.Models;
 using LearningManagementSystem.Services.UserService;
 using Microsoft.UI.Xaml.Data;
-using NPOI.OpenXmlFormats.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
