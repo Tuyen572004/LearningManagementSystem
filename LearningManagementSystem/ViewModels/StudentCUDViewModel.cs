@@ -333,7 +333,10 @@ namespace LearningManagementSystem.ViewModels
             foreach (var (student, errors) in e)
             {
                 var foundReference = AllStudents.FirstOrDefault(s => ReferenceEquals(student, s), null);
-                foundReference?.ChangeErrors("database", errors.ToList() ?? []);
+                if (errors is not null && errors.ToList().Count > 0)
+                {
+                    foundReference?.ChangeErrors("database", errors.ToList());
+                }
             }
             RefreshManagingStudents();
         }
