@@ -17,13 +17,29 @@ using Windows.Storage;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for handling submission-related operations.
+    /// </summary>
     public class SubmissionViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Gets or sets the submission details.
+        /// </summary>
         public Submission Submission { get; set; }
+
+        /// <summary>
+        /// Gets or sets the student details.
+        /// </summary>
         public Student Student { get; set; }
 
+        /// <summary>
+        /// Gets or sets the user details.
+        /// </summary>
         public User User { get; set; }
 
+        /// <summary>
+        /// Gets or sets the assignment details.
+        /// </summary>
         public Assignment Assignment { get; set; }
 
         private ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
@@ -32,16 +48,32 @@ namespace LearningManagementSystem.ViewModels
         private readonly FileHelper FileHelper = new FileHelper();
         private readonly UserService userService = new UserService();
 
+        /// <summary>
+        /// Command to update the submission.
+        /// </summary>
         public ICommand UpdateCommand { get; }
+
+        /// <summary>
+        /// Command to download the submission.
+        /// </summary>
         public ICommand DownloadCommand { get; }
 
+        /// <summary>
+        /// Command to delete the submission.
+        /// </summary>
         public ICommand DeleteCommand { get; }
 
+        /// <summary>
+        /// Command to grade the submission.
+        /// </summary>
         public ICommand GradeCommand { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubmissionViewModel"/> class.
+        /// </summary>
         public SubmissionViewModel()
         {
-            _dao = App.Current.Services.GetService<IDao>();;
+            _dao = App.Current.Services.GetService<IDao>(); ;
             Submission = new Submission();
             Student = new Student();
             Assignment = new Assignment();
@@ -51,9 +83,14 @@ namespace LearningManagementSystem.ViewModels
             DeleteCommand = new AsyncRelayCommand(DeleteSubmission, CanDeleteSubmission);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubmissionViewModel"/> class with specified submission and assignment.
+        /// </summary>
+        /// <param name="submission">The submission details.</param>
+        /// <param name="assignment">The assignment details.</param>
         public SubmissionViewModel(Submission submission, Assignment assignment)
         {
-            _dao = App.Current.Services.GetService<IDao>();;
+            _dao = App.Current.Services.GetService<IDao>(); ;
             Submission = submission;
             Student = _dao.GetStudentByUserId(submission.UserId);
             Assignment = assignment;
@@ -64,16 +101,26 @@ namespace LearningManagementSystem.ViewModels
             GradeCommand = new RelayCommand(GradeSubmission, CanGradeSubmission);
         }
 
+        /// <summary>
+        /// Determines whether the submission can be graded.
+        /// </summary>
+        /// <returns><c>true</c> if the submission can be graded; otherwise, <c>false</c>.</returns>
         private bool CanGradeSubmission()
         {
             return User.Role == RoleEnum.GetStringValue(Role.Teacher);
         }
 
+        /// <summary>
+        /// Grades the submission.
+        /// </summary>
         private void GradeSubmission()
         {
             _dao.UpdateSubmission(Submission);
         }
 
+        /// <summary>
+        /// Updates the submission.
+        /// </summary>
         public async Task UpdateSubmission()
         {
             try
@@ -105,11 +152,19 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Determines whether the submission can be updated.
+        /// </summary>
+        /// <returns><c>true</c> if the submission can be updated; otherwise, <c>false</c>.</returns>
         public bool CanUpdateSubmission()
         {
             return User.Role == "student" && DateTime.Now < Assignment.DueDate;
         }
 
+        /// <summary>
+        /// Updates the submission details.
+        /// </summary>
+        /// <param name="selectedFile">The selected file.</param>
         public async Task UpdateSubmissionDetails(StorageFile selectedFile)
         {
             Submission.SubmissionDate = DateTime.Now;
@@ -118,6 +173,9 @@ namespace LearningManagementSystem.ViewModels
             Submission.FilePath = await _cloudinaryService.UploadFileAsync(selectedFile.Path);
         }
 
+        /// <summary>
+        /// Downloads the submission.
+        /// </summary>
         public async Task DownloadSubmission()
         {
             try
@@ -147,6 +205,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Deletes the submission.
+        /// </summary>
         public async Task DeleteSubmission()
         {
             try
@@ -159,7 +220,7 @@ namespace LearningManagementSystem.ViewModels
                 _dao.DeleteSubmissionById(Submission.Id);
                 UpdateBusyStatus(false);
                 WeakReferenceMessenger.Default.Send(new DeleteSubmissionMessage(this));
-                
+
             }
             catch (Exception ex)
             {
@@ -168,12 +229,20 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Determines whether the submission can be deleted.
+        /// </summary>
+        /// <returns><c>true</c> if the submission can be deleted; otherwise, <c>false</c>.</returns>
         public bool CanDeleteSubmission()
         {
             var role = UserService.GetCurrentUser().Result.Role.ToString();
             return role == "student" && DateTime.Now < Assignment.DueDate;
         }
 
+        /// <summary>
+        /// Updates the busy status.
+        /// </summary>
+        /// <param name="isBusy">if set to <c>true</c> [is busy].</param>
         private void UpdateBusyStatus(bool isBusy)
         {
             WeakReferenceMessenger.Default.Send(new BusyMessage(isBusy));

@@ -29,20 +29,35 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class EditUser : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for the EditUser page.
+        /// </summary>
         public EditUserViewModel ViewModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of roles.
+        /// </summary>
         public ObservableCollection<string> Roles { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditUser"/> class.
+        /// </summary>
         public EditUser()
         {
             this.InitializeComponent();
             Roles = new ObservableCollection<string>
-            {
-                "admin",
-                "student",
-                "teacher"
-            };
+                {
+                    "admin",
+                    "student",
+                    "teacher"
+                };
             ViewModel = new EditUserViewModel();
         }
 
+        /// <summary>
+        /// Invoked when the Page is loaded and becomes the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The event data is representative of the pending navigation that will load the current Page. Usually, the most relevant property to examine is Parameter.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var oldTableUser = e.Parameter as TableUsersView;
@@ -65,6 +80,11 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Handles the Click event of the cancel button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -89,9 +109,14 @@ namespace LearningManagementSystem.Views
 
         }
 
+        /// <summary>
+        /// Handles the Click event of the save button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Regex emailRegex = new(@"^\d{8}@student\.hcmus\.edu\.vn$|^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             if (!emailRegex.IsMatch(inputEmail.Text))
             {
                 await new ContentDialog
@@ -148,6 +173,11 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the Click event of the reset password button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void resetPasswordBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog

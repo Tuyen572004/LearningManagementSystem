@@ -25,9 +25,19 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddClass : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for managing Class entities.
+        /// </summary>
         private ClassViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing Course entities.
+        /// </summary>
         private CourseViewModel CrsViewModel { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddClass"/> class.
+        /// </summary>
         public AddClass()
         {
             this.InitializeComponent();
@@ -36,6 +46,12 @@ namespace LearningManagementSystem.Views
             coursesComboBox.ItemsSource = CrsViewModel.Courses;
         }
 
+        /// <summary>
+        /// Handles the Click event of the cancel button.
+        /// Displays a confirmation dialog and navigates back if confirmed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -46,7 +62,6 @@ namespace LearningManagementSystem.Views
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No"
             };
-
 
             var result = await ctDialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -59,6 +74,12 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the Click event of the save button.
+        /// Validates input fields and inserts a new class if valid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
             if (inputClassCode.Text.Length == 0)

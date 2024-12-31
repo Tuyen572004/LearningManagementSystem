@@ -14,37 +14,105 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// Interface for holding a temporary user.
+    /// </summary>
     public interface ITemporaryUserHolder
     {
+        /// <summary>
+        /// The ID for a newly holding user.
+        /// </summary>
         public static readonly int NewlyHoldingUserId = -69000;
+
+        /// <summary>
+        /// Gets or sets the holding user.
+        /// </summary>
         protected User? HoldingUser { get; set; }
 
+        /// <summary>
+        /// Sets the holding user.
+        /// </summary>
+        /// <param name="newUser">The new user to hold.</param>
         public void SetHoldingUser(User? newUser) => HoldingUser = newUser;
-        // Prevent Automatic Column Generation on this property in DataGrid
-        public void GetHoldingUserByReference(ref User? user) => user = HoldingUser; 
+
+        /// <summary>
+        /// Gets the holding user by reference.
+        /// </summary>
+        /// <param name="user">The user reference to set.</param>
+        public void GetHoldingUserByReference(ref User? user) => user = HoldingUser;
     }
+    /// <summary>
+    /// Enum representing the target of a user assignment.
+    /// </summary>
     public enum UserAssignmentTarget { Student, Teacher }
+    /// <summary>
+    /// Message class for user assignment confirmation.
+    /// </summary>
+    /// <param name="isConfirmed">Indicates if the assignment is confirmed.</param>
+    /// <param name="target">The target of the assignment.</param>
     public class UserAssignmentMessage(bool isConfirmed, UserAssignmentTarget target)
     {
         private readonly UserAssignmentTarget _target = target;
         private readonly bool _isConfirm = isConfirmed;
-        public bool IsConfirm => _isConfirm;
-        public UserAssignmentTarget Target => _target;
 
+        /// <summary>
+        /// Gets a value indicating whether the assignment is confirmed.
+        /// </summary>
+        public bool IsConfirm => _isConfirm;
+
+        /// <summary>
+        /// Gets the target of the assignment.
+        /// </summary>
+        public UserAssignmentTarget Target => _target;
     }
-    partial class UserAssignmentViewModel(IDao dao, UserService userService): CUDViewModel(dao)
+    /// <summary>
+    /// ViewModel for user assignment.
+    /// </summary>
+    /// <param name="dao">The data access object.</param>
+    /// <param name="userService">The user service.</param>
+    partial class UserAssignmentViewModel(IDao dao, UserService userService) : CUDViewModel(dao)
     {
+        /// <summary>
+        /// The assignment confirmation message.
+        /// </summary>
         public static readonly string AssignmentConfimation = "AssignmentConfirm";
 
         private readonly UserService _userService = userService;
+
+        /// <summary>
+        /// Gets the order of columns.
+        /// </summary>
         public override IEnumerable<string> ColumnOrder => ["Username", "Password", "Email"];
+
+        /// <summary>
+        /// Gets the columns to ignore.
+        /// </summary>
         public override IEnumerable<string> IgnoringColumns => ["Id", "Role", "CreatedAt", "PasswordHash"];
+
+        /// <summary>
+        /// Gets the column converters.
+        /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => base.ColumnConverters;
 
+        /// <summary>
+        /// Gets the message of the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the message of.</param>
+        /// <returns>The message of the item.</returns>
         public override InfoBarMessage? GetMessageOf(object item) => null;
 
+        /// <summary>
+        /// Gets the row status of the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the row status of.</param>
+        /// <returns>The row status of the item.</returns>
         public override RowStatus? GetRowStatus(object item) => null;
 
+        /// <summary>
+        /// Converts the input string to lowercase and removes spaces.
+        /// </summary>
+        /// <param name="input">The input string.</param>
+        /// <returns>The processed string.</returns>
         static private string ToLowerCaseNoSpaces(string input)
         {
             return input.ToLower().Replace(" ", "");
@@ -82,8 +150,10 @@ namespace LearningManagementSystem.ViewModels
 
         private readonly List<object> _originalObjects = [];
         private readonly Dictionary<int, User> _userMapper = [];
+
         private readonly HashSet<User> _invalidUsers = [];
         // Note that students and teachers should not both in the same list, as their ids may conflict.
+
         public void ConvertObjectsToUsersThenPopulate(IEnumerable<object> objects)
         {
             List<object> newUsers = [];
@@ -202,6 +272,9 @@ namespace LearningManagementSystem.ViewModels
             PopulateItems(newUsers);
         }
 
+        /// <summary>
+        /// Confirms the assignment of users.
+        /// </summary>
         public void OnConfirmAssignment()
         {
             foreach (var originalObject in _originalObjects)

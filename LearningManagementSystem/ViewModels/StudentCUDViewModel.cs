@@ -14,8 +14,15 @@ using System.Linq;
 
 namespace LearningManagementSystem.ViewModels
 {
-    public partial class StudentCUDViewModel: BaseViewModel, ITableItemProvider, IPagingProvider, IInfoProvider, IRowStatusDeterminer, IDisposable
+    /// <summary>
+    /// ViewModel for managing Create, Update, and Delete operations for students.
+    /// </summary>
+    public partial class StudentCUDViewModel : BaseViewModel, ITableItemProvider, IPagingProvider, IInfoProvider, IRowStatusDeterminer, IDisposable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StudentCUDViewModel"/> class.
+        /// </summary>
+        /// <param name="dao">The data access object for interacting with the database.</param>
         public StudentCUDViewModel(IDao dao)
         {
             _dao = dao;
@@ -27,21 +34,32 @@ namespace LearningManagementSystem.ViewModels
                 }
             });
         }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="StudentCUDViewModel"/> class.
+        /// </summary>
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
+        /// <summary>
+        /// The default number of rows per page.
+        /// </summary>
         public static readonly int DEFAULT_ROWS_PER_PAGE = 10;
         private readonly IDao _dao;
 
         /// <summary>
-        /// Should be non-zero all the time
+        /// Gets or sets the current page number. Should be non-zero all the time.
         /// </summary>
         public int CurrentPage { get; internal set; } = 1;
         private int _rowsPerPage = DEFAULT_ROWS_PER_PAGE;
 
+        /// <summary>
+        /// Gets or sets the number of rows per page.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when the value is less than or equal to 0.</exception>
         [AlsoNotifyFor(nameof(PageCount))]
         public int RowsPerPage
         {
@@ -56,23 +74,66 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the total number of items.
+        /// </summary>
         [AlsoNotifyFor(nameof(PageCount))]
         public int ItemCount { get; private set; } = 0;
+
+        /// <summary>
+        /// Gets the total number of pages.
+        /// </summary>
         public int PageCount { get => ItemCount / RowsPerPage + ((ItemCount % RowsPerPage > 0) ? 1 : 0); }
+
+        /// <summary>
+        /// Gets the collection of students currently being managed.
+        /// </summary>
         public ObservableCollection<StudentVer2> ManagingStudents { get; private set; } = [];
+
+        /// <summary>
+        /// Gets the collection of items currently being managed.
+        /// </summary>
         public ObservableCollection<object> ManagingItems { get; private set; } = [];
+
+        /// <summary>
+        /// Gets the columns to be ignored.
+        /// </summary>
         public IEnumerable<string> IgnoringColumns => [];
+
+        /// <summary>
+        /// Gets the order of columns.
+        /// </summary>
         public IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo", "EnrollmentYear", "GraduationYear"];
+
+        /// <summary>
+        /// Gets the column converters.
+        /// </summary>
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
-            ("UserId", new NegativeIntToNewMarkerConverter()),
-            ("GraduationYear", new NullableIntToStringConverter()),
-            ("BirthDate", new DateTimeToStringConverter()),
-            ];
+                ("UserId", new NegativeIntToNewMarkerConverter()),
+                ("GraduationYear", new NullableIntToStringConverter()),
+                ("BirthDate", new DateTimeToStringConverter()),
+                ];
+
+        /// <summary>
+        /// Gets the read-only columns.
+        /// </summary>
         public IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
+
+        /// <summary>
+        /// Gets the collection of all students.
+        /// </summary>
         public ObservableCollection<StudentVer2> AllStudents { get; private set; } = [];
+
+        /// <summary>
+        /// Gets or sets the sort criteria.
+        /// </summary>
         public List<SortCriteria>? SortCriteria { get; private set; } = null;
 
+        /// <summary>
+        /// Navigates to the specified page number.
+        /// </summary>
+        /// <param name="pageNumber">The page number to navigate to.</param>
         public void NavigateToPage(int pageNumber)
         {
             if (pageNumber < 1)
@@ -86,6 +147,9 @@ namespace LearningManagementSystem.ViewModels
             return;
         }
 
+        /// <summary>
+        /// Sorts the students by the specified criteria.
+        /// </summary>
         private void SortByItsCriteria()
         {
             if (SortCriteria is null || SortCriteria.Count == 0)
@@ -108,6 +172,10 @@ namespace LearningManagementSystem.ViewModels
             }
             AllStudents = new ObservableCollection<StudentVer2>(sortResult);
         }
+
+        /// <summary>
+        /// Refreshes the collection of students currently being managed.
+        /// </summary>
         public void RefreshManagingStudents()
         {
             SortByItsCriteria();
@@ -120,6 +188,9 @@ namespace LearningManagementSystem.ViewModels
             RaisePropertyChanged(nameof(ManagingItems));
         }
 
+        /// <summary>
+        /// Refreshes the total number of items.
+        /// </summary>
         public void RefreshItemCount()
         {
             ItemCount = AllStudents.Count;
@@ -130,6 +201,11 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Handles changes in the sort criteria.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The new sort criteria.</param>
         public void HandleSortChange(object? sender, List<SortCriteria>? e)
         {
             if (sender is null)
@@ -139,15 +215,37 @@ namespace LearningManagementSystem.ViewModels
             SortCriteria = e;
             RefreshManagingStudents();
         }
+
+        /// <summary>
+        /// Gets the event handler for sort changes.
+        /// </summary>
         public EventHandler<List<SortCriteria>> SortChangedHandler => HandleSortChange;
 
+        /// <summary>
+        /// Event triggered when invalid students are transferred.
+        /// </summary>
         public event EventHandler<IList<StudentVer2>>? OnInvalidStudentsTranferred;
+
+        /// <summary>
+        /// Handles the transfer of a single student.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The student being transferred.</param>
         public void HandleStudentTransfer(object? sender, object e)
         {
             HandleStudentsTransfer(sender, [e]);
         }
+
+        /// <summary>
+        /// Gets the event handler for student transfers.
+        /// </summary>
         public EventHandler<object> StudentTransferHandler => HandleStudentTransfer;
 
+        /// <summary>
+        /// Handles the transfer of multiple students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The list of students being transferred.</param>
         public void HandleStudentsTransfer(object? sender, IList<object> e)
         {
             if (sender is null)
@@ -177,8 +275,17 @@ namespace LearningManagementSystem.ViewModels
                 OnInvalidStudentsTranferred?.Invoke(this, invalidStudents);
             }
         }
+
+        /// <summary>
+        /// Gets the event handler for multiple student transfers.
+        /// </summary>
         public EventHandler<IList<object>> StudentsTransferHandler => HandleStudentsTransfer;
 
+        /// <summary>
+        /// Handles the editing of a student.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The old and new student data.</param>
         public void HandleStudentEdit(object? sender, (object oldItem, object newItem) e)
         {
             if (e.oldItem is not StudentVer2 oldStudent || e.newItem is not StudentVer2 newStudent)
@@ -201,8 +308,17 @@ namespace LearningManagementSystem.ViewModels
             existingStudent.Copy(newStudent);
             RefreshManagingStudents();
         }
+
+        /// <summary>
+        /// Gets the event handler for student edits.
+        /// </summary>
         EventHandler<(object oldItem, object newItem)> ITableItemProvider.ItemEdittedHandler => HandleStudentEdit;
 
+        /// <summary>
+        /// Handles the removal of students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The list of students being removed.</param>
         public void HandleStudentsRemoval(object? sender, IList<object> e)
         {
             if (sender is null)
@@ -220,11 +336,23 @@ namespace LearningManagementSystem.ViewModels
             RefreshItemCount();
             RefreshManagingStudents();
         }
-        
+
+        /// <summary>
+        /// Gets the event handler for student removals.
+        /// </summary>
         public EventHandler<IList<object>> StudentsRemoveHandler => HandleStudentsRemoval;
 
+        /// <summary>
+        /// Event triggered when the selection of students changes.
+        /// </summary>
         public event EventHandler<IList<object>>? StudentsSelectionChanged;
         private int _nextIdForCreation = -1;
+
+        /// <summary>
+        /// Handles the creation of new students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
         public void HandleStudentsCreation(object? sender, EventArgs e)
         {
             if (sender is null)
@@ -251,12 +379,25 @@ namespace LearningManagementSystem.ViewModels
             }
             StudentsSelectionChanged?.Invoke(this, [emptyStudent]);
         }
+
+        /// <summary>
+        /// Gets the event handler for student creation.
+        /// </summary>
         public EventHandler StudentsCreationHandler => HandleStudentsCreation;
 
+        /// <summary>
+        /// Event triggered when students are updated.
+        /// </summary>
         public event EventHandler<(
             IList<StudentVer2> updatedStudents,
             IList<(StudentVer2 student, IEnumerable<String> errors)> invalidStudentsInfo
             )>? OnStudentsUpdated;
+
+        /// <summary>
+        /// Handles the update of students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The list of students being updated.</param>
         public void HandleStudentsUpdate(object? sender, IList<object> e)
         {
             if (sender is null)
@@ -286,14 +427,6 @@ namespace LearningManagementSystem.ViewModels
             var (addedStudents, addedCount, invalidAddingStudents) = _dao.AddStudents(validAddingStudents);
             var (updatedStudents, updatedCount, invalidUpdatingStudents) = _dao.UpdateStudents(validUpdatingStudents);
 
-            //invalidStudentsInfo.AddRange(
-            //    validAddingStudents
-            //        .Where(x => addedStudents.Where(a => a.Equals(x)).Any())
-            //        .Select(x => {
-            //            (StudentVer2 student, IEnumerable<String> errors) = (x, ["Added failed in database"]);
-            //            return (student, errors);
-            //            })
-            //    );
             invalidStudentsInfo.AddRange(invalidAddingStudents);
             invalidStudentsInfo.AddRange(invalidUpdatingStudents);
 
@@ -301,8 +434,17 @@ namespace LearningManagementSystem.ViewModels
             var modifiedStudents = e.Cast<StudentVer2>().Where(x => !invalidStudents.Contains(x)).ToList() ?? [];
             OnStudentsUpdated?.Invoke(this, (modifiedStudents, invalidStudentsInfo));
         }
+
+        /// <summary>
+        /// Gets the event handler for student updates.
+        /// </summary>
         public EventHandler<IList<object>> StudentsUpdateHandler => HandleStudentsUpdate;
 
+        /// <summary>
+        /// Handles the deletion of students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The list of students being deleted.</param>
         public void HandleStudentsDelete(object? sender, IList<object> e)
         {
             if (sender is null)
@@ -310,20 +452,19 @@ namespace LearningManagementSystem.ViewModels
                 return;
             }
             var (deletedStudents, deletedCount, invalidStudentsInfo) = _dao.DeleteStudents(e.Cast<StudentVer2>());
-            //for (int i = AllStudents.Count - 1; i >= 0; i--)
-            //{
-            //    var currentStudent = AllStudents[i];
-            //    if (deletedStudents.Contains(currentStudent))
-            //    {
-            //        AllStudents.RemoveAt(i);
-            //    }
-            //}
-            //RefreshItemCount();
-            //RefreshManagingStudents();
             OnStudentsUpdated?.Invoke(this, (deletedStudents, invalidStudentsInfo));
         }
+
+        /// <summary>
+        /// Gets the event handler for student deletions.
+        /// </summary>
         public EventHandler<IList<object>> StudentsDeleteHandler => HandleStudentsDelete;
 
+        /// <summary>
+        /// Handles the addition of errors to students.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The list of students and their errors.</param>
         public void HandleStudentsErrorsAdded(object? sender, IList<(StudentVer2 student, IEnumerable<String> errors)> e)
         {
             if (sender is null)
@@ -340,8 +481,17 @@ namespace LearningManagementSystem.ViewModels
             }
             RefreshManagingStudents();
         }
+
+        /// <summary>
+        /// Gets the event handler for adding errors to students.
+        /// </summary>
         public EventHandler<IList<(StudentVer2 student, IEnumerable<String> errors)>> StudentsErrorsAddedHandler => HandleStudentsErrorsAdded;
 
+        /// <summary>
+        /// Gets the message for the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the message for.</param>
+        /// <returns>The message for the item.</returns>
         InfoBarMessage? IInfoProvider.GetMessageOf(object item)
         {
             if (item is StudentVer2 student)
@@ -361,6 +511,11 @@ namespace LearningManagementSystem.ViewModels
             return null;
         }
 
+        /// <summary>
+        /// Gets the row status for the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the row status for.</param>
+        /// <returns>The row status for the item.</returns>
         public RowStatus? GetRowStatus(object item)
         {
             if (item is StudentVer2 student)

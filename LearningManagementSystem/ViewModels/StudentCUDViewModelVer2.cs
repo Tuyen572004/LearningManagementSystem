@@ -13,9 +13,16 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for handling Create, Update, and Delete operations for Student entities.
+    /// </summary>
     partial class StudentCUDViewModelVer2 : CUDViewModel, IDisposable
     {
-        public StudentCUDViewModelVer2(IDao dao): base(dao)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StudentCUDViewModelVer2"/> class.
+        /// </summary>
+        /// <param name="dao">The data access object for interacting with the database.</param>
+        public StudentCUDViewModelVer2(IDao dao) : base(dao)
         {
             WeakReferenceMessenger.Default.Register<UserAssignmentMessage>(this, (r, m) =>
             {
@@ -25,21 +32,45 @@ namespace LearningManagementSystem.ViewModels
                 }
             });
         }
+
+        /// <summary>
+        /// Disposes the ViewModel and unregisters all messages.
+        /// </summary>
         public void Dispose()
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
+
+        /// <summary>
+        /// Gets the order of columns for display.
+        /// </summary>
         public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "StudentCode", "StudentName", "Email", "BirthDate", "PhoneNo"];
+
+        /// <summary>
+        /// Gets the columns to be ignored.
+        /// </summary>
         public override IEnumerable<string> IgnoringColumns => [];
+
+        /// <summary>
+        /// Gets the column converters for specific columns.
+        /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
-            ("UserId", new NegativeIntToNewMarkerConverter()),
-            ("GraduationYear", new NullableIntToStringConverter()),
-            ("BirthDate", new DateTimeToStringConverter()),
-            ];
+                ("UserId", new NegativeIntToNewMarkerConverter()),
+                ("GraduationYear", new NullableIntToStringConverter()),
+                ("BirthDate", new DateTimeToStringConverter()),
+                ];
+
+        /// <summary>
+        /// Gets the read-only columns.
+        /// </summary>
         public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
 
-        // Required override from CUDViewModel
+        /// <summary>
+        /// Gets the message associated with a specific item.
+        /// </summary>
+        /// <param name="item">The item to get the message for.</param>
+        /// <returns>An <see cref="InfoBarMessage"/> if there are errors, otherwise null.</returns>
         public override InfoBarMessage? GetMessageOf(object item)
         {
             if (item is StudentVer2 student)
@@ -59,6 +90,11 @@ namespace LearningManagementSystem.ViewModels
             return null;
         }
 
+        /// <summary>
+        /// Gets the row status of a specific item.
+        /// </summary>
+        /// <param name="item">The item to get the row status for.</param>
+        /// <returns>A <see cref="RowStatus"/> indicating the status of the row.</returns>
         public override RowStatus? GetRowStatus(object item)
         {
             if (item is StudentVer2 student)
@@ -76,8 +112,11 @@ namespace LearningManagementSystem.ViewModels
             return null;
         }
 
-        // Functional overrides
-        public override GroupValidator? TransferingItemFilter => (newItem, existingItems) => {
+        /// <summary>
+        /// Validates if the new item can be transferred to the managing items.
+        /// </summary>
+        public override GroupValidator? TransferingItemFilter => (newItem, existingItems) =>
+        {
             var existingStudents = existingItems.OfType<StudentVer2>();
             var newStudent = newItem as StudentVer2;
             var existingStudent = existingStudents.FirstOrDefault(s => s.Id == newStudent?.Id);
@@ -88,6 +127,9 @@ namespace LearningManagementSystem.ViewModels
             return true;
         };
 
+        /// <summary>
+        /// Validates if the edited item exists in the managing items.
+        /// </summary>
         public override GroupSelector? OldItemValidationOnEditing => (newItem, existingItems) =>
         {
             var existingStudents = existingItems.OfType<StudentVer2>();
@@ -100,6 +142,9 @@ namespace LearningManagementSystem.ViewModels
             return null;
         };
 
+        /// <summary>
+        /// Transforms the edited item before updating the managing items.
+        /// </summary>
         public override ItemTransformer? ItemTransformerOnEditting => (object oldItem, ref object newItem) =>
         {
             if (newItem is not StudentVer2 newStudent || oldItem is not StudentVer2 oldStudent)
@@ -112,11 +157,19 @@ namespace LearningManagementSystem.ViewModels
             }
         };
 
+        /// <summary>
+        /// Updates the existing item with the new item.
+        /// </summary>
         public override ItemTransformer? ExistingItemTransformerOnEditting => (object newItem, ref object existingItem) =>
         {
             (existingItem as StudentVer2)?.Copy(newItem as StudentVer2);
         };
 
+        /// <summary>
+        /// Returns an empty item for adding.
+        /// </summary>
+        /// <param name="identitySeed">The identity seed for generating unique IDs.</param>
+        /// <returns>An empty <see cref="StudentVer2"/> object.</returns>
         public override object? EmptyItem(ref object? identitySeed)
         {
             if (identitySeed is int identitySeedInt)
@@ -132,10 +185,19 @@ namespace LearningManagementSystem.ViewModels
             return newEmptyStudent;
         }
 
+        /// <summary>
+        /// Checks if the item is valid for adding.
+        /// </summary>
         public override ItemChecker? ItemCheckForAdd => (object item) => item is StudentVer2 student && student.Id < 0;
 
+        /// <summary>
+        /// Checks if the item is valid for updating.
+        /// </summary>
         public override ItemChecker? ItemCheckForUpdate => (object item) => item is StudentVer2 student && student.Id >= 0;
 
+        /// <summary>
+        /// Inserts the items into the database.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var (addedStudents, addedCount, invalidStudentInfo) = _dao.AddStudents(items.OfType<StudentVer2>());
@@ -146,6 +208,9 @@ namespace LearningManagementSystem.ViewModels
             );
         };
 
+        /// <summary>
+        /// Updates the items in the database.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoUpdater => (IEnumerable<object> items) =>
         {
             var (updatedStudents, updatedCount, invalidStudentInfo) = _dao.UpdateStudents(items.OfType<StudentVer2>());
@@ -156,6 +221,9 @@ namespace LearningManagementSystem.ViewModels
             );
         };
 
+        /// <summary>
+        /// Deletes the items from the database.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var (deletedStudents, deletedCount, invalidStudentInfo) = _dao.DeleteStudents(items.OfType<StudentVer2>());

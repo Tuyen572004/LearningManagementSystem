@@ -23,6 +23,9 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class LoginWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginWindow"/> class.
+        /// </summary>
         public LoginWindow()
         {
             this.InitializeComponent();

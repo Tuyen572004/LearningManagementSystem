@@ -208,11 +208,11 @@ namespace LearningManagementSystem.DataAccess
         /// <param name="user">The user to retrieve.</param>
         public void GetFullUser(User user)
         {
-            var sql = "SELECT * FROM Users WHERE username=@Username AND passwordhash=@PasswordHash";
+            var sql = "SELECT * FROM Users WHERE email=@email AND passwordhash=@PasswordHash";
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
-                command.Parameters.AddWithValue("@Username", user.Username);
+                command.Parameters.AddWithValue("@email", user.Email);
                 command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
 
                 connection.Open();
@@ -236,11 +236,11 @@ namespace LearningManagementSystem.DataAccess
         /// <returns>True if the user exists, otherwise false.</returns>
         public bool CheckUserInfo(User user)
         {
-            var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE Username=@username AND PasswordHash=@passwordhash";
+            var sql = "SELECT COUNT(*) AS TotalItems FROM Users WHERE email=@email AND PasswordHash=@passwordhash";
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
-                command.Parameters.AddWithValue("@username", user.Username);
+                command.Parameters.AddWithValue("@email", user.Email);
                 command.Parameters.AddWithValue("@passwordhash", user.PasswordHash);
 
                 connection.Open();

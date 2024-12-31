@@ -10,15 +10,29 @@ namespace LearningManagementSystem.ViewModels
 {
     public class ClassDetailViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Gets or sets the EnrollmentViewModel.
+        /// </summary>
         public EnrollmentClassViewModel EnrollmentViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ResourceViewModel.
+        /// </summary>
         public ResourceViewModel ResourceViewModel { get; set; }
 
+        /// <summary>
+        /// Indicates whether the current user can edit.
+        /// </summary>
         public readonly bool CanEdit;
 
+        /// <summary>
+        /// Event handler for ComboBox selection changes.
+        /// </summary>
         public SelectionChangedEventHandler ComboBox_SelectionChanged { get; }
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClassDetailViewModel"/> class.
+        /// </summary>
         public ClassDetailViewModel()
         {
             EnrollmentViewModel = new EnrollmentClassViewModel();
@@ -26,9 +40,13 @@ namespace LearningManagementSystem.ViewModels
             CanEdit = !UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
 
             ComboBox_SelectionChanged = new SelectionChangedEventHandler(OnSelectionChanged);
-           
         }
 
+        /// <summary>
+        /// Handles the ComboBox selection change event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Get the selected item
@@ -48,7 +66,7 @@ namespace LearningManagementSystem.ViewModels
 
                     WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddAssignment), assignmentViewModel));
                 }
-                else if(selectedCategory.Id == (int)ResourceCategoryEnum.Notification)
+                else if (selectedCategory.Id == (int)ResourceCategoryEnum.Notification)
                 {
                     NotificationViewModel notificationViewModel = new NotificationViewModel();
                     notificationViewModel.Notification.ClassId = EnrollmentViewModel.Class.Id;
@@ -59,7 +77,5 @@ namespace LearningManagementSystem.ViewModels
                 }
             }
         }
-
-       
     }
 }

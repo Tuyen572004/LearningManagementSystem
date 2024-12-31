@@ -20,10 +20,16 @@ using Windows.Storage;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing notifications.
+    /// </summary>
     public class NotificationViewModel : BaseViewModel
     {
         private Notification _notification;
 
+        /// <summary>
+        /// Gets or sets the notification.
+        /// </summary>
         public Notification Notification
         {
             get => _notification;
@@ -46,20 +52,42 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the dependent properties when the notification changes.
+        /// </summary>
         private void UpdateNotificationDependentProperties(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(Notification));
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the ViewModel is busy.
+        /// </summary>
         public bool IsBusy { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the current user is a teacher.
+        /// </summary>
         public bool IsTeacher { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the current user is a student.
+        /// </summary>
         public bool IsStudent => UserService.GetCurrentUser().Result.Role.Equals(RoleEnum.GetStringValue(Role.Student));
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the notification is being edited.
+        /// </summary>
         public bool IsEditing { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the notification is not being edited.
+        /// </summary>
         public bool IsNotEditing => !IsEditing;
 
+        /// <summary>
+        /// Gets the text for the edit button.
+        /// </summary>
         public string EditButtonText => IsEditing ? "Save Changes" : "Edit Notification";
 
         public ICommand ToggleEditCommand { get; }
@@ -74,6 +102,9 @@ namespace LearningManagementSystem.ViewModels
         public FileHelper FileHelper = new FileHelper();
         public IEmailService emailService = App.Current.Services.GetService<IEmailService>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationViewModel"/> class.
+        /// </summary>
         public NotificationViewModel()
         {
             ToggleEditCommand = new RelayCommand(ToggleEditMode);
@@ -87,12 +118,18 @@ namespace LearningManagementSystem.ViewModels
             Notification = new Notification();
         }
 
+        /// <summary>
+        /// Checks the role of the current user.
+        /// </summary>
         private void CheckRole()
         {
             User user = UserService.GetCurrentUser().Result;
             IsTeacher = user.Role.Equals(RoleEnum.GetStringValue(Role.Teacher));
         }
 
+        /// <summary>
+        /// Gets or sets the post date of the notification.
+        /// </summary>
         public DateTimeOffset PostDate
         {
             get => new DateTimeOffset(Notification.PostDate);
@@ -107,6 +144,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the post time of the notification.
+        /// </summary>
         public TimeSpan PostTime
         {
             get => Notification.PostDate.TimeOfDay;
@@ -121,6 +161,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Toggles the edit mode.
+        /// </summary>
         private void ToggleEditMode()
         {
             if (IsEditing)
@@ -135,11 +178,17 @@ namespace LearningManagementSystem.ViewModels
             IsEditing = !IsEditing;
         }
 
+        /// <summary>
+        /// Determines whether the attachment can be deleted.
+        /// </summary>
         private bool CanDeleteAttachment()
         {
             return Notification.FilePath != null && IsTeacher;
         }
 
+        /// <summary>
+        /// Deletes the attachment.
+        /// </summary>
         private async Task DeleteAttachment()
         {
             try
@@ -161,6 +210,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Downloads the attachment.
+        /// </summary>
         private async Task DownloadAttachment()
         {
             if (string.IsNullOrEmpty(Notification.FileName))
@@ -189,6 +241,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Changes the attachment.
+        /// </summary>
         private async Task ChangeAttachment()
         {
             StorageFile selectedFile = await FileHelper.ChooseFile();
@@ -210,11 +265,17 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Determines whether a notification can be added.
+        /// </summary>
         private bool CanAddNotification()
         {
             return !IsStudent;
         }
 
+        /// <summary>
+        /// Adds a new notification.
+        /// </summary>
         private void AddNotification()
         {
             try
@@ -236,6 +297,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the name of the user.
+        /// </summary>
         private string getName(User user)
         {
             if (IsTeacher)
@@ -249,7 +313,9 @@ namespace LearningManagementSystem.ViewModels
             return user.Username;
         }
 
-
+        /// <summary>
+        /// Creates an email request for sending notifications.
+        /// </summary>
         private EmailRequest CreateEmailRequest()
         {
             User user = UserService.GetCurrentUser().Result;
@@ -285,6 +351,9 @@ namespace LearningManagementSystem.ViewModels
 
         }
 
+        /// <summary>
+        /// Sends an email notification.
+        /// </summary>
         private async Task SendEmail()
         {
             try

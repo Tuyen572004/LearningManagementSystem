@@ -1,13 +1,10 @@
 ﻿namespace LearningManagementSystem.ViewModels
 {
-    public class LoginOfStudentPageViewModel: LoginWindowViewModel
+    /// <summary>
+    /// ViewModel for the login page of a student.
+    /// Inherits from <see cref="LoginWindowViewModel"/>.
+    /// </summary>
+    public class LoginOfStudentPageViewModel : LoginWindowViewModel
     {
-
-
-
-
-
-
-
     }
 }

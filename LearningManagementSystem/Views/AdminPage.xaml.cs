@@ -27,25 +27,38 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AdminPage : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for managing the table of users.
+        /// </summary>
         public TableUsersViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing user-related operations and data.
+        /// </summary>
         public UserViewModel UsrViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the collection of options for sorting users.
+        /// </summary>
         public ObservableCollection<string> sortByOptions { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdminPage"/> class.
+        /// </summary>
         public AdminPage()
         {
             this.InitializeComponent();
             ViewModel = new TableUsersViewModel();
             UsrViewModel = new UserViewModel();
             sortByOptions = new ObservableCollection<string>
-            {
-                "Default",
-                "ID",
-                "Username",
-                "Email",
-                "Role",
-                "Created At"
-            };
+                {
+                    "Default",
+                    "ID",
+                    "Username",
+                    "Email",
+                    "Role",
+                    "Created At"
+                };
 
             pagingNavi.Visibility = Visibility.Collapsed;
             sortPanel.Visibility = Visibility.Collapsed;
@@ -54,6 +67,9 @@ namespace LearningManagementSystem.Views
             StartRingProcess();
         }
 
+        /// <summary>
+        /// Starts the ring process animation and loads the user data.
+        /// </summary>
         private async void StartRingProcess()
         {
             for (int i = 0; i <= 100; i++)
@@ -73,8 +89,11 @@ namespace LearningManagementSystem.Views
             UpdatePagingInfo_bootstrap();
         }
 
-
-
+        /// <summary>
+        /// Handles the click event for deleting a user account.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void deleteAccount_Click(object sender, RoutedEventArgs e)
         {
             if (myUsersTable.SelectedItem is TableUsersView selectedUser)
@@ -135,8 +154,6 @@ namespace LearningManagementSystem.Views
                         return;
                     }
 
-
-
                     myUsersTable.SelectedItem = null;
                     ViewModel.TableUsers.Remove(selectedUser);
                     await new ContentDialog()
@@ -154,6 +171,10 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Called when the page is navigated to.
+        /// </summary>
+        /// <param name="e">The event data.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null)
@@ -167,7 +188,6 @@ namespace LearningManagementSystem.Views
                     Email = _oldData.Email,
                     Role = _oldData.Role,
                     CreatedAt = _oldData.CreatedAt
-
                 };
 
                 ViewModel.SelectedUser = oldUser.Clone() as TableUsersView;
@@ -175,21 +195,36 @@ namespace LearningManagementSystem.Views
 
             base.OnNavigatedTo(e);
         }
+
+        /// <summary>
+        /// Handles the click event for changing a user account.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void changeAccount_Click(object sender, RoutedEventArgs e)
         {
             if (myUsersTable.SelectedItem is TableUsersView selectedUser)
             {
                 ViewModel.SelectedUser = selectedUser.Clone() as TableUsersView;
-
-
                 Frame.Navigate(typeof(EditUser), ViewModel.SelectedUser);
             }
         }
 
+        /// <summary>
+        /// Handles the click event for adding a new user account.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void addAccount_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(AddAccount));
         }
+
+        /// <summary>
+        /// Handles the click event for navigating to the previous page.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void previousBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -199,6 +234,11 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the selection changed event for the pages combo box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void pagesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             dynamic item = pagesComboBox.SelectedItem;
@@ -209,6 +249,9 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Updates the paging information for the bootstrap pagination.
+        /// </summary>
         public void UpdatePagingInfo_bootstrap()
         {
             var infoList = new List<object>();
@@ -223,10 +266,13 @@ namespace LearningManagementSystem.Views
 
             pagesComboBox.ItemsSource = infoList;
             pagesComboBox.SelectedIndex = 0;
-
-
-
         }
+
+        /// <summary>
+        /// Handles the click event for navigating to the next page.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void nextBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -236,6 +282,11 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the query submitted event for the auto-suggest box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">The event data.</param>
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             var searchText = args.QueryText;
@@ -244,6 +295,11 @@ namespace LearningManagementSystem.Views
             UpdatePagingInfo_bootstrap();
         }
 
+        /// <summary>
+        /// Handles the suggestion chosen event for the auto-suggest box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">The event data.</param>
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             var searchText = args.SelectedItem.ToString();
@@ -252,6 +308,11 @@ namespace LearningManagementSystem.Views
             UpdatePagingInfo_bootstrap();
         }
 
+        /// <summary>
+        /// Handles the text changed event for the auto-suggest box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">The event data.</param>
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
@@ -280,6 +341,11 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the selection changed event for the sort by combo box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void sortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SortBy = sortByOptions[sortByComboBox.SelectedIndex].Replace(" ", "");
@@ -290,6 +356,11 @@ namespace LearningManagementSystem.Views
             UpdatePagingInfo_bootstrap();
         }
 
+        /// <summary>
+        /// Handles the click event for changing the sort order.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void sortOrder_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.countRepeatButton++;

@@ -25,9 +25,19 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class EditCourses : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for editing courses.
+        /// </summary>
         public EditCourseViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing departments.
+        /// </summary>
         private DepartmentsViewModel DeViewModel { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditCourses"/> class.
+        /// </summary>
         public EditCourses()
         {
             this.InitializeComponent();
@@ -36,13 +46,17 @@ namespace LearningManagementSystem.Views
             departmentComboBox.ItemsSource = DeViewModel.Departments;
         }
 
+        /// <summary>
+        /// Invoked when the Page is loaded and becomes the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The parameter value is a NavigationEventArgs that contains data about the navigation request.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var oldTableCourse = e.Parameter as TableCoursesView;
 
             var oldCourse = new Course
             {
-                Id= oldTableCourse.ID,
+                Id = oldTableCourse.ID,
                 CourseCode = oldTableCourse.CourseCode,
                 CourseDescription = oldTableCourse.CourseDecription,
                 DepartmentId = oldTableCourse.DepartmentID
@@ -59,6 +73,11 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Handles the Click event of the cancel button. Prompts the user to confirm cancellation.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -80,9 +99,13 @@ namespace LearningManagementSystem.Views
             {
                 ctDialog.Hide();
             }
-
         }
 
+        /// <summary>
+        /// Handles the Click event of the save button. Prompts the user to confirm saving changes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new ContentDialog
@@ -100,7 +123,7 @@ namespace LearningManagementSystem.Views
             {
                 var newCourse = new Course
                 {
-                    Id=ViewModel.SelectedCourse.Id,
+                    Id = ViewModel.SelectedCourse.Id,
                     CourseCode = inputCourseCode.Text,
                     CourseDescription = inputCourseDescription.Text,
                     DepartmentId = DeViewModel.FindDepartmentID(RvDepartment.Text)
@@ -115,8 +138,5 @@ namespace LearningManagementSystem.Views
                 dialog.Hide();
             }
         }
-
-
-
     }
 }
