@@ -25,19 +25,21 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        //public MainWindow(EnrollmentClassesViewModel enrollmentClassesViewModel)
-        //{
-        //    this.InitializeComponent();
-        //    // You can now use the enrollmentClassesViewModel as needed
-        //    MainFrame.Navigate(typeof(Views.EnrollmentClassesPage), enrollmentClassesViewModel);
-        //}
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// </summary>
         public MainWindow()
         {
             Title = "Learning Management System";
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Handles the Window Activated event.
+        /// Navigates to the <see cref="EnrollmentClassesPage"/> when the window is activated.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">The event data.</param>
         private void Window_Activated(object sender, WindowActivatedEventArgs args)
         {
             content.Navigate(typeof(EnrollmentClassesPage));

@@ -26,25 +26,37 @@ namespace LearningManagementSystem
 {
     public sealed partial class CoursesPage : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for managing table courses.
+        /// </summary>
         public TableCoursesViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing courses.
+        /// </summary>
         public CourseViewModel CrsViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the collection of options for sorting courses.
+        /// </summary>
         public ObservableCollection<string> sortByOptions { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoursesPage"/> class.
+        /// </summary>
         public CoursesPage()
         {
             this.InitializeComponent();
             ViewModel = new TableCoursesViewModel();
             CrsViewModel = new CourseViewModel();
             sortByOptions = new ObservableCollection<string>
-            {
-                "Default",
-                "ID",
-                "Course Code",
-                "Course Description",
-                "Department ID",
-            };
+                {
+                    "Default",
+                    "ID",
+                    "Course Code",
+                    "Course Description",
+                    "Department ID",
+                };
             myCoursesTable.Visibility = Visibility.Collapsed;
             pagingNavi.Visibility = Visibility.Collapsed;
             SearchBar.Visibility = Visibility.Collapsed;
@@ -52,6 +64,9 @@ namespace LearningManagementSystem
             StartRingProcess();
         }
 
+        /// <summary>
+        /// Starts the ring process animation and loads the courses.
+        /// </summary>
         private async void StartRingProcess()
         {
             for (int i = 0; i <= 100; i++)
@@ -71,12 +86,17 @@ namespace LearningManagementSystem
             UpdatePagingInfo_bootstrap();
         }
 
-
+        /// <summary>
+        /// Navigates to the AddCourse page.
+        /// </summary>
         private void addCourses_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(AddCourse));
         }
 
+        /// <summary>
+        /// Deletes the selected course.
+        /// </summary>
         private async void deleteCourses_Click(object sender, RoutedEventArgs e)
         {
             if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
@@ -131,6 +151,9 @@ namespace LearningManagementSystem
             }
         }
 
+        /// <summary>
+        /// Handles the navigation to the page and sets the selected course if provided.
+        /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter != null)
@@ -150,6 +173,9 @@ namespace LearningManagementSystem
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Navigates to the EditCourses page with the selected course.
+        /// </summary>
         private void changeCourses_Click(object sender, RoutedEventArgs e)
         {
             if (myCoursesTable.SelectedItem is TableCoursesView selectedCourse)
@@ -159,6 +185,9 @@ namespace LearningManagementSystem
             }
         }
 
+        /// <summary>
+        /// Handles the selection change in the pages combo box and loads the selected page.
+        /// </summary>
         private void pagesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             dynamic item = pagesComboBox.SelectedItem;
@@ -169,7 +198,9 @@ namespace LearningManagementSystem
             }
         }
 
-
+        /// <summary>
+        /// Updates the paging information in the combo box.
+        /// </summary>
         public void UpdatePagingInfo_bootstrap()
         {
             var infoList = new List<object>();
@@ -185,6 +216,10 @@ namespace LearningManagementSystem
             pagesComboBox.ItemsSource = infoList;
             pagesComboBox.SelectedIndex = 0;
         }
+
+        /// <summary>
+        /// Handles the click event for the previous button and navigates to the previous page.
+        /// </summary>
         private void previousBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -193,6 +228,10 @@ namespace LearningManagementSystem
                 pagesComboBox.SelectedIndex -= 1;
             }
         }
+
+        /// <summary>
+        /// Handles the text changed event for the AutoSuggestBox and provides suggestions.
+        /// </summary>
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
@@ -221,7 +260,9 @@ namespace LearningManagementSystem
             }
         }
 
-
+        /// <summary>
+        /// Handles the click event for the next button and navigates to the next page.
+        /// </summary>
         private void nextBtn_Click(object sender, RoutedEventArgs e)
         {
             int i = pagesComboBox.SelectedIndex;
@@ -231,6 +272,9 @@ namespace LearningManagementSystem
             }
         }
 
+        /// <summary>
+        /// Handles the query submitted event for the AutoSuggestBox and performs a search.
+        /// </summary>
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             var searchText = args.QueryText;
@@ -239,6 +283,9 @@ namespace LearningManagementSystem
             UpdatePagingInfo_bootstrap();
         }
 
+        /// <summary>
+        /// Handles the suggestion chosen event for the AutoSuggestBox and performs a search.
+        /// </summary>
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             var searchText = args.SelectedItem.ToString();
@@ -247,6 +294,9 @@ namespace LearningManagementSystem
             UpdatePagingInfo_bootstrap();
         }
 
+        /// <summary>
+        /// Handles the click event for the sort order button and updates the sort order.
+        /// </summary>
         private void sortOrder_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.countRepeatButton++;
@@ -268,9 +318,11 @@ namespace LearningManagementSystem
 
             ViewModel.Load();
             UpdatePagingInfo_bootstrap();
-
         }
 
+        /// <summary>
+        /// Handles the selection change event for the sort by combo box and updates the sort field.
+        /// </summary>
         private void sortByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SortBy = sortByOptions[sortByComboBox.SelectedIndex].Replace(" ", "");

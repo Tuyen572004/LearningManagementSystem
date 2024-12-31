@@ -25,7 +25,14 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for the HomePage.
+        /// </summary>
         public HomePageViewModel ViewModel { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomePage"/> class.
+        /// </summary>
         public HomePage()
         {
             this.InitializeComponent();

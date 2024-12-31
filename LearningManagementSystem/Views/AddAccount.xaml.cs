@@ -29,24 +29,43 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddAccount : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for managing user-related operations and data.
+        /// </summary>
         private UserViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the UserService for handling user-related services.
+        /// </summary>
         private UserService MyUserService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the collection of roles available for selection.
+        /// </summary>
         public ObservableCollection<string> Roles { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddAccount"/> class.
+        /// </summary>
         public AddAccount()
         {
             this.InitializeComponent();
             ViewModel = new UserViewModel();
             MyUserService = new UserService();
             Roles = new ObservableCollection<string>
-            {
-                "admin",
-                "student",
-                "teacher"
-            };
+                {
+                    "admin",
+                    "student",
+                    "teacher"
+                };
         }
 
+        /// <summary>
+        /// Handles the click event of the cancel button.
+        /// Displays a confirmation dialog and navigates back if confirmed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -58,7 +77,6 @@ namespace LearningManagementSystem.Views
                 CloseButtonText = "No"
             };
 
-
             var result = await ctDialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
@@ -68,9 +86,14 @@ namespace LearningManagementSystem.Views
             {
                 ctDialog.Hide();
             }
-
         }
 
+        /// <summary>
+        /// Handles the click event of the save button.
+        /// Validates the input, creates a new user, and displays the result.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
             var rawPassword = "12345";

@@ -15,10 +15,21 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class DashBoard : Window
     {
-
+        /// <summary>
+        /// Gets or sets the user service.
+        /// </summary>
         public UserService MyUserService { get; set; }
+
         //public static INavigationService NavigationService { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the window handle.
+        /// </summary>
         public static IntPtr HWND { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DashBoard"/> class.
+        /// </summary>
         public DashBoard()
         {
             Title = "Learning Management System";
@@ -29,6 +40,10 @@ namespace LearningManagementSystem
             MyUserService = new UserService();
             Menu.SelectionChanged += menu_SelectionChanged;
         }
+
+        /// <summary>
+        /// Initializes the dashboard asynchronously.
+        /// </summary>
         private async void InitializeAsync()
         {
             var userRole = await UserService.GetCurrentUserRole();
@@ -42,10 +57,21 @@ namespace LearningManagementSystem
             SetMenuItemVisibility("LearningManagementSystem.Views.EnrollmentClassesPage", !checkAdmin(userRole));
         }
 
+        /// <summary>
+        /// Checks if the user role is admin.
+        /// </summary>
+        /// <param name="userRole">The user role.</param>
+        /// <returns><c>true</c> if the user role is admin; otherwise, <c>false</c>.</returns>
         private bool checkAdmin(string userRole)
         {
             return userRole.Equals(RoleEnum.GetStringValue(Role.Admin));
         }
+
+        /// <summary>
+        /// Sets the visibility of a footer menu item.
+        /// </summary>
+        /// <param name="tag">The tag of the menu item.</param>
+        /// <param name="isVisible">if set to <c>true</c> the menu item is visible; otherwise, it is collapsed.</param>
         private void SetMenuItemVisibilityFooter(string tag, bool isVisible)
         {
             var menuItem = Menu.FooterMenuItems
@@ -57,6 +83,11 @@ namespace LearningManagementSystem
             }
         }
 
+        /// <summary>
+        /// Sets the visibility of a menu item.
+        /// </summary>
+        /// <param name="tag">The tag of the menu item.</param>
+        /// <param name="isVisible">if set to <c>true</c> the menu item is visible; otherwise, it is collapsed.</param>
         private void SetMenuItemVisibility(string tag, bool isVisible)
         {
             var menuItem = Menu.MenuItems
@@ -67,6 +98,12 @@ namespace LearningManagementSystem
                 menuItem.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+        /// <summary>
+        /// Handles the selection changed event of the menu.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="NavigationViewSelectionChangedEventArgs"/> instance containing the event data.</param>
         private async void menu_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is NavigationViewItem item &&
@@ -122,6 +159,10 @@ namespace LearningManagementSystem
             }
         }
 
+        /// <summary>
+        /// Navigates to the page specified by the tag.
+        /// </summary>
+        /// <param name="tag">The tag of the page to navigate to.</param>
         private void NavigateByTag(string tag)
         {
             if (tag == null)

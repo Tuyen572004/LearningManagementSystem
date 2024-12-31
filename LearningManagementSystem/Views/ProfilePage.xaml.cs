@@ -26,8 +26,14 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class ProfilePage : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for the ProfilePage.
+        /// </summary>
         public ProfilePageViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfilePage"/> class.
+        /// </summary>
         public ProfilePage()
         {
             this.InitializeComponent();
@@ -40,6 +46,13 @@ namespace LearningManagementSystem.Views
             UserNameInput.Text = ViewModel.UserName;
             EmailInput.Text = ViewModel.Email;
         }
+
+        /// <summary>
+        /// Handles the Click event of the ChangePasswordBtn control.
+        /// Shows the password change inputs and hides the ChangePassword button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void ChangePasswordBtn_Click(object sender, RoutedEventArgs e)
         {
             ChangePasswordBtn.Visibility = Visibility.Collapsed;
@@ -50,6 +63,9 @@ namespace LearningManagementSystem.Views
             Cancel.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Restarts the application.
+        /// </summary>
         public static void RestartApp()
         {
             var loginWindow = new LoginWindow();
@@ -64,6 +80,13 @@ namespace LearningManagementSystem.Views
             System.Diagnostics.Process.Start(processInfo);
             Application.Current.Exit();
         }
+
+        /// <summary>
+        /// Handles the Click event of the SaveNewPassword control.
+        /// Validates and saves the new password.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private async void SaveNewPassword_Click(object sender, RoutedEventArgs e)
         {
             var oldPassword = OldPasswordInput.Password;
@@ -124,6 +147,12 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the Click event of the SaveChange control.
+        /// Validates and saves the profile changes.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private async void SaveChange_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(UserNameInput.Text))
@@ -180,6 +209,12 @@ namespace LearningManagementSystem.Views
             RestartApp();
         }
 
+        /// <summary>
+        /// Handles the Click event of the Cancel control.
+        /// Hides the password change inputs and shows the ChangePassword button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             OldPasswordInput.Visibility = Visibility.Collapsed;
@@ -190,12 +225,24 @@ namespace LearningManagementSystem.Views
             ChangePasswordBtn.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// Handles the Click event of the EditUserInput control.
+        /// Enables editing of the username input.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void EditUserInput_Click(object sender, RoutedEventArgs e)
         {
             UserNameInput.IsReadOnly = false;
             UserNameInput.Focus(FocusState.Programmatic);
         }
 
+        /// <summary>
+        /// Handles the Click event of the EditEmailInput control.
+        /// Enables editing of the email input.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void EditEmailInput_Click(object sender, RoutedEventArgs e)
         {
             EmailInput.IsReadOnly = false;

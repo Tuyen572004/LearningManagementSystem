@@ -15,12 +15,27 @@ namespace LearningManagementSystem.ViewModels
     partial class TeachersInClassCUDViewModel(IDao dao, int classId) : CUDViewModel(dao)
     {
         private readonly int _classId = classId;
+
+        /// <summary>
+        /// Gets the columns to be ignored.
+        /// </summary>
         public override IEnumerable<string> IgnoringColumns => ["IsValid"];
+
+        /// <summary>
+        /// Gets the order of the columns.
+        /// </summary>
         public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "TeacherCode", "TeacherName", "Email", "PhoneNo"];
+
+        /// <summary>
+        /// Gets the column converters.
+        /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
 
-
-        // Required override from CUDViewModel
+        /// <summary>
+        /// Gets the message of the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the message of.</param>
+        /// <returns>The message of the item, or null if the item is not a Teacher or has no errors.</returns>
         public override InfoBarMessage? GetMessageOf(object item)
         {
             if (item is not Teacher teacher)
@@ -41,6 +56,11 @@ namespace LearningManagementSystem.ViewModels
             return null;
         }
 
+        /// <summary>
+        /// Gets the row status of the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the row status of.</param>
+        /// <returns>The row status of the item, or null if the item is not a Teacher or does not implement INotifyDataErrorInfoExtended.</returns>
         public override RowStatus? GetRowStatus(object item)
         {
             if (item is not Teacher teacher)
@@ -63,7 +83,9 @@ namespace LearningManagementSystem.ViewModels
             return RowStatus.Error;
         }
 
-        // Functional overrides
+        /// <summary>
+        /// Gets the filter for transferring items.
+        /// </summary>
         public override GroupValidator? TransferingItemFilter => (newItem, existingItems) =>
         {
             var existingTeachers = existingItems.Cast<Teacher>();
@@ -76,8 +98,14 @@ namespace LearningManagementSystem.ViewModels
             return true;
         };
 
+        /// <summary>
+        /// Gets the checker for adding items.
+        /// </summary>
         public override ItemChecker? ItemCheckForAdd => (object item) => item is Teacher teacher && teacher.Id >= 0;
 
+        /// <summary>
+        /// Gets the inserter for adding items to the DAO.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var insertingTeachers = items.Cast<Teacher>();
@@ -89,6 +117,9 @@ namespace LearningManagementSystem.ViewModels
             return (addedTeachers.ToList(), addedCount, new List<(object, IEnumerable<string>)>(invalidTeachersInfo));
         };
 
+        /// <summary>
+        /// Gets the deleter for removing items from the DAO.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var deletingTeachers = items.Cast<Teacher>();

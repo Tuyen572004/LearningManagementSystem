@@ -10,15 +10,41 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for the Profile Page.
+    /// </summary>
     public class ProfilePageViewModel : BaseViewModel
     {
         private IDao _dao = null;
 
+        /// <summary>
+        /// Gets or sets the UserService instance.
+        /// </summary>
         public UserService MyUserService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current user.
+        /// </summary>
         private User CurrentUser { get; set; }
+
+        /// <summary>
+        /// Gets or sets the username of the current user.
+        /// </summary>
         public string UserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the email of the current user.
+        /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password of the current user.
+        /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfilePageViewModel"/> class.
+        /// </summary>
         public ProfilePageViewModel()
         {
             MyUserService = new UserService();
@@ -29,6 +55,10 @@ namespace LearningManagementSystem.ViewModels
             Email = CurrentUser.Email;
             Password = CurrentUser.PasswordHash;
         }
+
+        /// <summary>
+        /// Updates the profile of the current user.
+        /// </summary>
         public void UpdateProfile()
         {
             CurrentUser.Username = UserName;

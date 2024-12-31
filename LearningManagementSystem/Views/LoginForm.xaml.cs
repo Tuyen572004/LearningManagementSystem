@@ -29,9 +29,19 @@ namespace LearningManagementSystem
     /// </summary>
     public sealed partial class LoginForm : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for the login window.
+        /// </summary>
         public LoginWindowViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the user service for handling user-related operations.
+        /// </summary>
         public UserService MyUserService { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginForm"/> class.
+        /// </summary>
         public LoginForm()
         {
             this.InitializeComponent();
@@ -39,10 +49,13 @@ namespace LearningManagementSystem
             ViewModel = new LoginWindowViewModel();
         }
 
-
+        /// <summary>
+        /// Handles the click event of the login button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
-
             var username = inputUsername.Text;
             var password = inputPassword.Password;
 
@@ -68,7 +81,6 @@ namespace LearningManagementSystem
                         XamlRoot = this.XamlRoot,
                         Title = "Oops !",
                         Content = "Incorrect Username or Password",
-
                         CloseButtonText = "Try Again"
                     };
                     var result = await ctDialog.ShowAsync();
@@ -81,18 +93,27 @@ namespace LearningManagementSystem
                     XamlRoot = this.XamlRoot,
                     Title = "Error",
                     Content = $"An error occurred: {ex.Message}\nPlease Try Again",
-
                     CloseButtonText = "Try Again"
                 };
                 var result = await ctDialog.ShowAsync();
             }
         }
 
+        /// <summary>
+        /// Handles the checked event of the reveal mode checkbox.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void revealModeCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             inputPassword.PasswordRevealMode = PasswordRevealMode.Visible;
         }
 
+        /// <summary>
+        /// Handles the unchecked event of the reveal mode checkbox.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void revealModeCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             inputPassword.PasswordRevealMode = PasswordRevealMode.Hidden;

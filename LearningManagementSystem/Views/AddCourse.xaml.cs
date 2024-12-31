@@ -14,9 +14,19 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddCourse : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for managing courses.
+        /// </summary>
         private CourseViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing departments.
+        /// </summary>
         private DepartmentsViewModel DeViewModel { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddCourse"/> class.
+        /// </summary>
         public AddCourse()
         {
             this.InitializeComponent();
@@ -25,6 +35,12 @@ namespace LearningManagementSystem.Views
             departmentComboBox.ItemsSource = DeViewModel.Departments;
         }
 
+        /// <summary>
+        /// Handles the Click event of the cancel button.
+        /// Displays a confirmation dialog and navigates back if confirmed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -36,7 +52,6 @@ namespace LearningManagementSystem.Views
                 CloseButtonText = "No"
             };
 
-
             var result = await ctDialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
@@ -46,9 +61,14 @@ namespace LearningManagementSystem.Views
             {
                 ctDialog.Hide();
             }
-
         }
 
+        /// <summary>
+        /// Handles the Click event of the save button.
+        /// Validates the input and saves the course if valid.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
             var course = new Course

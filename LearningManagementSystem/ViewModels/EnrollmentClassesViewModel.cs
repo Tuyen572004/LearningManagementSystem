@@ -9,23 +9,37 @@ using System.Collections.ObjectModel;
 namespace LearningManagementSystem.ViewModels
 {
 
+    /// <summary>
+    /// ViewModel for managing enrollment classes.
+    /// </summary>
     public class EnrollmentClassesViewModel : BaseViewModel
     {
         private IDao _dao; // Private field to hold the dao instance
         public ObservableCollection<EnrollmentClassViewModel> enrolledClassesViewModel { get; set; }
 
         private UserService userService;
-        public EnrollmentClassesViewModel() 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnrollmentClassesViewModel"/> class.
+        /// </summary>
+        public EnrollmentClassesViewModel()
         {
             enrolledClassesViewModel = new FullObservableCollection<EnrollmentClassViewModel>();
-            _dao = App.Current.Services.GetService<IDao>();; 
+            _dao = App.Current.Services.GetService<IDao>(); ;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnrollmentClassesViewModel"/> class with a specified IDao.
+        /// </summary>
+        /// <param name="dao">The data access object to be used by this ViewModel.</param>
         public EnrollmentClassesViewModel(IDao dao) // Constructor accepting IDao
         {
             _dao = dao; // Assign the dao instance to the private field
         }
 
+        /// <summary>
+        /// Loads the enrolled classes for the current user based on their role.
+        /// </summary>
         public void LoadEnrolledClasses()
         {
             var user = UserService.GetCurrentUser().Result;
@@ -33,7 +47,8 @@ namespace LearningManagementSystem.ViewModels
 
             var enrolledClasses = new ObservableCollection<Class>();
 
-            if (role.Equals(RoleEnum.GetStringValue(Role.Student))){
+            if (role.Equals(RoleEnum.GetStringValue(Role.Student)))
+            {
                 var student = _dao.GetStudentByUserId(user.Id);
                 enrolledClasses = _dao.GetEnrolledClassesByStudentId(student.Id);
             }

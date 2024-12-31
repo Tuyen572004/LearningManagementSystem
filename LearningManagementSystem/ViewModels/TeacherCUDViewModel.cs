@@ -13,9 +13,16 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for Create, Update, Delete operations on Teacher entities.
+    /// </summary>
     partial class TeacherCUDViewModel : CUDViewModel, IDisposable
     {
-        public TeacherCUDViewModel(IDao dao): base(dao)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TeacherCUDViewModel"/> class.
+        /// </summary>
+        /// <param name="dao">The data access object.</param>
+        public TeacherCUDViewModel(IDao dao) : base(dao)
         {
             WeakReferenceMessenger.Default.Register<UserAssignmentMessage>(this, (r, m) =>
             {
@@ -25,19 +32,43 @@ namespace LearningManagementSystem.ViewModels
                 }
             });
         }
+
+        /// <summary>
+        /// Disposes the instance and unregisters all messages.
+        /// </summary>
         public void Dispose()
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
+
+        /// <summary>
+        /// Gets the columns to be ignored.
+        /// </summary>
         public override IEnumerable<string> IgnoringColumns => [];
+
+        /// <summary>
+        /// Gets the order of the columns.
+        /// </summary>
         public override IEnumerable<string> ColumnOrder => ["Id", "UserId", "IsValid", "TeacherCode", "TeacherName", "Email", "PhoneNo"];
+
+        /// <summary>
+        /// Gets the read-only columns.
+        /// </summary>
         public override IEnumerable<string> ReadOnlyColumns => ["Id", "UserId", "IsValid"];
+
+        /// <summary>
+        /// Gets the column converters.
+        /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
-            ("UserId", new NegativeIntToNewMarkerConverter()),
-            ];
+                ("UserId", new NegativeIntToNewMarkerConverter()),
+                ];
 
-        // Required override from CUDViewModel
+        /// <summary>
+        /// Gets the message of the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>The message.</returns>
         public override InfoBarMessage? GetMessageOf(object item)
         {
             if (item is not Teacher teacher)
@@ -57,6 +88,12 @@ namespace LearningManagementSystem.ViewModels
             }
             return null;
         }
+
+        /// <summary>
+        /// Gets the row status of the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>The row status.</returns>
         public override RowStatus? GetRowStatus(object item)
         {
             if (item is not Teacher teacher)
@@ -79,7 +116,9 @@ namespace LearningManagementSystem.ViewModels
             return RowStatus.Error;
         }
 
-        // Functional overrides
+        /// <summary>
+        /// Gets the filter for transferring items.
+        /// </summary>
         public override GroupValidator? TransferingItemFilter => (newItem, existingItems) =>
         {
             var existingTeachers = existingItems.Cast<Teacher>();
@@ -92,6 +131,9 @@ namespace LearningManagementSystem.ViewModels
             return true;
         };
 
+        /// <summary>
+        /// Gets the validation for old items on editing.
+        /// </summary>
         public override GroupSelector? OldItemValidationOnEditing => (newItem, existingItems) =>
         {
             var existingTeachers = existingItems.Cast<Teacher>();
@@ -104,13 +146,24 @@ namespace LearningManagementSystem.ViewModels
             return null;
         };
 
+        /// <summary>
+        /// Gets the item transformer on editing.
+        /// </summary>
         public override ItemTransformer? ItemTransformerOnEditting => base.ItemTransformerOnEditting;
 
+        /// <summary>
+        /// Gets the existing item transformer on editing.
+        /// </summary>
         public override ItemTransformer? ExistingItemTransformerOnEditting => (object newItem, ref object existingItem) =>
         {
             (existingItem as Teacher)?.Copy(newItem as Teacher);
         };
 
+        /// <summary>
+        /// Gets an empty item.
+        /// </summary>
+        /// <param name="identitySeed">The identity seed.</param>
+        /// <returns>The empty item.</returns>
         public override object? EmptyItem(ref object? identitySeed)
         {
             if (identitySeed is int identitySeedInt)
@@ -126,10 +179,19 @@ namespace LearningManagementSystem.ViewModels
             return newTeacher;
         }
 
+        /// <summary>
+        /// Checks if the item can be added.
+        /// </summary>
         public override ItemChecker? ItemCheckForAdd => (object item) => item is Teacher teacher && teacher.Id < 0;
 
+        /// <summary>
+        /// Checks if the item can be updated.
+        /// </summary>
         public override ItemChecker? ItemCheckForUpdate => (object item) => item is Teacher teacher && teacher.Id >= 0;
 
+        /// <summary>
+        /// Inserts the specified items.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var (addedTeachers, addedCount, invalidTeachersInfo) = _dao.AddTeachers(items.Cast<Teacher>());
@@ -140,6 +202,9 @@ namespace LearningManagementSystem.ViewModels
             );
         };
 
+        /// <summary>
+        /// Updates the specified items.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoUpdater => (IEnumerable<object> items) =>
         {
             var (updatedTeachers, updatedCount, invalidTeachersInfo) = _dao.UpdateTeachers(items.Cast<Teacher>());
@@ -150,6 +215,9 @@ namespace LearningManagementSystem.ViewModels
             );
         };
 
+        /// <summary>
+        /// Deletes the specified items.
+        /// </summary>
         public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var (deletedTeachers, deletedCount, invalidTeachersInfo) = _dao.DeleteTeachers(items.Cast<Teacher>());

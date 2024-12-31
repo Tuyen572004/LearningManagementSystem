@@ -25,9 +25,19 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class EditClass : Page
     {
+        /// <summary>
+        /// Gets or sets the ViewModel for editing classes.
+        /// </summary>
         public EditClassViewModel ViewModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ViewModel for managing courses.
+        /// </summary>
         private CourseViewModel CrsViewModel { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditClass"/> class.
+        /// </summary>
         public EditClass()
         {
             this.InitializeComponent();
@@ -36,6 +46,10 @@ namespace LearningManagementSystem.Views
             coursesComboBox.ItemsSource = CrsViewModel.Courses;
         }
 
+        /// <summary>
+        /// Invoked when the Page is loaded and becomes the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var oldTableClass = e.Parameter as TableClassesView;
@@ -47,7 +61,6 @@ namespace LearningManagementSystem.Views
                 CourseId = oldTableClass.CourseID,
                 ClassStartDate = oldTableClass.ClassStartDate,
                 ClassEndDate = oldTableClass.ClassEndDate
-
             };
 
             ViewModel.SelectedClass = oldClass.Clone() as Class;
@@ -60,6 +73,11 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Handles the Click event of the cancel button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void cancel_Click(object sender, RoutedEventArgs e)
         {
             var ctDialog = new ContentDialog
@@ -81,9 +99,13 @@ namespace LearningManagementSystem.Views
             {
                 ctDialog.Hide();
             }
-
         }
 
+        /// <summary>
+        /// Handles the Click event of the save button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
             if (inputClassCode.Text.Length == 0)
@@ -158,7 +180,6 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
-
             var dialog = new ContentDialog
             {
                 XamlRoot = this.XamlRoot,
@@ -179,7 +200,6 @@ namespace LearningManagementSystem.Views
                     CourseId = (int)coursesComboBox.SelectedValue,
                     ClassStartDate = inputStartDate.Date.Value.DateTime,
                     ClassEndDate = inputEndDate.Date.Value.DateTime,
-
                 };
 
                 ViewModel.SelectedClass = newClass.Clone() as Class;
@@ -191,8 +211,5 @@ namespace LearningManagementSystem.Views
                 dialog.Hide();
             }
         }
-
-
-
     }
 }

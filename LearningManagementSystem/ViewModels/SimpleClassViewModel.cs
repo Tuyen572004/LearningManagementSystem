@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing simple class information.
+    /// </summary>
+    /// <param name="dao">The data access object for database operations.</param>
+    /// <param name="classId">The ID of the class to manage.</param>
     partial class SimpleClassViewModel(IDao dao, int classId) : BaseViewModel
     {
         private readonly IDao _dao = dao;
@@ -18,6 +23,9 @@ namespace LearningManagementSystem.ViewModels
         private Course? _associatedCourse = null;
         private Department? _associatedDepartment = null;
 
+        /// <summary>
+        /// Loads the required information for the class, course, and department.
+        /// </summary>
         public void LoadRequiredInformation()
         {
             GetClassInformation();
@@ -31,30 +39,41 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Retrieves the class information from the database.
+        /// </summary>
         private void GetClassInformation()
         {
             try
             {
                 Class? retrievedClass = _dao.findClassById(_classId);
                 _managingClass = retrievedClass;
-            } catch (Exception)
+            }
+            catch (Exception)
             {
-                // No nothing for now
+                // Do nothing for now
             }
         }
 
+        /// <summary>
+        /// Retrieves the course information associated with the class from the database.
+        /// </summary>
         private void GetCourseInformation()
         {
             try
             {
                 Course retrievedCourse = _dao.findCourseByClassId(_managingClass?.CourseId ?? -1);
                 _associatedCourse = retrievedCourse;
-            } catch (Exception)
+            }
+            catch (Exception)
             {
-                // No nothing for now
+                // Do nothing for now
             }
         }
 
+        /// <summary>
+        /// Retrieves the department information associated with the course from the database.
+        /// </summary>
         private void GetDepartmentInformation()
         {
             try
@@ -64,14 +83,25 @@ namespace LearningManagementSystem.ViewModels
             }
             catch (Exception)
             {
-                // No nothing for now
+                // Do nothing for now
             }
         }
 
+        /// <summary>
+        /// Gets the class code.
+        /// </summary>
         public string ClassCode => _managingClass?.ClassCode ?? "";
+
+        /// <summary>
+        /// Gets the course name.
+        /// </summary>
         public string CourseName => _associatedCourse?.CourseDescription ?? "";
 
-        public EnrollmentClassViewModel? DetailPageNavigatingParameter() 
+        /// <summary>
+        /// Gets the detail page navigating parameter.
+        /// </summary>
+        /// <returns>An instance of <see cref="EnrollmentClassViewModel"/> if all required information is loaded; otherwise, null.</returns>
+        public EnrollmentClassViewModel? DetailPageNavigatingParameter()
         {
             if (_managingClass is not null && _associatedCourse is not null && _associatedDepartment is not null)
             {

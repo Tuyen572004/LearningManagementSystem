@@ -21,13 +21,16 @@ using Windows.Storage;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing assignments.
+    /// </summary>
     public class AssignmentViewModel : BaseViewModel
     {
         private Assignment _assignment;
 
-        //    Reason why we have to set manually eventhough we have Fody.PropertyChanged
-        //    Hanlde nested property change.If we just do as normally {get;set;} it will only trigger when the whole object is changed(not the attributes)
-        // Error : Due date change but Due Status is not updated even though I use PropertyChanged += UpdateAssignmentDependentProperties, DependsOn, whatever I tried
+        /// <summary>
+        /// Gets or sets the assignment.
+        /// </summary>
         public Assignment Assignment
         {
             get => _assignment;
@@ -50,6 +53,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the due date of the assignment.
+        /// </summary>
         public DateTimeOffset DueDate
         {
             get => new DateTimeOffset(Assignment.DueDate);
@@ -64,6 +70,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the due time of the assignment.
+        /// </summary>
         public TimeSpan DueTime
         {
             get => Assignment.DueDate.TimeOfDay;
@@ -78,7 +87,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-
+        /// <summary>
+        /// Updates dependent properties when the assignment properties change.
+        /// </summary>
         private void UpdateAssignmentDependentProperties(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(Assignment));
@@ -86,16 +97,26 @@ namespace LearningManagementSystem.ViewModels
             {
                 RaisePropertyChanged(nameof(DueStatus));
             }
-
         }
 
+        /// <summary>
+        /// Collection of submissions for the assignment.
+        /// </summary>
         public FullObservableCollection<SubmissionViewModel> Submissions { get; set; }
 
+        /// <summary>
+        /// Command to export submissions to an Excel file.
+        /// </summary>
         public ICommand ExportToExcelCommand { get; }
 
+        /// <summary>
+        /// Indicates whether the ViewModel is busy.
+        /// </summary>
         public bool IsBusy { get; set; }
 
-
+        /// <summary>
+        /// Exports the submissions to an Excel file.
+        /// </summary>
         private async Task ExportToExcel()
         {
             try
@@ -157,46 +178,94 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-
-
+        /// <summary>
+        /// The current user.
+        /// </summary>
         public User User { get; set; }
         private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
 
+        /// <summary>
+        /// Indicates whether the current user is a teacher.
+        /// </summary>
         public bool IsTeacher { get; set; }
+
+        /// <summary>
+        /// Indicates whether the current user is a student.
+        /// </summary>
         public bool IsStudent { get; set; }
 
+        /// <summary>
+        /// Indicates whether the assignment is being edited.
+        /// </summary>
         public bool IsEditing { get; set; }
 
+        /// <summary>
+        /// Indicates whether the assignment is not being edited.
+        /// </summary>
         public bool IsNotEditing => !IsEditing;
 
+        /// <summary>
+        /// Text for the edit button.
+        /// </summary>
         public string EditButtonText => IsEditing ? "Save Changes" : "Edit Assignment";
 
+        /// <summary>
+        /// Indicates whether the assignment is due.
+        /// </summary>
         private bool IsDue => Assignment.DueDate < DateTime.Now;
 
+        /// <summary>
+        /// Status of the assignment due date.
+        /// </summary>
         public string DueStatus => IsDue ? "Closed" : "On Going";
 
+        /// <summary>
+        /// Visibility of the submit button.
+        /// </summary>
         public bool SubmitVisibility => Submissions.Count == 0 && !IsDue;
 
+        /// <summary>
+        /// Command to submit the assignment.
+        /// </summary>
         public ICommand SubmitCommand { get; }
+
+        /// <summary>
+        /// Command to toggle edit mode.
+        /// </summary>
         public ICommand ToggleEditCommand { get; }
+
+        /// <summary>
+        /// Command to change the attachment.
+        /// </summary>
         public ICommand ChangeAttachmentCommand { get; }
 
+        /// <summary>
+        /// Command to download the attachment.
+        /// </summary>
         public ICommand DownloadAttachmentCommand { get; }
 
+        /// <summary>
+        /// Command to delete the attachment.
+        /// </summary>
         public ICommand DeleteAttachmentCommand { get; }
 
+        /// <summary>
+        /// Command to add a new assignment.
+        /// </summary>
         public ICommand AddAssignmentCommand { get; }
-
-
 
         private readonly UserService _userService;
         public FileHelper FileHelper = new FileHelper();
 
-        // Events for dependencies
+        /// <summary>
+        /// Event triggered when editing state changes.
+        /// </summary>
         public event Action EditingChanged;
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssignmentViewModel"/> class.
+        /// </summary>
         public AssignmentViewModel()
         {
             _userService = new UserService();
@@ -220,7 +289,6 @@ namespace LearningManagementSystem.ViewModels
             WeakReferenceMessenger.Default.Register<DeleteSubmissionMessage>(this, async (r, m) =>
             {
                 DeleteSubmission(m.Value as SubmissionViewModel);
-
             });
 
             Assignment = new Assignment();
@@ -233,11 +301,17 @@ namespace LearningManagementSystem.ViewModels
             ExportToExcelCommand = new AsyncRelayCommand(ExportToExcel);
         }
 
+        /// <summary>
+        /// Determines whether a new assignment can be added.
+        /// </summary>
         private bool CanAddAssignment()
         {
             return !IsStudent;
         }
 
+        /// <summary>
+        /// Adds a new assignment.
+        /// </summary>
         private void AddAssignment()
         {
             try
@@ -257,14 +331,19 @@ namespace LearningManagementSystem.ViewModels
                 IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error adding assignment: {e.Message}\nPlease try again later."));
             }
-
         }
 
+        /// <summary>
+        /// Determines whether the attachment can be deleted.
+        /// </summary>
         private bool CanDeleteAttachment()
         {
             return Assignment.FilePath != null && IsTeacher;
         }
 
+        /// <summary>
+        /// Deletes the attachment.
+        /// </summary>
         private async Task DeleteAttachment()
         {
             try
@@ -272,7 +351,7 @@ namespace LearningManagementSystem.ViewModels
                 IsBusy = true;
                 await _cloudinaryService.DeleteFileByUriAsync(Assignment.FilePath);
 
-                _dao.DeleteAttachmentByAssignmentId(Assignment.Id); ;
+                _dao.DeleteAttachmentByAssignmentId(Assignment.Id);
 
                 Assignment.FileName = null;
                 Assignment.FilePath = null;
@@ -286,6 +365,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Downloads the attachment.
+        /// </summary>
         private async Task DownloadAttachment()
         {
             if (string.IsNullOrEmpty(Assignment.FileName))
@@ -308,7 +390,6 @@ namespace LearningManagementSystem.ViewModels
 
                 // Send success message
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Download Successful", $"File downloaded successfully to {selectedFolder.Path}"));
-
             }
             catch (Exception ex)
             {
@@ -318,11 +399,17 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Determines whether the assignment can be submitted.
+        /// </summary>
         private bool canSubmitAssignment()
         {
             return SubmitVisibility;
         }
 
+        /// <summary>
+        /// Checks the role of the current user.
+        /// </summary>
         public async void checkRole()
         {
             User = await UserService.GetCurrentUser();
@@ -331,6 +418,9 @@ namespace LearningManagementSystem.ViewModels
             IsStudent = role.Equals(RoleEnum.GetStringValue(Role.Student));
         }
 
+        /// <summary>
+        /// Loads the submissions for the assignment.
+        /// </summary>
         public void LoadSubmissions()
         {
             if (IsTeacher)
@@ -352,8 +442,9 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
-
-
+        /// <summary>
+        /// Submits the assignment.
+        /// </summary>
         public async Task SubmitAssignment()
         {
             StorageFile file = await FileHelper.ChooseFile();
@@ -387,15 +478,20 @@ namespace LearningManagementSystem.ViewModels
                     IsBusy = false;
                     WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error submitting assignment: {ex.Message}\nPlease try again later."));
                 }
-
             }
         }
 
+        /// <summary>
+        /// Deletes a submission.
+        /// </summary>
         public void DeleteSubmission(SubmissionViewModel model)
         {
             Submissions.Remove(model);
         }
 
+        /// <summary>
+        /// Toggles the edit mode.
+        /// </summary>
         private void ToggleEditMode()
         {
             if (IsEditing)
@@ -407,11 +503,13 @@ namespace LearningManagementSystem.ViewModels
                 }
                 // Save changes
                 _dao.UpdateAssignment(Assignment);
-
             }
             IsEditing = !IsEditing;
         }
 
+        /// <summary>
+        /// Changes the attachment.
+        /// </summary>
         private async Task ChangeAttachment()
         {
             StorageFile selectedFile = await FileHelper.ChooseFile();
@@ -433,10 +531,11 @@ namespace LearningManagementSystem.ViewModels
                 IsBusy = false;
                 WeakReferenceMessenger.Default.Send(new DialogMessage("Error", $"Error changing attachment: {ex.Message}\nPlease try again later."));
             }
-
         }
 
-
+        /// <summary>
+        /// Handles changes in the submissions collection.
+        /// </summary>
         private void OnSubmissionsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(Submissions));
@@ -444,16 +543,15 @@ namespace LearningManagementSystem.ViewModels
             RaisePropertyChanged(nameof(SubmitCommand));
         }
 
+        /// <summary>
+        /// Updates properties dependent on the editing state.
+        /// </summary>
         private void UpdateEditingDependentProperties()
         {
             RaisePropertyChanged(nameof(IsEditing));
             RaisePropertyChanged(nameof(IsNotEditing));
             RaisePropertyChanged(nameof(EditButtonText));
         }
-
-
-
-
     }
 }
 

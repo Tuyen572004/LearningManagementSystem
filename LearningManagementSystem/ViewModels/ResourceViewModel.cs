@@ -12,25 +12,38 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.ViewModels
 {
+    /// <summary>
+    /// ViewModel for managing resources in the learning management system.
+    /// </summary>
     public class ResourceViewModel : BaseViewModel
     {
+        /// <summary>
+        /// Gets or sets the collection of singular resource view models.
+        /// </summary>
         public FullObservableCollection<SingularResourceViewModel> SingularResources { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the ViewModel is busy.
+        /// </summary>
         public bool IsBusy { get; set; }
 
         private IDao _dao;
 
         private readonly ICloudinaryService _cloudinaryService = App.Current.Services.GetService<ICloudinaryService>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ResourceViewModel"/> class.
+        /// </summary>
         public ResourceViewModel()
         {
-            _dao = App.Current.Services.GetService<IDao>();;
+            _dao = App.Current.Services.GetService<IDao>(); ;
             SingularResources = new FullObservableCollection<SingularResourceViewModel>();
             LoadResourceTitles();
-
-            
         }
 
+        /// <summary>
+        /// Loads the resource titles from the data access object.
+        /// </summary>
         private void LoadResourceTitles()
         {
             var categories = _dao.findAllResourceCategories();
@@ -40,6 +53,10 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Loads more items based on the specified class ID.
+        /// </summary>
+        /// <param name="classId">The ID of the class to load items for.</param>
         public void LoadMoreItems(int classId)
         {
             var resources = new FullObservableCollection<BaseResource>();
@@ -52,11 +69,13 @@ namespace LearningManagementSystem.ViewModels
             resources = _dao.findNotificationsByClassId(classId);
             resourcesViewModel = convertToViewModels(resources);
             SingularResources.FirstOrDefault(x => x.ResourceCategory.Id == (int)ResourceCategoryEnum.Notification).Resources = resourcesViewModel;
-
-            
         }
 
-
+        /// <summary>
+        /// Converts a collection of base resources to a collection of base resource view models.
+        /// </summary>
+        /// <param name="baseResources">The collection of base resources to convert.</param>
+        /// <returns>A collection of base resource view models.</returns>
         private FullObservableCollection<BaseResourceViewModel> convertToViewModels(FullObservableCollection<BaseResource> baseResources)
         {
             var baseResourceViewModels = new FullObservableCollection<BaseResourceViewModel>();
@@ -67,6 +86,10 @@ namespace LearningManagementSystem.ViewModels
             return baseResourceViewModels;
         }
 
+        /// <summary>
+        /// Deletes the specified resource asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource to delete.</param>
         public async Task DeleteResource(BaseResourceViewModel resource)
         {
             IsBusy = true;
@@ -103,6 +126,10 @@ namespace LearningManagementSystem.ViewModels
             }
         }
 
+        /// <summary>
+        /// Deletes an assignment resource asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource to delete.</param>
         private async Task DeleteAssignmentResource(BaseResourceViewModel resource)
         {
             var id = resource.BaseResource.Id;
@@ -131,6 +158,10 @@ namespace LearningManagementSystem.ViewModels
             RemoveResourceFromViewModel(ResourceCategoryEnum.Assignment, resource);
         }
 
+        /// <summary>
+        /// Deletes a notification resource asynchronously.
+        /// </summary>
+        /// <param name="resource">The resource to delete.</param>
         private async Task DeleteNotificationResource(BaseResourceViewModel resource)
         {
             var id = resource.BaseResource.Id;
@@ -152,6 +183,11 @@ namespace LearningManagementSystem.ViewModels
             RemoveResourceFromViewModel(ResourceCategoryEnum.Notification, resource);
         }
 
+        /// <summary>
+        /// Removes a resource from the ViewModel based on the specified category.
+        /// </summary>
+        /// <param name="category">The category of the resource.</param>
+        /// <param name="resource">The resource to remove.</param>
         private void RemoveResourceFromViewModel(ResourceCategoryEnum category, BaseResourceViewModel resource)
         {
             var singularResource = SingularResources
@@ -159,6 +195,5 @@ namespace LearningManagementSystem.ViewModels
 
             singularResource?.Resources.Remove(resource);
         }
-
     }
 }
