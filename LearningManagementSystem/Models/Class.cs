@@ -8,7 +8,6 @@ namespace LearningManagementSystem.Models
         public int CourseId { get; set; }  // Foreign key to Courses table
 
         public string ClassCode { get; set; }
-        public int CycleId { get; set; }   // Foreign key to Cycles table
         public DateTime ClassStartDate { get; set; }
         public DateTime ClassEndDate { get; set; }
 
@@ -19,7 +18,6 @@ namespace LearningManagementSystem.Models
                 Id = this.Id,
                 CourseId = this.CourseId,
                 ClassCode = this.ClassCode,
-                CycleId = this.CycleId,
                 ClassStartDate = this.ClassStartDate,
                 ClassEndDate = this.ClassEndDate
             };

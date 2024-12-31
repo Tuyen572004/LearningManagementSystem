@@ -12,7 +12,7 @@ namespace LearningManagementSystem.DataAccess
         {
             var result = new Class();
             var sql = """
-                SELECT Id, CourseId, ClassCode, CycleId, ClassStartDate, ClassEndDate
+                SELECT Id, CourseId, ClassCode, ClassStartDate, ClassEndDate
                 FROM Classes
                 WHERE Id=@classId
                 """;
@@ -31,7 +31,6 @@ namespace LearningManagementSystem.DataAccess
                         Id = reader.GetInt32(reader.GetOrdinal("Id")),
                         CourseId = reader.GetInt32(reader.GetOrdinal("CourseId")),
                         ClassCode = reader.GetString(reader.GetOrdinal("ClassCode")),
-                        CycleId = reader.GetInt32(reader.GetOrdinal("CycleId")),
                         ClassStartDate = reader.GetDateTime(reader.GetOrdinal("ClassStartDate")),
                         ClassEndDate = reader.GetDateTime(reader.GetOrdinal("ClassEndDate"))
                     };
@@ -60,7 +59,7 @@ namespace LearningManagementSystem.DataAccess
         {
             var result = new List<Class>();
             var sql = $"""
-                SELECT COUNT(*) OVER() AS TotalItems, Id, ClassCode, CourseId, CycleID, ClassStartDate, ClassEndDate
+                SELECT COUNT(*) OVER() AS TotalItems, Id, ClassCode, CourseId, ClassStartDate, ClassEndDate
                 FROM Classes
                 WHERE ClassCode LIKE @Keyword
                 ORDER BY {sortBy} {sortOrder}
@@ -92,7 +91,6 @@ namespace LearningManagementSystem.DataAccess
                         Id = reader.GetInt32(reader.GetOrdinal("Id")),
                         CourseId = reader.GetInt32(reader.GetOrdinal("CourseId")),
                         ClassCode = reader.GetString(reader.GetOrdinal("ClassCode")),
-                        CycleId = reader.GetInt32(reader.GetOrdinal("CycleId")),
                         ClassStartDate = reader.GetDateTime(reader.GetOrdinal("ClassStartDate")),
                         ClassEndDate = reader.GetDateTime(reader.GetOrdinal("ClassEndDate"))
                     });
@@ -114,13 +112,12 @@ namespace LearningManagementSystem.DataAccess
 
         public void UpdateClass(Class newClass)
         {
-            var sql = "UPDATE Classes SET ClassCode=@ClassCode, CourseID=@CourseID, CycleID=@CycleID, ClassStartDate=@ClassStartDate, ClassEndDate=@ClassEndDate WHERE Id=@Id";
+            var sql = "UPDATE Classes SET ClassCode=@ClassCode, CourseID=@CourseID, ClassStartDate=@ClassStartDate, ClassEndDate=@ClassEndDate WHERE Id=@Id";
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
                 command.Parameters.AddWithValue("@ClassCode", newClass.ClassCode);
                 command.Parameters.AddWithValue("@CourseID", newClass.CourseId);
-                command.Parameters.AddWithValue("@CycleID", newClass.CycleId);
                 command.Parameters.AddWithValue("@ClassStartDate", newClass.ClassStartDate.Date);
                 command.Parameters.AddWithValue("@ClassEndDate", newClass.ClassEndDate.Date);
                 command.Parameters.AddWithValue("@Id", newClass.Id);
@@ -146,8 +143,8 @@ namespace LearningManagementSystem.DataAccess
         public int InsertClass(Class newClass)
         {
             var sql = """
-                INSERT INTO classes (classcode, courseid, cycleid, classstartdate, classenddate) 
-                VALUES (@ClassCode, @CourseID, @CycleID, @ClassStartDate, @ClassEndDate)
+                INSERT INTO classes (classcode, courseid, classstartdate, classenddate) 
+                VALUES (@ClassCode, @CourseID, @ClassStartDate, @ClassEndDate)
                  returning id;
                 """;
 
@@ -156,7 +153,6 @@ namespace LearningManagementSystem.DataAccess
             {
                 command.Parameters.AddWithValue("@ClassCode", newClass.ClassCode);
                 command.Parameters.AddWithValue("@CourseID", newClass.CourseId);
-                command.Parameters.AddWithValue("@CycleID", newClass.CycleId);
                 command.Parameters.AddWithValue("@ClassStartDate", newClass.ClassStartDate.Date);
                 command.Parameters.AddWithValue("@ClassEndDate", newClass.ClassEndDate.Date);
 
@@ -176,7 +172,7 @@ namespace LearningManagementSystem.DataAccess
             {
                 connection.Open();
                 var query = @"
-                    SELECT c.id, c.courseid, c.classcode, c.cycleid, c.classstartdate, c.classenddate
+                    SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
                     FROM classes c
                     JOIN enrollments e ON c.id = e.classid
                     WHERE e.studentid = @StudentId"
@@ -193,7 +189,6 @@ namespace LearningManagementSystem.DataAccess
                                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                                 CourseId = reader.GetInt32(reader.GetOrdinal("courseid")),
                                 ClassCode = reader.GetString(reader.GetOrdinal("classcode")),
-                                CycleId = reader.GetInt32(reader.GetOrdinal("cycleid")),
                                 ClassStartDate = reader.GetDateTime(reader.GetOrdinal("classstartdate")),
                                 ClassEndDate = reader.GetDateTime(reader.GetOrdinal("classenddate"))
                             });
@@ -212,7 +207,7 @@ namespace LearningManagementSystem.DataAccess
             {
                 connection.Open();
                 var query = @"
-                    SELECT c.id, c.courseid, c.classcode, c.cycleid, c.classstartdate, c.classenddate
+                    SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
                     FROM classes c
                     JOIN teachersperclass e ON c.id = e.classid
                     WHERE e.teacherid = @TeacherId"
@@ -229,7 +224,6 @@ namespace LearningManagementSystem.DataAccess
                                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                                 CourseId = reader.GetInt32(reader.GetOrdinal("courseid")),
                                 ClassCode = reader.GetString(reader.GetOrdinal("classcode")),
-                                CycleId = reader.GetInt32(reader.GetOrdinal("cycleid")),
                                 ClassStartDate = reader.GetDateTime(reader.GetOrdinal("classstartdate")),
                                 ClassEndDate = reader.GetDateTime(reader.GetOrdinal("classenddate"))
                             });

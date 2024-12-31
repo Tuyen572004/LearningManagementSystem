@@ -109,18 +109,6 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
-            if (inputCycleID.Text.Length == 0)
-            {
-                await new ContentDialog
-                {
-                    XamlRoot = this.XamlRoot,
-                    Title = "Class",
-                    Content = "Cycle ID (a number) is required.",
-                    CloseButtonText = "Ok"
-                }.ShowAsync();
-                return;
-            }
-
             if (inputStartDate.Date == null)
             {
                 await new ContentDialog
@@ -148,7 +136,6 @@ namespace LearningManagementSystem.Views
             var newClass = new Class
             {
                 ClassCode = inputClassCode.Text,
-                CycleId = Convert.ToInt32(inputCycleID.Text),
                 CourseId = (int)coursesComboBox.SelectedValue,
                 ClassStartDate = inputStartDate.Date.Value.DateTime,
                 ClassEndDate = inputEndDate.Date.Value.DateTime,
