@@ -67,7 +67,6 @@ namespace LearningManagementSystem.ViewModels
                     TableClasses.Add(new TableClassesView
                     {
                         CourseID = classes[i].CourseId,
-                        CycleID = classes[i].CycleId,
                         ClassCode = classes[i].ClassCode,
                         ID = classes[i].Id,
                         ClassStartDate = classes[i].ClassStartDate,

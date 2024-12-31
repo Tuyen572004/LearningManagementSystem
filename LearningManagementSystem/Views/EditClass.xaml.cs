@@ -44,7 +44,6 @@ namespace LearningManagementSystem.Views
             {
                 Id = oldTableClass.ID,
                 ClassCode = oldTableClass.ClassCode,
-                CycleId = oldTableClass.CycleID,
                 CourseId = oldTableClass.CourseID,
                 ClassStartDate = oldTableClass.ClassStartDate,
                 ClassEndDate = oldTableClass.ClassEndDate
@@ -54,7 +53,6 @@ namespace LearningManagementSystem.Views
             ViewModel.SelectedClass = oldClass.Clone() as Class;
 
             inputClassCode.Text = ViewModel.SelectedClass.ClassCode;
-            inputCycleID.Value = ViewModel.SelectedClass.CycleId;
             inputStartDate.Date = ViewModel.SelectedClass.ClassStartDate;
             inputEndDate.Date = ViewModel.SelectedClass.ClassEndDate;
             coursesComboBox.SelectedIndex = CrsViewModel.Courses.IndexOf(CrsViewModel.Courses.FirstOrDefault(x => x.Id == ViewModel.SelectedClass.CourseId));
@@ -136,18 +134,6 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
-            if (inputCycleID.Text.Length == 0)
-            {
-                await new ContentDialog
-                {
-                    XamlRoot = this.XamlRoot,
-                    Title = "Class",
-                    Content = "Cycle ID (a number) is required.",
-                    CloseButtonText = "Ok"
-                }.ShowAsync();
-                return;
-            }
-
             if (inputStartDate.Date == null)
             {
                 await new ContentDialog
@@ -190,7 +176,6 @@ namespace LearningManagementSystem.Views
                 {
                     Id = ViewModel.SelectedClass.Id,
                     ClassCode = inputClassCode.Text,
-                    CycleId = Convert.ToInt32(inputCycleID.Text),
                     CourseId = (int)coursesComboBox.SelectedValue,
                     ClassStartDate = inputStartDate.Date.Value.DateTime,
                     ClassEndDate = inputEndDate.Date.Value.DateTime,

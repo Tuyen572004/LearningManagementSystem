@@ -30,6 +30,7 @@ namespace LearningManagementSystem.ViewModels
         {
             _dao = App.Current.Services.GetService<IDao>();
             SelectedCourse = new Course();
+            Courses = new FullObservableCollection<Course>();
             GetAllCourse();
         }
 

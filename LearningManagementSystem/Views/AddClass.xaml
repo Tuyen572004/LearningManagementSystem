@@ -38,9 +38,6 @@
             <TextBlock FontWeight="ExtraBold" FontSize="25">Class Code</TextBlock>
             <TextBox Name="inputClassCode" Width="Auto"></TextBox>
 
-            <TextBlock FontWeight="ExtraBold" FontSize="25" >Cycle ID</TextBlock>
-            <NumberBox Name="inputCycleID" Width="Auto"></NumberBox>
-
             <TextBlock FontWeight="ExtraBold" FontSize="25">Course ID</TextBlock>
 
             <ComboBox Name="coursesComboBox" Width="Auto" Height="35" ItemsSource="{x:Bind CrsViewModel.Courses}" SelectedValuePath="Id">
