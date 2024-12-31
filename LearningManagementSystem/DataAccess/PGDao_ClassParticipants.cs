@@ -15,6 +15,17 @@ namespace LearningManagementSystem.DataAccess
 {
     partial class SqlDao
     {
+        /// <summary>
+        /// Adds a list of students to a specified class.
+        /// </summary>
+        /// <param name="studentIds">The IDs of the students to be added.</param>
+        /// <param name="classId">The ID of the class to which the students will be added.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - A list of IDs of the students who were successfully added.
+        /// - The count of students who were successfully added.
+        /// - A list of tuples containing the IDs of students who could not be added and the corresponding error messages.
+        /// </returns>
         public (
             IList<int> addedStudentIds,
             int addedCount,
@@ -117,6 +128,17 @@ namespace LearningManagementSystem.DataAccess
             return (addedStudentIds, addedCount, invalidStudentIds);
         }
 
+        /// <summary>
+        /// Removes a list of students from a specified class.
+        /// </summary>
+        /// <param name="studentIds">The IDs of the students to be removed.</param>
+        /// <param name="classId">The ID of the class from which the students will be removed.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - A list of IDs of the students who were successfully removed.
+        /// - The count of students who were successfully removed.
+        /// - A list of tuples containing the IDs of students who could not be removed and the corresponding error messages.
+        /// </returns>
         public (
             IList<int> removedStudentIds,
             int removedCount,
@@ -208,7 +230,7 @@ namespace LearningManagementSystem.DataAccess
                             removedStudentIds.Add(studentId);
                             removedCount++;
                         }
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -221,6 +243,19 @@ namespace LearningManagementSystem.DataAccess
             return (removedStudentIds, removedCount, invalidStudentIds);
         }
 
+        /// <summary>
+        /// Retrieves a list of students from a specified class.
+        /// </summary>
+        /// <param name="classId">The ID of the class from which to retrieve students.</param>
+        /// <param name="fetchingAll">Indicates whether to fetch all students or apply pagination.</param>
+        /// <param name="ignoringCount">The number of students to skip (used for pagination).</param>
+        /// <param name="fetchingCount">The number of students to fetch (used for pagination).</param>
+        /// <param name="sortCriteria">The criteria for sorting the results.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - An ObservableCollection of StudentVer2 objects representing the students.
+        /// - The total number of students in the class.
+        /// </returns>
         public (ObservableCollection<StudentVer2>, int) GetStudentsFromClass(
             int classId,
             bool fetchingAll = false,
@@ -299,6 +334,23 @@ namespace LearningManagementSystem.DataAccess
             return (students, totalItems);
         }
 
+        /// <summary>
+        /// Adds a list of teachers to a specified class.
+        /// </summary>
+        /// <param name="teacherIds">The list of teacher IDs to be added to the class.</param>
+        /// <param name="classId">The ID of the class to which the teachers will be added.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of successfully added teacher IDs.</description></item>
+        /// <item><description>The count of successfully added teachers.</description></item>
+        /// <item><description>A list of invalid teacher IDs with associated error messages.</description></item>
+        /// </list>
+        /// </returns>
+        /// <remarks>
+        /// This method checks if the class exists and if each teacher exists before adding them to the class.
+        /// If a teacher is already assigned to the class or if any error occurs, the teacher ID and error message are added to the invalidTeacherIds list.
+        /// </remarks>
         public (
             IList<int> addedTeacherIds,
             int addedCount,
@@ -401,6 +453,20 @@ namespace LearningManagementSystem.DataAccess
             return (addedTeacherIds, addedCount, invalidTeacherIds);
         }
 
+        /// <summary>
+        /// Removes the specified teachers from the class.
+        /// </summary>
+        /// <param name="teacherIds">The IDs of the teachers to remove.</param>
+        /// <param name="classId">The ID of the class from which to remove the teachers.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of IDs of the removed teachers.</description></item>
+        /// <item><description>The count of removed teachers.</description></item>
+        /// <item><description>A list of tuples containing the IDs of invalid teachers and the associated error messages.</description></item>
+        /// </list>
+        /// </returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the removal process.</exception>
         public (
             IList<int> removedTeacherIds,
             int removedCount,
@@ -493,7 +559,7 @@ namespace LearningManagementSystem.DataAccess
                             removedCount++;
                         }
 
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -505,6 +571,25 @@ namespace LearningManagementSystem.DataAccess
             return (removedTeacherIds, removedCount, invalidTeacherIds);
         }
 
+        /// <summary>
+        /// Retrieves a collection of teachers associated with a specific class.
+        /// </summary>
+        /// <param name="classId">The ID of the class.</param>
+        /// <param name="fetchingAll">Indicates whether to fetch all teachers or apply pagination.</param>
+        /// <param name="ignoringCount">The number of teachers to skip (used for pagination).</param>
+        /// <param name="fetchingCount">The number of teachers to fetch (used for pagination).</param>
+        /// <param name="sortCriteria">The criteria for sorting the results.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>An <see cref="ObservableCollection{Teacher}"/> of teachers.</description>
+        /// </item>
+        /// <item>
+        /// <description>The total number of teachers in the class.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         public (ObservableCollection<Teacher>, int) GetTeachersFromClass(
             int classId,
             bool fetchingAll = false,

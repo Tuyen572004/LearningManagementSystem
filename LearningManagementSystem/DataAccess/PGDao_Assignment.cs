@@ -11,14 +11,19 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Finds assignments by class ID.
+        /// </summary>
+        /// <param name="classId">The ID of the class.</param>
+        /// <returns>A collection of assignments for the specified class.</returns>
         public FullObservableCollection<BaseResource> findAssignmentsByClassId(int classId)
         {
             var result = new FullObservableCollection<BaseResource>();
             var sql = """
-            SELECT Id, ClassId, ResourceCategoryId, Title, TeacherId, Description, DueDate, FilePath, FileName, FileType
-            FROM Assignments
-            WHERE ClassId=@ClassId
-            """;
+                SELECT Id, ClassId, ResourceCategoryId, Title, TeacherId, Description, DueDate, FilePath, FileName, FileType
+                FROM Assignments
+                WHERE ClassId=@ClassId
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -45,12 +50,16 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Saves a new assignment to the database.
+        /// </summary>
+        /// <param name="assignment">The assignment to save.</param>
         public void SaveAssignment(Assignment assignment)
         {
             var sql = """
-            INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
-            VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
-            """;
+                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
+                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -68,13 +77,17 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Updates an existing assignment in the database.
+        /// </summary>
+        /// <param name="assignment">The assignment to update.</param>
         public void UpdateAssignment(Assignment assignment)
         {
             var sql = """
-            UPDATE Assignments 
-            SET ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, Title=@Title, Description=@Description, TeacherId=@TeacherId, DueDate=@DueDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType
-            WHERE Id=@Id
-            """;
+                UPDATE Assignments 
+                SET ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, Title=@Title, Description=@Description, TeacherId=@TeacherId, DueDate=@DueDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType
+                WHERE Id=@Id
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -93,13 +106,17 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Deletes the attachment of an assignment by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the assignment.</param>
         public void DeleteAttachmentByAssignmentId(int id)
         {
             var sql = """
-            UPDATE Assignments 
-            SET FileName=NULL, FilePath=NULL, FileType=NULL
-            WHERE Id=@AssignmentId
-            """;
+                UPDATE Assignments 
+                SET FileName=NULL, FilePath=NULL, FileType=NULL
+                WHERE Id=@AssignmentId
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -109,12 +126,16 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Adds a new assignment to the database.
+        /// </summary>
+        /// <param name="assignment">The assignment to add.</param>
         public void AddAssignment(Assignment assignment)
         {
             var sql = """
-            INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
-            VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
-            """;
+                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
+                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -132,6 +153,10 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Deletes an assignment by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the assignment to delete.</param>
         public void DeleteAssignmentById(int id)
         {
             var sql = "DELETE FROM Assignments WHERE Id=@Id";
@@ -144,14 +169,19 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Retrieves an assignment by its ID.
+        /// </summary>
+        /// <param name="assignmentId">The ID of the assignment to retrieve.</param>
+        /// <returns>The assignment with the specified ID.</returns>
         public Assignment GetAssignmentById(int assignmentId)
         {
             var result = new Assignment();
             var sql = """
-            SELECT Id, ClassId, ResourceCategoryId, Title, Description, DueDate, FilePath, FileName, FileType
-            FROM Assignments
-            WHERE Id=@Id
-            """;
+                SELECT Id, ClassId, ResourceCategoryId, Title, Description, DueDate, FilePath, FileName, FileType
+                FROM Assignments
+                WHERE Id=@Id
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
@@ -174,13 +204,18 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Checks if an assignment has been submitted.
+        /// </summary>
+        /// <param name="assignmentId">The ID of the assignment.</param>
+        /// <returns>True if the assignment has been submitted, otherwise false.</returns>
         public bool checkIfAssignmentIsSubmitted(int assignmentId)
         {
             var sql = """
-            SELECT COUNT(*)
-            FROM Submissions
-            WHERE AssignmentId=@AssignmentId
-            """;
+                SELECT COUNT(*)
+                FROM Submissions
+                WHERE AssignmentId=@AssignmentId
+                """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
             {
