@@ -119,7 +119,7 @@ namespace LearningManagementSystem.Views
                 return;
             }
 
-            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Regex emailRegex = new(@"^\d{8}@student\.hcmus\.edu\.vn$|^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             if (!emailRegex.IsMatch(user.Email))
             {
                 await new ContentDialog

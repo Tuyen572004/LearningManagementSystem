@@ -116,7 +116,7 @@ namespace LearningManagementSystem.Views
         /// <param name="e">The event data.</param>
         private async void save_Click(object sender, RoutedEventArgs e)
         {
-            Regex emailRegex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Regex emailRegex = new(@"^\d{8}@student\.hcmus\.edu\.vn$|^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             if (!emailRegex.IsMatch(inputEmail.Text))
             {
                 await new ContentDialog
