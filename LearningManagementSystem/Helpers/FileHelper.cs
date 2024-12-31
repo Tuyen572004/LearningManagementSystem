@@ -15,7 +15,10 @@ namespace LearningManagementSystem.Helpers
 {
     public class FileHelper
     {
-
+        /// <summary>
+        /// Opens a file picker dialog to allow the user to choose a file.
+        /// </summary>
+        /// <returns>A <see cref="StorageFile"/> representing the selected file, or null if no file was selected.</returns>
         public async Task<StorageFile> ChooseFile()
         {
             try
@@ -27,8 +30,6 @@ namespace LearningManagementSystem.Helpers
                     SuggestedStartLocation = PickerLocationId.DocumentsLibrary
                 };
                 picker.FileTypeFilter.Add("*");
-                
-                
 
                 // Associate the picker with the current window
                 InitializeWithWindow.Initialize(picker, DashBoard.HWND);
@@ -43,7 +44,10 @@ namespace LearningManagementSystem.Helpers
             }
         }
 
-
+        /// <summary>
+        /// Saves the specified file to a predefined target folder.
+        /// </summary>
+        /// <param name="file">The <see cref="StorageFile"/> to save.</param>
         public async Task SaveFile(StorageFile file)
         {
             try
@@ -73,6 +77,10 @@ namespace LearningManagementSystem.Helpers
             }
         }
 
+        /// <summary>
+        /// Opens a folder picker dialog to allow the user to choose a folder.
+        /// </summary>
+        /// <returns>A <see cref="StorageFolder"/> representing the selected folder.</returns>
         public async Task<StorageFolder> ChooseFolder()
         {
             // Open folder picker to select a directory
@@ -85,7 +93,6 @@ namespace LearningManagementSystem.Helpers
             // Add a wildcard file type filter
             picker.FileTypeFilter.Add("*");
 
-
             // Associate the picker with the current window
             InitializeWithWindow.Initialize(picker, DashBoard.HWND);
 
@@ -93,6 +100,5 @@ namespace LearningManagementSystem.Helpers
             StorageFolder folder = await picker.PickSingleFolderAsync();
             return folder;
         }
-
     }
 }

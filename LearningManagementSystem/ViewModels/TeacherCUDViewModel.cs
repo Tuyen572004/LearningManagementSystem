@@ -61,8 +61,9 @@ namespace LearningManagementSystem.ViewModels
         /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
-                ("UserId", new NegativeIntToNewMarkerConverter()),
-                ];
+            ("UserId", new NegativeIntToNewMarkerConverter()),
+            ("PhoneNo", new NullableStringToStringConverter()),
+            ];
 
         /// <summary>
         /// Gets the message of the specified item.

@@ -17,6 +17,7 @@ namespace LearningManagementSystem.ViewModels
     /// <param name="dao">Data access object for database operations.</param>
     partial class SimplifiedStudentHolderViewModel(IDao dao) : CUDViewModel(dao)
     {
+
         /// <summary>
         /// Gets the order of columns to be displayed.
         /// </summary>
@@ -32,6 +33,7 @@ namespace LearningManagementSystem.ViewModels
         /// </summary>
         /// <param name="item">The item to get the message for.</param>
         /// <returns>Returns null as no specific message is associated.</returns>
+
         public override InfoBarMessage? GetMessageOf(object item) => null;
 
         /// <summary>

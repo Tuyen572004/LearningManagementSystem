@@ -7,7 +7,10 @@ namespace LearningManagementSystem.Services.UserService
 {
     public class UserService
     {
-        //// TODO : Implement the GetUserRoleAsync method
+        /// <summary>
+        /// Gets the current user's role asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the role of the current user.</returns>
         public static async Task<string> GetCurrentUserRole()
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -15,6 +18,10 @@ namespace LearningManagementSystem.Services.UserService
             return await Task.FromResult(role);
         }
 
+        /// <summary>
+        /// Saves the user configuration to local settings.
+        /// </summary>
+        /// <param name="user">The user object containing the configuration to save.</param>
         public static void SaveUserConfig(User user)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -24,6 +31,11 @@ namespace LearningManagementSystem.Services.UserService
             localSettings.Values["Id"] = user.Id;
         }
 
+        /// <summary>
+        /// Encrypts the given password using Base64 encoding.
+        /// </summary>
+        /// <param name="password">The password to encrypt.</param>
+        /// <returns>The encrypted password as a Base64 encoded string.</returns>
         public string EncryptPassword(string password)
         {
             var passwordRaw = password;
@@ -34,6 +46,9 @@ namespace LearningManagementSystem.Services.UserService
             return encryptedPasswordBase64;
         }
 
+        /// <summary>
+        /// Logs out the current user by clearing the local settings.
+        /// </summary>
         public void Logout()
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -42,9 +57,13 @@ namespace LearningManagementSystem.Services.UserService
             localSettings.Values["Email"] = null;
             localSettings.Values["Id"] = null;
         }
+
+        /// <summary>
+        /// Gets the current user asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the current user object, or null if no user is found.</returns>
         public static async Task<User> GetCurrentUser()
         {
-
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var id = localSettings.Values["Id"] as int?;
             var username = localSettings.Values["Username"] as string;
@@ -64,7 +83,6 @@ namespace LearningManagementSystem.Services.UserService
                 });
             }
             return null;
-
         }
     }
 }

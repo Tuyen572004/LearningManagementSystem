@@ -7,14 +7,19 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Retrieves a submission by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the submission.</param>
+        /// <returns>A <see cref="Submission"/> object if found; otherwise, a new <see cref="Submission"/> object.</returns>
         public Submission GetSubmissionById(int id)
         {
             var result = new Submission();
             var sql = """
-                SELECT Id, AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade
-                FROM Submissions
-                WHERE Id=@Id
-                """;
+                    SELECT Id, AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade
+                    FROM Submissions
+                    WHERE Id=@Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -41,12 +46,16 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Saves a new submission to the database.
+        /// </summary>
+        /// <param name="submission">The <see cref="Submission"/> object to save.</param>
         public void SaveSubmission(Submission submission)
         {
             var sql = """
-                INSERT INTO Submissions (AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade)
-                VALUES (@AssignmentId, @UserId, @SubmissionDate, @FilePath, @FileName, @FileType, @Grade)
-                """;
+                    INSERT INTO Submissions (AssignmentId, UserId, SubmissionDate, FilePath, FileName, FileType, Grade)
+                    VALUES (@AssignmentId, @UserId, @SubmissionDate, @FilePath, @FileName, @FileType, @Grade)
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -64,15 +73,20 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of submissions for a specific assignment.
+        /// </summary>
+        /// <param name="id">The unique identifier of the assignment.</param>
+        /// <returns>A list of <see cref="Submission"/> objects.</returns>
         public List<Submission> GetSubmissionsByAssignmentId(int id)
         {
             var result = new List<Submission>();
             var sql = """
-                SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, u.Username, s.Grade
-                FROM Submissions s
-                JOIN Users u ON s.UserId = u.Id
-                WHERE s.AssignmentId=@AssignmentId
-                """;
+                    SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, u.Username, s.Grade
+                    FROM Submissions s
+                    JOIN Users u ON s.UserId = u.Id
+                    WHERE s.AssignmentId=@AssignmentId
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -99,15 +113,21 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Retrieves a list of submissions for a specific assignment and user.
+        /// </summary>
+        /// <param name="id1">The unique identifier of the assignment.</param>
+        /// <param name="id2">The unique identifier of the user.</param>
+        /// <returns>A list of <see cref="Submission"/> objects.</returns>
         public List<Submission> GetSubmissionsByAssignmentIdAndUserId(int id1, int id2)
         {
             var result = new List<Submission>();
             var sql = """
-                SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, s.Grade
-                FROM Submissions s
-                JOIN Users u ON s.UserId = u.Id
-                WHERE s.AssignmentId=@AssignmentId AND s.UserId=@UserId
-                """;
+                    SELECT s.Id, s.AssignmentId, s.UserId, s.SubmissionDate, s.FilePath, s.FileName, s.FileType, s.Grade
+                    FROM Submissions s
+                    JOIN Users u ON s.UserId = u.Id
+                    WHERE s.AssignmentId=@AssignmentId AND s.UserId=@UserId
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -135,12 +155,16 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Updates an existing submission in the database.
+        /// </summary>
+        /// <param name="submission">The <see cref="Submission"/> object to update.</param>
         public void UpdateSubmission(Submission submission)
         {
             var sql = """
-                UPDATE Submissions SET AssignmentId=@AssignmentId, UserId=@UserId, SubmissionDate=@SubmissionDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType, Grade=@Grade
-                WHERE Id=@Id
-                """;
+                    UPDATE Submissions SET AssignmentId=@AssignmentId, UserId=@UserId, SubmissionDate=@SubmissionDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType, Grade=@Grade
+                    WHERE Id=@Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -159,6 +183,10 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Deletes a submission by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the submission to delete.</param>
         public void DeleteSubmissionById(int id)
         {
             var sql = "DELETE FROM Submissions WHERE Id=@Id";

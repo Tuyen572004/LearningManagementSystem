@@ -133,7 +133,7 @@ namespace LearningManagementSystem.Models
                 TeacherCode = "",
                 TeacherName = "",
                 Email = "",
-                PhoneNo = "",
+                PhoneNo = null,
                 UserId = null
             };
         }

@@ -7,14 +7,19 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Finds notifications by class ID.
+        /// </summary>
+        /// <param name="classId">The ID of the class.</param>
+        /// <returns>A collection of notifications for the specified class.</returns>
         FullObservableCollection<BaseResource> IDao.findNotificationsByClassId(int classId)
         {
             var result = new FullObservableCollection<BaseResource>();
             var sql = """
-                SELECT Id, ClassId, ResourceCategoryId, Description, PostDate, Title, FilePath, FileName, FileType, createdBy
-                FROM Notifications
-                WHERE ClassId=@ClassId
-                """;
+                    SELECT Id, ClassId, ResourceCategoryId, Description, PostDate, Title, FilePath, FileName, FileType, createdBy
+                    FROM Notifications
+                    WHERE ClassId=@ClassId
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -42,14 +47,18 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Updates an existing notification.
+        /// </summary>
+        /// <param name="notification">The notification to update.</param>
         void IDao.UpdateNotification(Notification notification)
         {
             var sql = """
-                UPDATE Notifications 
-                SET Description=@Description, FileName=@FileName, FilePath=@FilePath, FileType=@FileType, PostDate=@PostDate,
-                    Title=@Title, ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, CreatedBy=@CreatedBy
-                WHERE Id=@Id
-                """;
+                    UPDATE Notifications 
+                    SET Description=@Description, FileName=@FileName, FilePath=@FilePath, FileType=@FileType, PostDate=@PostDate,
+                        Title=@Title, ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, CreatedBy=@CreatedBy
+                    WHERE Id=@Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -70,13 +79,17 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Deletes the attachment of a notification by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the notification.</param>
         void IDao.DeleteAttachmentByNotificationId(int id)
         {
             var sql = """
-                UPDATE Notifications 
-                SET FileName=NULL, FilePath=NULL, FileType=NULL
-                WHERE Id=@NotificationId
-                """;
+                    UPDATE Notifications 
+                    SET FileName=NULL, FilePath=NULL, FileType=NULL
+                    WHERE Id=@NotificationId
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -87,13 +100,17 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Adds a new notification.
+        /// </summary>
+        /// <param name="notification">The notification to add.</param>
         void IDao.AddNotification(Notification notification)
         {
             var sql = """
-                INSERT INTO Notifications (Description, FileName, FilePath, FileType, PostDate, Title, ClassId, ResourceCategoryId, CreatedBy)
-                VALUES (@Description, @FileName, @FilePath, @FileType, @PostDate, @Title, @ClassId, @ResourceCategoryId, @CreatedBy)
-                RETURNING Id
-                """;
+                    INSERT INTO Notifications (Description, FileName, FilePath, FileType, PostDate, Title, ClassId, ResourceCategoryId, CreatedBy)
+                    VALUES (@Description, @FileName, @FilePath, @FileType, @PostDate, @Title, @ClassId, @ResourceCategoryId, @CreatedBy)
+                    RETURNING Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -113,11 +130,16 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Finds a notification by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the notification.</param>
+        /// <returns>The notification with the specified ID, or null if not found.</returns>
         Notification IDao.FindNotificationById(int id)
         {
             var sql = """
-                SELECT * FROM Notifications WHERE Id=@Id
-                """;
+                    SELECT * FROM Notifications WHERE Id=@Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -147,11 +169,15 @@ namespace LearningManagementSystem.DataAccess
             return null;
         }
 
+        /// <summary>
+        /// Deletes a notification by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the notification.</param>
         void IDao.DeleteNotificationById(int id)
         {
             var sql = """
-                DELETE FROM Notifications WHERE Id=@Id
-                """;
+                    DELETE FROM Notifications WHERE Id=@Id
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))

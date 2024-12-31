@@ -10,6 +10,11 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Finds the course by its course code and sets the course ID.
+        /// </summary>
+        /// <param name="course">The course object containing the course code.</param>
+        /// <returns>The ID of the course.</returns>
         public int FindCourseByID(Course course)
         {
             var sql = "SELECT Id FROM Courses WHERE CourseCode=@CourseCode";
@@ -27,6 +32,11 @@ namespace LearningManagementSystem.DataAccess
                 return course.Id;
             }
         }
+        /// <summary>
+        /// Finds the total number of classes for a given course ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course.</param>
+        /// <returns>The total number of classes.</returns>
         public int findTotalClassesByCourseId(int courseId)
         {
             var sql = "SELECT COUNT(*) FROM classes WHERE courseid=@CourseId";
@@ -39,9 +49,13 @@ namespace LearningManagementSystem.DataAccess
                 return (int)result;
             }
         }
+        /// <summary>
+        /// Finds the total number of students enrolled in a given course ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course.</param>
+        /// <returns>The total number of students.</returns>
         public int findTotalStudentsByCourseId(int courseId)
         {
-            // class has courseid and classid, enrollment has classid and studentid
             var sql = "SELECT COUNT(*) FROM enrollments e JOIN classes c ON e.classid = c.id WHERE c.courseid=@CourseId";
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -52,6 +66,11 @@ namespace LearningManagementSystem.DataAccess
                 return (int)result;
             }
         }
+        /// <summary>
+        /// Finds the course associated with a given class ID.
+        /// </summary>
+        /// <param name="classId">The ID of the class.</param>
+        /// <returns>The course associated with the class ID.</returns>
         public Course findCourseByClassId(int classId)
         {
             var result = new Course();
@@ -83,90 +102,39 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Gets the course by its ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course.</param>
+        /// <returns>The course with the specified ID.</returns>
         public Course GetCourseById(int courseId)
         {
-            Random random = new Random();
-            courseId = random.Next(1, 20);
-            if (courseId % 8 == 1)
+            var result = new Course();
+            var sql = "SELECT Id, CourseCode, CourseDescription, DepartmentId FROM Courses WHERE Id=@Id";
+            using (var connection = GetConnection())
+            using (var command = new NpgsqlCommand(sql, connection))
             {
-                return new Course
+                command.Parameters.AddWithValue("@Id", courseId);
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    Id = courseId,
-                    CourseCode = "CSE101",
-                    CourseDescription = "Introduction to Computer Science",
-                    DepartmentId = 1
-                };
+                    result = new Course
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        CourseCode = reader.GetString(reader.GetOrdinal("CourseCode")),
+                        CourseDescription = reader.GetString(reader.GetOrdinal("CourseDescription")),
+                        DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
+                    };
+                }
             }
-            if (courseId % 8 == 2)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE102",
-                    CourseDescription = "Data Structures and Algorithms",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 3)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE103",
-                    CourseDescription = "Operating Systems",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 4)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE104",
-                    CourseDescription = "Computer Networks",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 5)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE105",
-                    CourseDescription = "Database Management Systems",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 6)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE106",
-                    CourseDescription = "Software Engineering",
-                    DepartmentId = 1
-                };
-            }
-            if (courseId % 8 == 7)
-            {
-                return new Course
-                {
-                    Id = courseId,
-                    CourseCode = "CSE107",
-                    CourseDescription = "Web Development",
-                    DepartmentId = 1
-                };
-            }
+            return result;
+        }
 
-            return new Course
-            {
-                Id = courseId,
-                CourseCode = "CSE108",
-                CourseDescription = "Computer Graphics",
-                DepartmentId = 1
-            };
-        } // MOCK
-
+        /// <summary>
+        /// Retrieves all course descriptions from the database.
+        /// </summary>
+        /// <returns>A list of course descriptions.</returns>
         public List<string> GetAllCourseDecriptions()
         {
             var result = new List<string>();
@@ -184,11 +152,16 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
-        public void DeleteCourse(int courseId)
-        {
-            throw new NotImplementedException();
-        }
 
+        /// <summary>
+        /// Retrieves a paginated list of courses from the database.
+        /// </summary>
+        /// <param name="page">The page number to retrieve.</param>
+        /// <param name="pageSize">The number of courses per page.</param>
+        /// <param name="keyword">The keyword to filter courses by description.</param>
+        /// <param name="sortBy">The column to sort by.</param>
+        /// <param name="sortOrder">The sort order (ASC or DESC).</param>
+        /// <returns>A tuple containing the total number of courses and a list of courses.</returns>
         public Tuple<int, List<Course>> GetAllCourses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<Course>();
@@ -232,6 +205,11 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Inserts a new course into the database.
+        /// </summary>
+        /// <param name="course">The course to insert.</param>
+        /// <returns>The ID of the inserted course.</returns>
         public int InsertCourse(Course course)
         {
             var sql = """
@@ -255,6 +233,11 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Removes a course from the database by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the course to remove.</param>
+        /// <returns>0 if the course was successfully removed, 1 if an error occurred.</returns>
         public int RemoveCourseByID(int id)
         {
             var sql = "DELETE FROM Courses WHERE Id=@Id";
@@ -277,6 +260,10 @@ namespace LearningManagementSystem.DataAccess
             return 0;
         }
 
+        /// <summary>
+        /// Updates the course details in the database.
+        /// </summary>
+        /// <param name="course">The course object containing updated details.</param>
         public void UpdateCourse(Course course)
         {
             var sql = "UPDATE Courses SET CourseCode=@CourseCode, CourseDescription=@CourseDescription, DepartmentId=@DepartmentId WHERE Id=@Id";
@@ -293,6 +280,10 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Counts the total number of courses in the database.
+        /// </summary>
+        /// <returns>The total number of courses.</returns>
         public int CountCourse()
         {
             var sql = "SELECT COUNT(*) AS TotalItems FROM Courses";

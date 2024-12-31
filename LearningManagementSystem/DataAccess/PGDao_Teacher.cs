@@ -17,6 +17,12 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Retrieves a teacher by their unique identifier.
+        /// </summary>
+        /// <param name="teacherId">The unique identifier of the teacher.</param>
+        /// <returns>The <see cref="Teacher"/> object if found; otherwise, throws an exception.</returns>
+        /// <exception cref="Exception">Thrown when the teacher is not found.</exception>
         public Teacher GetTeacherById(int teacherId)
         {
             Teacher result = null;
@@ -57,6 +63,11 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Retrieves a teacher by their user identifier.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>The <see cref="Teacher"/> object if found; otherwise, null.</returns>
         public Teacher GetTeacherByUserId(int userId)
         {
             Teacher result = null;
@@ -93,6 +104,12 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Retrieves a collection of teachers associated with a specific class.
+        /// </summary>
+        /// <param name="classId">The unique identifier of the class.</param>
+        /// <returns>A <see cref="FullObservableCollection{Teacher}"/> containing the teachers associated with the specified class.</returns>
+        /// <exception cref="Exception">Thrown when there is an error retrieving the teachers.</exception>
         public FullObservableCollection<Teacher> GetTeachersByClassId(int classId)
         {
             FullObservableCollection<Teacher> result = new();
@@ -132,6 +149,19 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Adds a collection of teachers to the database.
+        /// </summary>
+        /// <param name="teachers">The collection of <see cref="Teacher"/> objects to be added.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of successfully added <see cref="Teacher"/> objects.</description></item>
+        /// <item><description>The count of successfully added teachers.</description></item>
+        /// <item><description>A list of invalid <see cref="Teacher"/> objects along with the associated errors.</description></item>
+        /// </list>
+        /// </returns>
+        /// <exception cref="Exception">Thrown when there is an error during the transaction.</exception>
         public (
             IList<Teacher> addedTeachers,
             int addedCount,
@@ -248,6 +278,27 @@ namespace LearningManagementSystem.DataAccess
             return (addedTeachers, addedCount, invalidTeachers);
         }
 
+        /// <summary>
+        /// Updates a collection of teachers in the database.
+        /// </summary>
+        /// <param name="teachers">The collection of teachers to update.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of successfully updated teachers.</description></item>
+        /// <item><description>The count of successfully updated teachers.</description></item>
+        /// <item><description>A list of invalid teachers with their respective errors.</description></item>
+        /// </list>
+        /// </returns>
+        /// <remarks>
+        /// This method performs the following checks before updating a teacher:
+        /// <list type="bullet">
+        /// <item><description>Checks if the teacher exists in the database.</description></item>
+        /// <item><description>Checks if the UserId exists or inserts a new user if necessary.</description></item>
+        /// <item><description>Checks if the TeacherCode is unique (excluding the current teacher).</description></item>
+        /// </list>
+        /// If any of these checks fail, the teacher is added to the invalid teachers list with the corresponding errors.
+        /// </remarks>
         public (
             IList<Teacher> updatedTeachers,
             int updatedCount,
@@ -382,6 +433,29 @@ namespace LearningManagementSystem.DataAccess
             return (updatedTeachers, updatedCount, invalidTeachers);
         }
 
+        /// <summary>
+        /// Deletes a collection of teachers from the database.
+        /// </summary>
+        /// <param name="teachers">The collection of teachers to be deleted.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of successfully deleted teachers.</description></item>
+        /// <item><description>The count of successfully deleted teachers.</description></item>
+        /// <item><description>A list of invalid teachers with associated error messages.</description></item>
+        /// </list>
+        /// </returns>
+        /// <remarks>
+        /// This method performs the following steps for each teacher:
+        /// <list type="number">
+        /// <item><description>Checks if the teacher ID is valid.</description></item>
+        /// <item><description>Checks if the teacher exists in the database.</description></item>
+        /// <item><description>Checks for references to the teacher in other tables.</description></item>
+        /// <item><description>Deletes the teacher record if no references are found.</description></item>
+        /// <item><description>Deletes the associated user record if applicable.</description></item>
+        /// </list>
+        /// </remarks>
+        /// <exception cref="Exception">Thrown when an error occurs during the database operation.</exception>
         public (
             IList<Teacher> deletedTeachers,
             int deletedCount,
@@ -482,6 +556,16 @@ namespace LearningManagementSystem.DataAccess
             return (deletedTeachers, deletedCount, invalidTeachers);
         }
 
+        /// <summary>
+        /// Retrieves a collection of teachers based on the specified criteria.
+        /// </summary>
+        /// <param name="fetchingAll">If true, fetches all teachers without pagination.</param>
+        /// <param name="ignoringCount">The number of teachers to skip.</param>
+        /// <param name="fetchingCount">The number of teachers to fetch.</param>
+        /// <param name="chosenIds">A collection of teacher IDs to filter the results.</param>
+        /// <param name="sortCriteria">A collection of sorting criteria to order the results.</param>
+        /// <param name="searchCriteria">The search criteria to filter the results.</param>
+        /// <returns>A tuple containing an observable collection of teachers and the total count of teachers.</returns>
         public (ObservableCollection<Teacher>, int) GetTeachers(
             bool fetchingAll = false,
             int ignoringCount = 0,

@@ -114,6 +114,10 @@ namespace LearningManagementSystem.DataAccess
             return (addedStudents, addedCount, invalidStudents);
         }
 
+        /// <summary>
+        /// Counts the total number of students in the database.
+        /// </summary>
+        /// <returns>The total number of students.</returns>
         public int CountStudent()
         {
             int count = 0;
@@ -129,6 +133,24 @@ namespace LearningManagementSystem.DataAccess
             return count;
         }
 
+        /// <summary>
+        /// Updates a list of students in the database.
+        /// </summary>
+        /// <param name="students">The list of students to update.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>A list of successfully updated students.</description>
+        /// </item>
+        /// <item>
+        /// <description>The count of successfully updated students.</description>
+        /// </item>
+        /// <item>
+        /// <description>A list of students that failed to update along with the corresponding error messages.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         public (
             IList<StudentVer2> updateStudents,
             int updatedCount,
@@ -194,7 +216,8 @@ namespace LearningManagementSystem.DataAccess
                                     continue;
                                 }
                             }
-                        } else if (student.UserId is not null)
+                        }
+                        else if (student.UserId is not null)
                         {
                             var checkUserIdCommand = new NpgsqlCommand(
                             """
@@ -261,6 +284,24 @@ namespace LearningManagementSystem.DataAccess
             return (updatedStudents, updatedCount, invalidStudents);
         }
 
+        /// <summary>
+        /// Deletes a list of students from the database.
+        /// </summary>
+        /// <param name="students">The list of students to delete.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>A list of successfully deleted students.</description>
+        /// </item>
+        /// <item>
+        /// <description>The count of successfully deleted students.</description>
+        /// </item>
+        /// <item>
+        /// <description>A list of students that failed to delete along with the corresponding error messages.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
         public (
             IList<StudentVer2> deleteStudents,
             int deletedCount,
@@ -356,6 +397,16 @@ namespace LearningManagementSystem.DataAccess
             return (deletedStudents, deletedCount, invalidStudents);
         }
 
+        /// <summary>
+        /// Retrieves a collection of students from the database based on the specified criteria.
+        /// </summary>
+        /// <param name="fetchingAll">If true, fetches all students; otherwise, fetches a limited number of students.</param>
+        /// <param name="ignoringCount">The number of students to skip.</param>
+        /// <param name="fetchingCount">The number of students to fetch.</param>
+        /// <param name="chosenIds">A collection of student IDs to filter the results.</param>
+        /// <param name="sortCriteria">A collection of sorting criteria to order the results.</param>
+        /// <param name="searchCriteria">The search criteria to filter the results.</param>
+        /// <returns>A tuple containing an observable collection of students and the total count of students.</returns>
         public (ObservableCollection<StudentVer2>, int) GetStudents(
             bool fetchingAll = false,
             int ignoringCount = 0,
@@ -363,7 +414,6 @@ namespace LearningManagementSystem.DataAccess
             IEnumerable<int> chosenIds = null,
             IEnumerable<SortCriteria> sortCriteria = null,
             SearchCriteria searchCriteria = null
-            // List<(StudentField field, object leftBound, object rightBound, bool containedLeftBound, bool withinBounds, bool containedRightBound)> filterCriteria = null
         )
         {
             ObservableCollection<StudentVer2> result = [];
@@ -483,11 +533,11 @@ namespace LearningManagementSystem.DataAccess
             return (result, queryCount);
         }
 
-        //public Student GetStudentById(int studentId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        /// <summary>
+        /// Retrieves a student by their user ID.
+        /// </summary>
+        /// <param name="id">The user ID of the student to retrieve.</param>
+        /// <returns>A <see cref="Student"/> object containing the student's details.</returns>
         public Student GetStudentByUserId(int id)
         {
             var result = new Student();
@@ -521,92 +571,13 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
-        //public ObservableCollection<StudentVer2> GetStudentsByClassId(int classId)
-        //{
-        //    try
-        //    {
-        //        using (var connection = GetConnection())
-        //        {
-        //            connection.Open();
-        //            Console.WriteLine("Connection is open");
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //    }
-        //    return new ObservableCollection<StudentVer2>();
-        //}
-
-        //public (ObservableCollection<StudentVer2>, int) GetStudentsById(
-        //    int ignoringCount = 0,
-        //    int fetchingCount = 0,
-        //    IEnumerable<int> chosenIds = null
-        //)
-        //{
-        //    ObservableCollection<StudentVer2> result = new();
-        //    int queryCount = 0;
-
-        //    using (var connection = GetConnection())
-        //    {
-        //        connection.Open();
-        //        var query = """
-        //            select count(*) over() as "totalitem", "id", "studentcode", "studentname", "email", "birthdate", "phoneno", "userid", "enrollmentyear", "graduationyear"
-        //            from "students"
-        //            """;
-
-        //        if (chosenIds is not null && chosenIds.Any())
-        //        {
-        //            query += $"\nwhere \"id\" in ({string.Join(", ", chosenIds)})";
-        //        }
-
-        //        query += "\nlimit @Take offset @Skip";
-
-        //        var command = new NpgsqlCommand(query, connection);
-        //        command.Parameters.Add("@Skip", NpgsqlDbType.Integer).Value = ignoringCount;
-        //        command.Parameters.Add("@Take", NpgsqlDbType.Integer).Value = fetchingCount;
-
-        //        var queryResultReader = command.ExecuteReader();
-
-        //        bool isTotalItemFetched = false;
-
-        //        while (queryResultReader.Read())
-        //        {
-        //            if (!isTotalItemFetched)
-        //            {
-        //                queryCount = queryResultReader.GetInt32(queryResultReader.GetOrdinal("totalitem"));
-        //                isTotalItemFetched = true;
-        //            }
-
-        //            int graduationYearColumn = queryResultReader.GetOrdinal("graduationyear");
-        //            int userIdColumn = queryResultReader.GetOrdinal("userid");
-        //            StudentVer2 newStudent = new()
-        //            {
-        //                Id = queryResultReader.GetInt32("id"),
-        //                StudentCode = queryResultReader.GetString("studentcode"),
-        //                StudentName = queryResultReader.GetString("studentname"),
-        //                Email = queryResultReader.GetString("email"),
-        //                BirthDate = queryResultReader.GetDateTime("birthdate"),
-        //                PhoneNo = queryResultReader.GetString("phoneno"),
-        //                UserId = (queryResultReader.IsDBNull(userIdColumn)
-        //                    ? null
-        //                    : queryResultReader.GetInt32("userid")
-        //                    ),
-        //                EnrollmentYear = queryResultReader.GetInt32("enrollmentyear"),
-        //                GraduationYear = (queryResultReader.IsDBNull(graduationYearColumn)
-        //                    ? null
-        //                    : queryResultReader.GetInt32("graduationyear")
-        //                    )
-        //            };
-
-        //            result.Add(newStudent);
-        //        };
-        //    }
-        //    return (result, queryCount);
-        //}
-
-        // only get name and user id
-        public List<StudentVer2> findStudentsByIdIn(List<int> ids){
+        /// <summary>
+        /// Finds students by their IDs and returns a list of students with their names and user IDs.
+        /// </summary>
+        /// <param name="ids">A list of student IDs to search for.</param>
+        /// <returns>A list of <see cref="StudentVer2"/> objects containing the student names and user IDs.</returns>
+        public List<StudentVer2> findStudentsByIdIn(List<int> ids)
+        {
             List<StudentVer2> result = [];
             using (var connection = GetConnection())
             {

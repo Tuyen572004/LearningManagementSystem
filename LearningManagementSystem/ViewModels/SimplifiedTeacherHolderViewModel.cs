@@ -17,6 +17,7 @@ namespace LearningManagementSystem.ViewModels
     /// <param name="dao">Data access object for interacting with the database.</param>
     partial class SimplifiedTeacherHolderViewModel(IDao dao) : CUDViewModel(dao)
     {
+
         /// <summary>
         /// Gets the order of columns to be displayed.
         /// </summary>
