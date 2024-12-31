@@ -61,7 +61,7 @@ namespace LearningManagementSystem.ViewModels
                 {
                     AssignmentViewModel assignmentViewModel = new AssignmentViewModel();
                     assignmentViewModel.Assignment.ClassId = EnrollmentViewModel.Class.Id;
-                    assignmentViewModel.Assignment.TeacherId = UserService.GetCurrentUser().Result.Id;
+                    assignmentViewModel.Assignment.CreatedBy = UserService.GetCurrentUser().Result.Id;
                     assignmentViewModel.Assignment.ResourceCategoryId = (int)ResourceCategoryEnum.Assignment;
 
                     WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(AddAssignment), assignmentViewModel));

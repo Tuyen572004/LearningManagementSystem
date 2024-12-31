@@ -22,7 +22,7 @@
 
             <Rectangle Grid.Row="0" Fill="ForestGreen" />
             <TextBlock 
-                Text="Teacher CRUD" Width="Auto" Height="50"
+                Text="Edit Teacher" Width="Auto" Height="50"
                 FontSize="40" FontWeight="Bold"
                 TextAlignment="Center" VerticalAlignment="Bottom" Margin="16, 0, 0, 16" HorizontalAlignment="Left" 
                 Grid.Row="0"

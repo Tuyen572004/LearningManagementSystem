@@ -20,7 +20,7 @@ namespace LearningManagementSystem.DataAccess
         {
             var result = new FullObservableCollection<BaseResource>();
             var sql = """
-                SELECT Id, ClassId, ResourceCategoryId, Title, TeacherId, Description, DueDate, FilePath, FileName, FileType
+                SELECT Id, ClassId, ResourceCategoryId, Title, CreatedBy, Description, DueDate, FilePath, FileName, FileType
                 FROM Assignments
                 WHERE ClassId=@ClassId
                 """;
@@ -38,7 +38,7 @@ namespace LearningManagementSystem.DataAccess
                         ClassId = reader.GetInt32(reader.GetOrdinal("ClassId")),
                         ResourceCategoryId = reader.GetInt32(reader.GetOrdinal("ResourceCategoryId")),
                         Title = reader.GetString(reader.GetOrdinal("Title")),
-                        TeacherId = reader.GetInt32(reader.GetOrdinal("TeacherId")),
+                        CreatedBy = reader.GetInt32(reader.GetOrdinal("CreatedBy")),
                         Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
                         DueDate = reader.GetDateTime(reader.GetOrdinal("DueDate")),
                         FilePath = reader.IsDBNull(reader.GetOrdinal("FilePath")) ? null : reader.GetString(reader.GetOrdinal("FilePath")),
@@ -57,8 +57,8 @@ namespace LearningManagementSystem.DataAccess
         public void SaveAssignment(Assignment assignment)
         {
             var sql = """
-                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
-                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
+                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, CreatedBy, DueDate, FilePath, FileName, FileType)
+                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @CreatedBy, @DueDate, @FilePath, @FileName, @FileType)
                 """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -67,7 +67,7 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.AddWithValue("@ResourceCategoryId", assignment.ResourceCategoryId);
                 command.Parameters.AddWithValue("@Title", assignment.Title);
                 command.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@TeacherId", assignment.TeacherId);
+                command.Parameters.AddWithValue("@CreatedBy", assignment.CreatedBy);
                 command.Parameters.AddWithValue("@DueDate", assignment.DueDate);
                 command.Parameters.AddWithValue("@FilePath", assignment.FilePath ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@FileName", assignment.FileName ?? (object)DBNull.Value);
@@ -85,7 +85,7 @@ namespace LearningManagementSystem.DataAccess
         {
             var sql = """
                 UPDATE Assignments 
-                SET ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, Title=@Title, Description=@Description, TeacherId=@TeacherId, DueDate=@DueDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType
+                SET ClassId=@ClassId, ResourceCategoryId=@ResourceCategoryId, Title=@Title, Description=@Description, CreatedBy=@CreatedBy, DueDate=@DueDate, FilePath=@FilePath, FileName=@FileName, FileType=@FileType
                 WHERE Id=@Id
                 """;
             using (var connection = GetConnection())
@@ -95,7 +95,7 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.AddWithValue("@ResourceCategoryId", assignment.ResourceCategoryId);
                 command.Parameters.AddWithValue("@Title", assignment.Title);
                 command.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@TeacherId", assignment.TeacherId);
+                command.Parameters.AddWithValue("@CreatedBy", assignment.CreatedBy);
                 command.Parameters.AddWithValue("@DueDate", assignment.DueDate);
                 command.Parameters.AddWithValue("@FilePath", assignment.FilePath ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@FileName", assignment.FileName ?? (object)DBNull.Value);
@@ -133,8 +133,8 @@ namespace LearningManagementSystem.DataAccess
         public void AddAssignment(Assignment assignment)
         {
             var sql = """
-                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, TeacherId, DueDate, FilePath, FileName, FileType)
-                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @TeacherId, @DueDate, @FilePath, @FileName, @FileType)
+                INSERT INTO Assignments (ClassId, ResourceCategoryId, Title, Description, CreatedBy, DueDate, FilePath, FileName, FileType)
+                VALUES (@ClassId, @ResourceCategoryId, @Title, @Description, @CreatedBy, @DueDate, @FilePath, @FileName, @FileType)
                 """;
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -143,7 +143,7 @@ namespace LearningManagementSystem.DataAccess
                 command.Parameters.AddWithValue("@ResourceCategoryId", assignment.ResourceCategoryId);
                 command.Parameters.AddWithValue("@Title", assignment.Title);
                 command.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
-                command.Parameters.AddWithValue("@TeacherId", assignment.TeacherId);
+                command.Parameters.AddWithValue("@CreatedBy", assignment.CreatedBy);
                 command.Parameters.AddWithValue("@DueDate", assignment.DueDate);
                 command.Parameters.AddWithValue("@FilePath", assignment.FilePath ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@FileName", assignment.FileName ?? (object)DBNull.Value);
