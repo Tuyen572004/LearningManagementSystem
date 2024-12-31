@@ -8,14 +8,19 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Finds a class by its ID.
+        /// </summary>
+        /// <param name="classId">The ID of the class to find.</param>
+        /// <returns>The class with the specified ID.</returns>
         public Class findClassById(int classId)
         {
             var result = new Class();
             var sql = """
-                SELECT Id, CourseId, ClassCode, ClassStartDate, ClassEndDate
-                FROM Classes
-                WHERE Id=@classId
-                """;
+                    SELECT Id, CourseId, ClassCode, ClassStartDate, ClassEndDate
+                    FROM Classes
+                    WHERE Id=@classId
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -39,6 +44,10 @@ namespace LearningManagementSystem.DataAccess
             return result;
         }
 
+        /// <summary>
+        /// Gets all class codes.
+        /// </summary>
+        /// <returns>A list of all class codes.</returns>
         public List<String> GetAllClassesCode()
         {
             var result = new List<String>();
@@ -55,16 +64,26 @@ namespace LearningManagementSystem.DataAccess
             }
             return result;
         }
+
+        /// <summary>
+        /// Gets all classes with pagination and filtering options.
+        /// </summary>
+        /// <param name="page">The page number.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <param name="keyword">The keyword to filter by class code.</param>
+        /// <param name="sortBy">The column to sort by.</param>
+        /// <param name="sortOrder">The sort order (ASC or DESC).</param>
+        /// <returns>A tuple containing the total number of items and a list of classes.</returns>
         public Tuple<int, List<Class>> GetAllClasses(int page = 1, int pageSize = 10, string keyword = "", string sortBy = "Id", string sortOrder = "ASC")
         {
             var result = new List<Class>();
             var sql = $"""
-                SELECT COUNT(*) OVER() AS TotalItems, Id, ClassCode, CourseId, ClassStartDate, ClassEndDate
-                FROM Classes
-                WHERE ClassCode LIKE @Keyword
-                ORDER BY {sortBy} {sortOrder}
-                LIMIT @Take OFFSET @Skip
-                """;
+                    SELECT COUNT(*) OVER() AS TotalItems, Id, ClassCode, CourseId, ClassStartDate, ClassEndDate
+                    FROM Classes
+                    WHERE ClassCode LIKE @Keyword
+                    ORDER BY {sortBy} {sortOrder}
+                    LIMIT @Take OFFSET @Skip
+                    """;
 
             var skip = (page - 1) * pageSize;
             var take = pageSize;
@@ -98,6 +117,11 @@ namespace LearningManagementSystem.DataAccess
                 return new Tuple<int, List<Class>>(totalItems, result);
             }
         }
+
+        /// <summary>
+        /// Removes a class by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the class to remove.</param>
         public void RemoveClassByID(int id)
         {
             var sql = "DELETE FROM Classes WHERE Id=@Id";
@@ -110,6 +134,10 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Updates an existing class.
+        /// </summary>
+        /// <param name="newClass">The class object with updated values.</param>
         public void UpdateClass(Class newClass)
         {
             var sql = "UPDATE Classes SET ClassCode=@ClassCode, CourseID=@CourseID, ClassStartDate=@ClassStartDate, ClassEndDate=@ClassEndDate WHERE Id=@Id";
@@ -126,6 +154,10 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Counts the total number of classes.
+        /// </summary>
+        /// <returns>The total number of classes.</returns>
         public int CountClass()
         {
             var sql = "SELECT COUNT(*) AS TotalItems FROM Classes";
@@ -140,13 +172,18 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Inserts a new class.
+        /// </summary>
+        /// <param name="newClass">The class object to insert.</param>
+        /// <returns>The ID of the newly inserted class.</returns>
         public int InsertClass(Class newClass)
         {
             var sql = """
-                INSERT INTO classes (classcode, courseid, classstartdate, classenddate) 
-                VALUES (@ClassCode, @CourseID, @ClassStartDate, @ClassEndDate)
-                 returning id;
-                """;
+                    INSERT INTO classes (classcode, courseid, classstartdate, classenddate) 
+                    VALUES (@ClassCode, @CourseID, @ClassStartDate, @ClassEndDate)
+                     returning id;
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))
@@ -164,18 +201,22 @@ namespace LearningManagementSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Gets the classes a student is enrolled in by the student's ID.
+        /// </summary>
+        /// <param name="studentId">The ID of the student.</param>
+        /// <returns>An observable collection of classes the student is enrolled in.</returns>
         public ObservableCollection<Class> GetEnrolledClassesByStudentId(int studentId)
         {
-
             var result = new ObservableCollection<Class>();
             using (var connection = GetConnection())
             {
                 connection.Open();
                 var query = @"
-                    SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
-                    FROM classes c
-                    JOIN enrollments e ON c.id = e.classid
-                    WHERE e.studentid = @StudentId"
+                        SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
+                        FROM classes c
+                        JOIN enrollments e ON c.id = e.classid
+                        WHERE e.studentid = @StudentId"
                 ;
                 using (var command = new NpgsqlCommand(query, connection))
                 {
@@ -197,9 +238,13 @@ namespace LearningManagementSystem.DataAccess
                 }
             }
             return result;
-
         }
 
+        /// <summary>
+        /// Gets the classes a teacher is enrolled in by the teacher's ID.
+        /// </summary>
+        /// <param name="teacherId">The ID of the teacher.</param>
+        /// <returns>An observable collection of classes the teacher is enrolled in.</returns>
         public ObservableCollection<Class> GetEnrolledClassesByTeacherId(int teacherId)
         {
             var result = new ObservableCollection<Class>();
@@ -207,10 +252,10 @@ namespace LearningManagementSystem.DataAccess
             {
                 connection.Open();
                 var query = @"
-                    SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
-                    FROM classes c
-                    JOIN teachersperclass e ON c.id = e.classid
-                    WHERE e.teacherid = @TeacherId"
+                        SELECT c.id, c.courseid, c.classcode, c.classstartdate, c.classenddate
+                        FROM classes c
+                        JOIN teachersperclass e ON c.id = e.classid
+                        WHERE e.teacherid = @TeacherId"
                 ;
                 using (var command = new NpgsqlCommand(query, connection))
                 {

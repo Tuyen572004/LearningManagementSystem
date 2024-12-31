@@ -21,11 +21,17 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddAssignment : Page
     {
-
+        /// <summary>
+        /// Gets or sets the AssignmentViewModel.
+        /// </summary>
         public AssignmentViewModel AssignmentViewModel { get; set; }
 
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         private readonly UserService userService = new UserService();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddAssignment"/> class.
+        /// </summary>
         public AddAssignment()
         {
             this.InitializeComponent();
@@ -38,7 +44,11 @@ namespace LearningManagementSystem.Views
             });
         }
 
-       protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into Add Assignment button)
+        /// <summary>
+        /// Invoked when the Page is loaded and becomes the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The event data is representative of the pending navigation that will load the current Page.</param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             AssignmentViewModel = e.Parameter as AssignmentViewModel;
             AssignmentViewModel.Assignment.DueDate = DateTime.Now;
@@ -46,20 +56,34 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Invoked immediately after the Page is no longer the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The event data is representative of the navigation that has unloaded the current Page.</param>
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
         }
 
+        /// <summary>
+        /// Handles the Back button click event to navigate back to the previous page.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">Event data that can be examined by overriding code.</param>
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.Frame.Navigate(typeof(ClassDetailPage), AssignmentViewModel.Assignment.ClassId);
             Frame.GoBack();
         }
 
         private ContentDialog _currentDialog;
 
+        /// <summary>
+        /// Displays a message dialog with the specified title and content.
+        /// </summary>
+        /// <param name="title">The title of the dialog.</param>
+        /// <param name="content">The content of the dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task ShowMessageDialog(string title, string content)
         {
             try
@@ -94,9 +118,5 @@ namespace LearningManagementSystem.Views
                 _currentDialog = null;
             }
         }
-
-
-
-
     }
 }

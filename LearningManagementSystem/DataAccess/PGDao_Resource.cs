@@ -10,13 +10,17 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Retrieves all resource categories from the database.
+        /// </summary>
+        /// <returns>A list of <see cref="ResourceCategory"/> objects.</returns>
         public List<ResourceCategory> findAllResourceCategories()
         {
             var result = new List<ResourceCategory>();
             var sql = """
-                SELECT Id, Name, Summary
-                FROM ResourceCategories
-                """;
+                    SELECT Id, Name, Summary
+                    FROM ResourceCategories
+                    """;
 
             using (var connection = GetConnection())
             using (var command = new NpgsqlCommand(sql, connection))

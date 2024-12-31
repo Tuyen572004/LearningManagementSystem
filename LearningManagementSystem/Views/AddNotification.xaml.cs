@@ -21,11 +21,17 @@ namespace LearningManagementSystem.Views
     /// </summary>
     public sealed partial class AddNotification : Page
     {
+        /// <summary>
+        /// Gets or sets the NotificationViewModel.
+        /// </summary>
         public NotificationViewModel NotificationViewModel { get; set; }
 
         private readonly IDao _dao = App.Current.Services.GetService<IDao>();
         private readonly UserService userService = new UserService();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddNotification"/> class.
+        /// </summary>
         public AddNotification()
         {
             this.InitializeComponent();
@@ -38,6 +44,10 @@ namespace LearningManagementSystem.Views
             });
         }
 
+        /// <summary>
+        /// Invoked when the Page is loaded and becomes the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The event data is representative of the pending navigation that will load the current Page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NotificationViewModel = e.Parameter as NotificationViewModel;
@@ -46,12 +56,21 @@ namespace LearningManagementSystem.Views
             base.OnNavigatedTo(e);
         }
 
+        /// <summary>
+        /// Invoked immediately before the Page is unloaded and is no longer the current source of a parent Frame.
+        /// </summary>
+        /// <param name="e">Event data that can be examined by overriding code. The event data is representative of the pending navigation that will unload the current Page.</param>
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
         }
 
+        /// <summary>
+        /// Handles the Back button click event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">Event data that can be examined by overriding code.</param>
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.GoBack();
@@ -59,6 +78,12 @@ namespace LearningManagementSystem.Views
 
         private ContentDialog _currentDialog;
 
+        /// <summary>
+        /// Shows a message dialog with the specified title and content.
+        /// </summary>
+        /// <param name="title">The title of the dialog.</param>
+        /// <param name="content">The content of the dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task ShowMessageDialog(string title, string content)
         {
             try

@@ -12,8 +12,14 @@ namespace LearningManagementSystem.Views
 {
     public sealed partial class NotificationPage : Page
     {
+        /// <summary>
+        /// Gets or sets the NotificationViewModel.
+        /// </summary>
         public NotificationViewModel NotificationViewModel { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationPage"/> class.
+        /// </summary>
         public NotificationPage()
         {
             this.InitializeComponent();
@@ -31,7 +37,11 @@ namespace LearningManagementSystem.Views
             });
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e) // navigated by ClassDetailPage (click into 1 assignment to see it in detail)
+        /// <summary>
+        /// Called when the page is navigated to.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NotificationViewModel.Notification = e.Parameter as Notification;
             base.OnNavigatedTo(e);
@@ -39,6 +49,12 @@ namespace LearningManagementSystem.Views
 
         private ContentDialog _currentDialog;
 
+        /// <summary>
+        /// Shows a message dialog with the specified title and content.
+        /// </summary>
+        /// <param name="title">The title of the dialog.</param>
+        /// <param name="content">The content of the dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task ShowMessageDialog(string title, string content)
         {
             try
@@ -74,9 +90,13 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Handles the Back button click event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private async void BackButton_Click(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 if (NotificationViewModel.IsEditing)
@@ -109,6 +129,10 @@ namespace LearningManagementSystem.Views
             }
         }
 
+        /// <summary>
+        /// Called when the page is navigated from.
+        /// </summary>
+        /// <param name="e">The event data.</param>
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             WeakReferenceMessenger.Default.Unregister<DialogMessage>(this);
