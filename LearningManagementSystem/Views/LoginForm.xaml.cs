@@ -56,13 +56,13 @@ namespace LearningManagementSystem
         /// <param name="e">The event data.</param>
         private async void LoginBtn_Click(object sender, RoutedEventArgs e)
         {
-            var username = inputUsername.Text;
+            var email = inputUsername.Text;
             var password = inputPassword.Password;
 
             var passwordhash = MyUserService.EncryptPassword(password);
             ViewModel.UserLogin = new User
             {
-                Username = username,
+                Email = email,
                 PasswordHash = passwordhash.Length > 4096 ? passwordhash[..4096] : passwordhash,
             };
             try
@@ -80,7 +80,7 @@ namespace LearningManagementSystem
                     {
                         XamlRoot = this.XamlRoot,
                         Title = "Oops !",
-                        Content = "Incorrect Username or Password",
+                        Content = "Incorrect Email or Password.",
                         CloseButtonText = "Try Again"
                     };
                     var result = await ctDialog.ShowAsync();
