@@ -39,12 +39,17 @@ namespace LearningManagementSystem.ViewModels
         /// Gets the holding user by reference.
         /// </summary>
         /// <param name="user">The user reference to set.</param>
+        /// <remarks>
+        /// Why use ref? To prevent Automatic Column Generation on this property in DataGrid
+        /// </remarks>
         public void GetHoldingUserByReference(ref User? user) => user = HoldingUser;
     }
+
     /// <summary>
     /// Enum representing the target of a user assignment.
     /// </summary>
     public enum UserAssignmentTarget { Student, Teacher }
+
     /// <summary>
     /// Message class for user assignment confirmation.
     /// </summary>
@@ -65,6 +70,7 @@ namespace LearningManagementSystem.ViewModels
         /// </summary>
         public UserAssignmentTarget Target => _target;
     }
+
     /// <summary>
     /// ViewModel for user assignment.
     /// </summary>
@@ -117,6 +123,12 @@ namespace LearningManagementSystem.ViewModels
         {
             return input.ToLower().Replace(" ", "");
         }
+        
+        /// <summary>
+        /// Gets the local part of an email address (the part before the '@' symbol).
+        /// </summary>
+        /// <param name="email">The email address to process.</param>
+        /// <returns>The local part of the email address, or an empty string if the email is null, empty, or invalid.</returns>
         public static string GetEmailLocalPart(string email)
         {
             if (string.IsNullOrEmpty(email))
@@ -132,9 +144,27 @@ namespace LearningManagementSystem.ViewModels
 
             return parts[0];
         }
+
+        /// <summary>
+        /// Gets the default password.
+        /// </summary>
         static public string DefaultPassword => "passwordUwU";
+
+        /// <summary>
+        /// Represents invalid content.
+        /// </summary>
         static public readonly string InvalidContent = "INVALID";
+
+        /// <summary>
+        /// Represents existing content.
+        /// </summary>
         static public readonly string ExistedContent = "EXISTED";
+
+        /// <summary>
+        /// Generates a password for the given object.
+        /// </summary>
+        /// <param name="obj">The object to generate a password for. Can be a StudentVer2 or Teacher.</param>
+        /// <returns>The generated password, or the default password if the object is not a StudentVer2 or Teacher.</returns>
         static private string GeneratePasswordForObject(object obj)
         {
             if (obj is StudentVer2 student)
@@ -148,12 +178,29 @@ namespace LearningManagementSystem.ViewModels
             return DefaultPassword;
         }
 
+        /// <summary>
+        /// The original objects before conversion.
+        /// </summary>
         private readonly List<object> _originalObjects = [];
+
+        /// <summary>
+        /// Maps user IDs to User objects.
+        /// </summary>
         private readonly Dictionary<int, User> _userMapper = [];
 
+        /// <summary>
+        /// A set of invalid users.
+        /// </summary>
         private readonly HashSet<User> _invalidUsers = [];
-        // Note that students and teachers should not both in the same list, as their ids may conflict.
 
+
+        /// <summary>
+        /// Converts a collection of objects to User objects and populates the items.
+        /// </summary>
+        /// <param name="objects">The collection of objects to convert.</param>
+        /// <remarks>
+        /// Note that students and teachers should not both in the same list, as their ids may conflict.
+        /// </remarks>
         public void ConvertObjectsToUsersThenPopulate(IEnumerable<object> objects)
         {
             List<object> newUsers = [];
@@ -165,34 +212,15 @@ namespace LearningManagementSystem.ViewModels
             bool isEmailValid;
             foreach (var obj in objects)
             {
-                
-                //if (obj is INotifyDataErrorInfoExtended errorNotifier)
-                //{
-                //    errorNotifier.RevalidateAllProperties();
-                //    if (errorNotifier.HasErrors)
-                //    {
-                //        User newUser = new()
-                //        {
-                //            Username = InvalidContent,
-                //            PasswordHash = "",
-                //            Password = InvalidContent,
-                //            Role = "student",
-                //            Email = InvalidContent,
-                //        };
-                //        newUsers.Add(newUser);
-                //        _invalidUsers.Add(newUser);
-                //        continue;
-                //    }
-                //}
                 objectAsErrorNotifier = obj as INotifyDataErrorInfoExtended;
-                
+
                 if (obj is StudentVer2 student)
                 {
                     var password = GeneratePasswordForObject(student);
                     User newUser;
                     if (student.UserId == null || student.UserId == ITemporaryUserHolder.NewlyHoldingUserId)
                     {
-                        isUserNameValid = objectAsErrorNotifier is null 
+                        isUserNameValid = objectAsErrorNotifier is null
                             || objectAsErrorNotifier.GetErrorsOfSingleProperty("StudentName").ToList().Count == 0;
                         isEmailValid = objectAsErrorNotifier is null
                             || objectAsErrorNotifier.GetErrorsOfSingleProperty("Email").ToList().Count == 0;

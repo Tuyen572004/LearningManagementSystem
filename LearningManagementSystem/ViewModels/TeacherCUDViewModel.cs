@@ -193,7 +193,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Inserts the specified items.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var (addedTeachers, addedCount, invalidTeachersInfo) = _dao.AddTeachers(items.Cast<Teacher>());
             return (
@@ -206,7 +206,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Updates the specified items.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoUpdater => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoUpdater => (IEnumerable<object> items) =>
         {
             var (updatedTeachers, updatedCount, invalidTeachersInfo) = _dao.UpdateTeachers(items.Cast<Teacher>());
             return (
@@ -219,7 +219,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Deletes the specified items.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var (deletedTeachers, deletedCount, invalidTeachersInfo) = _dao.DeleteTeachers(items.Cast<Teacher>());
             return (

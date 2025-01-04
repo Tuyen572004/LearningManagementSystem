@@ -56,10 +56,10 @@ namespace LearningManagementSystem.ViewModels
         /// </summary>
         public override IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [
             ("Id", new NegativeIntToNewMarkerConverter()),
-                ("UserId", new NegativeIntToNewMarkerConverter()),
-                ("GraduationYear", new NullableIntToStringConverter()),
-                ("BirthDate", new DateTimeToStringConverter()),
-                ];
+            ("UserId", new NegativeIntToNewMarkerConverter()),
+            ("GraduationYear", new NullableIntToStringConverter()),
+            ("BirthDate", new DateTimeToStringConverter()),
+            ];
 
         /// <summary>
         /// Gets the read-only columns.
@@ -168,7 +168,8 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Returns an empty item for adding.
         /// </summary>
-        /// <param name="identitySeed">The identity seed for generating unique IDs.</param>
+        /// <param name="identitySeed">The identity seed for generating unique IDs.
+        /// (See <see cref="CUDViewModel.EmptyItem(ref object?)"/> for more information about this parameter) </param>
         /// <returns>An empty <see cref="StudentVer2"/> object.</returns>
         public override object? EmptyItem(ref object? identitySeed)
         {
@@ -198,7 +199,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Inserts the items into the database.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var (addedStudents, addedCount, invalidStudentInfo) = _dao.AddStudents(items.OfType<StudentVer2>());
             return (
@@ -211,7 +212,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Updates the items in the database.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoUpdater => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoUpdater => (IEnumerable<object> items) =>
         {
             var (updatedStudents, updatedCount, invalidStudentInfo) = _dao.UpdateStudents(items.OfType<StudentVer2>());
             return (
@@ -224,7 +225,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Deletes the items from the database.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var (deletedStudents, deletedCount, invalidStudentInfo) = _dao.DeleteStudents(items.OfType<StudentVer2>());
             return (

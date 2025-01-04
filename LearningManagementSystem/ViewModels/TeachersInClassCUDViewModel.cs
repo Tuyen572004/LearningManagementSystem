@@ -106,7 +106,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Gets the inserter for adding items to the DAO.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoInserter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoInserter => (IEnumerable<object> items) =>
         {
             var insertingTeachers = items.Cast<Teacher>();
             var insertingIds = insertingTeachers.Select(teacher => teacher.Id);
@@ -120,7 +120,7 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Gets the deleter for removing items from the DAO.
         /// </summary>
-        public override ItemDaoModifier? ItemDaoDeleter => (IEnumerable<object> items) =>
+        public override ItemDaoUpdater? ItemDaoDeleter => (IEnumerable<object> items) =>
         {
             var deletingTeachers = items.Cast<Teacher>();
             var deletingIds = deletingTeachers.Select(teacher => teacher.Id);

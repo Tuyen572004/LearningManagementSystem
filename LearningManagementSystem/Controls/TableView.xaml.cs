@@ -27,45 +27,117 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
+    /// <summary>
+    /// Specifies the severity level of an InfoBarMessage.
+    /// </summary>
     public enum InfoBarMessageSeverity
     {
         Info,
         Warning,
         Error
     }
+    /// <summary>
+    /// Represents a message to be displayed in an InfoBar.
+    /// </summary>
     public class InfoBarMessage
     {
+        /// <summary>
+        /// Gets or sets the severity level of the message.
+        /// </summary>
         public InfoBarMessageSeverity Severity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the title of the message.
+        /// </summary>
         required public string Title { get; set; }
+
+        /// <summary>
+        /// Gets or sets the content of the message.
+        /// </summary>
         required public string Message { get; set; }
     }
+    /// <summary>
+    /// Provides a method to validate a property.
+    /// </summary>
     public interface IValidatableItem
     {
+        /// <summary>
+        /// Validates the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to validate.</param>
         void ValidateProperty(string? propertyName);
     }
+    /// <summary>
+    /// Provides a method to get an InfoBarMessage for a specific item.
+    /// </summary>
     public interface IInfoProvider
     {
+        /// <summary>
+        /// Gets the InfoBarMessage for the specified item.
+        /// </summary>
+        /// <param name="item">The item to get the message for.</param>
+        /// <returns>The InfoBarMessage for the item.</returns>
         public InfoBarMessage? GetMessageOf(object item);
     }
+    /// <summary>
+    /// Represents the criteria for sorting a column in a DataGrid.
+    /// </summary>
     public class SortCriteria
     {
+        /// <summary>
+        /// Gets or sets the tag of the column to sort.
+        /// </summary>
         required public string ColumnTag { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sort direction for the column.
+        /// </summary>
         public DataGridSortDirection? SortDirection { get; set; }
     }
-    public interface ITableItemProvider: INotifyPropertyChanged
+    /// <summary>
+    /// Provides data and event handlers for managing items in a table.
+    /// </summary>
+    public interface ITableItemProvider : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Gets the collection of items being managed.
+        /// </summary>
         public ObservableCollection<object> ManagingItems { get; }
+
+        /// <summary>
+        /// Gets the event handler for when the sort criteria changes.
+        /// </summary>
         public EventHandler<List<SortCriteria>>? SortChangedHandler => null;
+
+        /// <summary>
+        /// Gets the event handler for when an item is double-tapped.
+        /// </summary>
         public EventHandler<object>? ItemDoubleTappedHandler => null;
 
         /// <summary>
-        /// The item should be implemented with ICloneable interface. If not, the oldItem will be the same as newItem.
+        /// Gets the event handler for when an item is edited.
+        /// The item should implement the ICloneable interface. If not, the oldItem will be the same as newItem.
         /// </summary>
         public EventHandler<(object oldItem, object newItem)>? ItemEdittedHandler => null;
 
+        /// <summary>
+        /// Gets the collection of column names to ignore.
+        /// </summary>
         public IEnumerable<string> IgnoringColumns => [];
+
+        /// <summary>
+        /// Gets the collection of column names in the desired order.
+        /// </summary>
         public IEnumerable<string> ColumnOrder => [];
+
+        /// <summary>
+        /// Gets the collection of column converters.
+        /// </summary>
         public IEnumerable<(string ColumnName, IValueConverter Converter)> ColumnConverters => [];
+
+        /// <summary>
+        /// Gets the collection of read-only column names.
+        /// </summary>
         public IEnumerable<string> ReadOnlyColumns => [];
     }
     public partial class UnassignedItemProvider : ITableItemProvider

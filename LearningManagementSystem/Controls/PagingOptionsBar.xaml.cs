@@ -20,12 +20,31 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
-    public interface IPagingProvider: INotifyPropertyChanged
+    /// <summary>
+    /// Provides an interface for paging functionality, including navigation and property change notifications.
+    /// </summary>
+    public interface IPagingProvider : INotifyPropertyChanged
     {
-        public int CurrentPage { get; }
-        public int ItemCount { get; }
-        public int RowsPerPage { get; set; }
-        public void NavigateToPage(int page);
+        /// <summary>
+        /// Gets the current page number.
+        /// </summary>
+        int CurrentPage { get; }
+
+        /// <summary>
+        /// Gets the total number of items.
+        /// </summary>
+        int ItemCount { get; }
+
+        /// <summary>
+        /// Gets or sets the number of rows per page.
+        /// </summary>
+        int RowsPerPage { get; set; }
+
+        /// <summary>
+        /// Navigates to the specified page.
+        /// </summary>
+        /// <param name="page">The page number to navigate to.</param>
+        void NavigateToPage(int page);
     }
     public partial class UnassignedPagingProvider : IPagingProvider
     {

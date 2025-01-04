@@ -16,31 +16,65 @@ namespace LearningManagementSystem.Models
 {
     public partial class StudentVer2 : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged, ITemporaryUserHolder
     {
+        /// <summary>
+        /// Maximum length for the student code.
+        /// </summary>
         public static readonly int MAX_STUDENT_CODE_LENGTH = 10;
+
+        /// <summary>
+        /// Maximum length for the student name.
+        /// </summary>
         public static readonly int MAX_STUDENT_NAME_LENGTH = 100;
+
+        /// <summary>
+        /// Maximum length for the email address.
+        /// </summary>
         public static readonly int MAX_EMAIL_LENGTH = 100;
+
+        /// <summary>
+        /// Maximum length for the phone number.
+        /// </summary>
         public static readonly int MAX_PHONE_NO_LENGTH = 30;
 
+        /// <summary>
+        /// List of property names that need error checking.
+        /// </summary>
         private readonly List<string> _needErrorChecked =
             INotifyDataErrorInfoExtended.GetPropertiesOf<StudentVer2>()
             .Except(["Id", "UserId", "IsValid"])
             .ToList();
+
+        /// <summary>
+        /// Gets the list of property names that need error checking.
+        /// </summary>
         List<string> INotifyDataErrorInfoExtended.PropertyNames => _needErrorChecked;
 
+        /// <summary>
+        /// Dictionary to store validation errors for each property.
+        /// </summary>
         private readonly Dictionary<string, List<string>> _errors = [];
+
+        /// <summary>
+        /// Gets the dictionary of raw validation errors.
+        /// </summary>
         Dictionary<string, List<string>> INotifyDataErrorInfoExtended.RawErrors => _errors;
 
-        // TODO: For the old view model
+        /// <summary>
+        /// Gets a value indicating whether the student is valid (has no validation errors).
+        /// </summary>
         public bool IsValid => !(this as INotifyDataErrorInfoExtended).HasErrors;
 
-
+        /// <summary>
+        /// Occurs when the validation errors for a property have changed.
+        /// </summary>
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+        /// <summary>
+        /// Raises the ErrorsChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has validation errors.</param>
         void INotifyDataErrorInfoExtended.OnErrorsChanged(string propertyName)
         {
-            //if (!PropertyNames.Contains(propertyName))
-            //{
-            //    return;
-            //}
             if (propertyName == INotifyDataErrorInfoExtended.NoErrorPropertyName)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsValid)));
@@ -48,12 +82,20 @@ namespace LearningManagementSystem.Models
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Raises the ErrorsChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has validation errors.</param>
         public void OnErrorsChanged(string propertyName)
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
-        // TODO: For the old view model
+        /// <summary>
+        /// Gets the validation errors for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to get validation errors for.</param>
+        /// <returns>A collection of validation errors for the specified property.</returns>
         public IEnumerable GetErrors(string? propertyName)
         {
             if (string.IsNullOrEmpty(propertyName))
@@ -63,6 +105,11 @@ namespace LearningManagementSystem.Models
             return _errors.GetValueOrDefault(propertyName) ?? [];
         }
 
+        /// <summary>
+        /// Gets the validation errors for a single property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to get validation errors for.</param>
+        /// <returns>A collection of validation errors for the specified property.</returns>
         public IEnumerable<string> GetErrorsOfSingleProperty(string propertyName)
         {
             List<string> currentErrors = [];
@@ -86,7 +133,7 @@ namespace LearningManagementSystem.Models
                         currentErrors.Add("Student name must not be empty.");
                     }
                     else if (StudentName.Length > MAX_STUDENT_NAME_LENGTH)
-                    {   
+                    {
                         currentErrors.Add($"Student name must be less than {MAX_STUDENT_NAME_LENGTH} characters.");
                     }
                     break;
@@ -154,7 +201,10 @@ namespace LearningManagementSystem.Models
             return currentErrors;
         }
 
-        // TODO: For the old view model
+        /// <summary>
+        /// Validates a single property and updates the validation errors.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to validate.</param>
         public void ValidateProperty(string? propertyName)
         {
             if (propertyName == null)
@@ -251,7 +301,9 @@ namespace LearningManagementSystem.Models
             OnErrorsChanged(propertyName);
         }
 
-        // TODO: For the old view model
+        /// <summary>
+        /// Revalidates all properties and updates the validation errors.
+        /// </summary>
         public void RevalidateAllProperties()
         {
             _errors.Clear();
@@ -265,7 +317,11 @@ namespace LearningManagementSystem.Models
             ValidateProperty(nameof(EnrollmentYear));
             ValidateProperty(nameof(GraduationYear));
         }
-        // TODO: For the old view model
+        /// <summary>
+        /// Changes the validation errors for a specific property and raises the ErrorsChanged event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to change errors for.</param>
+        /// <param name="errors">The list of errors to set for the property.</param>
         public void ChangeErrors(string propertyName, List<string> errors)
         {
             _errors[propertyName] = errors;
@@ -273,6 +329,10 @@ namespace LearningManagementSystem.Models
         }
 
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="StudentVer2"/> class that is a copy of the current instance.
+        /// </summary>
+        /// <returns>A new <see cref="StudentVer2"/> object that is a copy of this instance.</returns>
         public object Clone()
         {
             return new StudentVer2
@@ -289,6 +349,11 @@ namespace LearningManagementSystem.Models
             };
         }
 
+        /// <summary>
+        /// Copies the values from another <see cref="StudentVer2"/> instance to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="StudentVer2"/> instance to copy values from.</param>
+        /// <returns>This <see cref="StudentVer2"/> instance with copied values.</returns>
         public StudentVer2 Copy(StudentVer2? other)
         {
             if (other == null)
@@ -306,6 +371,11 @@ namespace LearningManagementSystem.Models
             return this;
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -314,7 +384,7 @@ namespace LearningManagementSystem.Models
             }
             if (obj is StudentVer2 other)
             {
-                return 
+                return
                     StudentCode == other.StudentCode &&
                     StudentName == other.StudentName &&
                     Email == other.Email &&
@@ -327,6 +397,10 @@ namespace LearningManagementSystem.Models
             return false;
         }
 
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(
@@ -341,6 +415,10 @@ namespace LearningManagementSystem.Models
             );
         }
 
+        /// <summary>
+        /// Creates an empty <see cref="StudentVer2"/> instance with default values.
+        /// </summary>
+        /// <returns>An empty <see cref="StudentVer2"/> instance.</returns>
         static public StudentVer2 Empty()
         {
             return new()
@@ -357,7 +435,13 @@ namespace LearningManagementSystem.Models
             };
         }
 
+        /// <summary>
+        /// Gets or sets the user holding the temporary user information.
+        /// </summary>
         private User? _holdingUser = null;
+        /// <summary>
+        /// Gets or sets the user holding the temporary user information.
+        /// </summary>
         User? ITemporaryUserHolder.HoldingUser { get => _holdingUser; set => _holdingUser = value; }
 
         //static public (bool result, IEnumerable<String> errors) FieldsCheck(StudentVer2 student)

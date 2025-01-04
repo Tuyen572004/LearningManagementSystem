@@ -22,21 +22,48 @@ using Windows.Foundation.Collections;
 
 namespace LearningManagementSystem.Controls
 {
+    /// <summary>
+    /// Interface for search providers that supply search fields and handle search changes.
+    /// </summary>
     public interface ISearchProvider
     {
+        /// <summary>
+        /// Gets the list of search fields.
+        /// </summary>
         public List<string> SearchFields { get; }
-        public EventHandler<SearchCriteria?>? SearchChangedHandler => null; 
+
+        /// <summary>
+        /// Event handler for search criteria changes.
+        /// </summary>
+        public EventHandler<SearchCriteria?>? SearchChangedHandler => null;
     }
 
+    /// <summary>
+    /// A default implementation of ISearchProvider with no search fields.
+    /// </summary>
     public class UnassignedSearchProvider : ISearchProvider
     {
+        /// <summary>
+        /// Gets an empty list of search fields.
+        /// </summary>
         public List<string> SearchFields { get => []; }
     }
 
+    /// <summary>
+    /// Represents the criteria for a search operation.
+    /// </summary>
     public class SearchCriteria
     {
+        /// <summary>
+        /// Gets or sets the search field.
+        /// </summary>
         public string? Field { get; set; }
+
+        /// <summary>
+        /// Gets or sets the search pattern.
+        /// </summary>
         public string? Pattern { get; set; }
+
         // public bool IsCaseSensitive { get; set; }
     }
     public sealed partial class SearchBar : UserControl, IDisposable
