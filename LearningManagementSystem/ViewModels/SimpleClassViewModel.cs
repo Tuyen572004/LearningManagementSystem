@@ -62,7 +62,7 @@ namespace LearningManagementSystem.ViewModels
         {
             try
             {
-                Course retrievedCourse = _dao.findCourseByClassId(_managingClass?.CourseId ?? -1);
+                Course retrievedCourse = _dao.findCourseByClassId(_classId);
                 _associatedCourse = retrievedCourse;
             }
             catch (Exception)
