@@ -499,8 +499,7 @@ namespace LearningManagementSystem.DataAccess
                         var checkReferenceCommand = new NpgsqlCommand(
                             """
                             SELECT 
-                                (SELECT COUNT(*) FROM "teachersperclass" WHERE "teacherid" = @TeacherId) +
-                                (SELECT COUNT(*) FROM "assignments" WHERE "teacherid" = @TeacherId) 
+                                (SELECT COUNT(*) FROM "teachersperclass" WHERE "teacherid" = @TeacherId) 
                             AS "TotalReferences"
                             """, connection, transaction);
                         checkReferenceCommand.Parameters.AddWithValue("@TeacherId", teacher.Id);
