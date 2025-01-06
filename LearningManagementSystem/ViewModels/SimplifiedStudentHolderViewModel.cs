@@ -21,12 +21,12 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Gets the order of columns to be displayed.
         /// </summary>
-        public override IEnumerable<string> ColumnOrder => ["StudentCode", "StudentName"];
+        public override IEnumerable<string> ColumnOrder => ["StudentCode", "StudentName", "Email"];
 
         /// <summary>
         /// Gets the columns to be ignored during operations.
         /// </summary>
-        public override IEnumerable<string> IgnoringColumns => ["Id", "UserId", "IsValid", "Email", "PhoneNo", "BirthDate", "GraduationYear", "EnrollmentYear"];
+        public override IEnumerable<string> IgnoringColumns => ["Id", "UserId", "IsValid", "PhoneNo", "BirthDate", "GraduationYear", "EnrollmentYear"];
 
         /// <summary>
         /// Gets the message associated with a specific item.

@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace LearningManagementSystem.ViewModels
 {
     /// <summary>
-    /// Delegate for validating a group of items.
+    /// Delegate for a function whether to accept or reject an item, based on the group of items to be compared against.
     /// </summary>
     /// <param name="validatingItem">The item being validated.</param>
     /// <param name="comparingItems">The items to compare against.</param>
@@ -27,11 +27,11 @@ namespace LearningManagementSystem.ViewModels
     public delegate bool GroupValidator(object validatingItem, IEnumerable<object> comparingItems);
 
     /// <summary>
-    /// Delegate for selecting a group item.
+    /// Delegate for a function to select an item in the group, using another item to compare against.
     /// </summary>
     /// <param name="baseItem">The base item.</param>
     /// <param name="comparingItems">The items to compare against.</param>
-    /// <returns>The selected item, or null if no item is selected.</returns>
+    /// <returns>The selected item in the group, or null if no item is satified.</returns>
     public delegate object? GroupSelector(object baseItem, IEnumerable<object> comparingItems);
 
     /// <summary>
@@ -49,7 +49,7 @@ namespace LearningManagementSystem.ViewModels
     public delegate bool ItemChecker(object item);
 
     /// <summary>
-    /// Delegate for modifying items in the data access object (DAO).
+    /// Delegate for updating items in the database using the data access object (DAO).
     /// </summary>
     /// <param name="items">The items to modify.</param>
     /// <returns>A tuple containing the modified items, the count of modified items, and information about rejected items.</returns>
@@ -57,7 +57,7 @@ namespace LearningManagementSystem.ViewModels
         IList<object> modifiedItems,
         int modifiedCount,
         IList<(object rejectedItem, IEnumerable<string> errors)> rejectedItemsInfo
-        ) ItemDaoModifier(IEnumerable<object> items);
+        ) ItemDaoUpdater(IEnumerable<object> items);
 
     /// <summary>
     /// Extended interface for notifying data error information.
@@ -70,11 +70,17 @@ namespace LearningManagementSystem.ViewModels
         /// <summary>
         /// Gets the property names that need to be validated.
         /// </summary>
+        /// <remarks>
+        /// Should only contains the property names that are needed to be validated
+        /// </remarks>
         protected List<string> PropertyNames { get; }
 
         /// <summary>
-        /// Gets the raw errors of the properties. Should not be accessed directly.
+        /// Is used to get (Stores) the raw errors of the properties. Should not be accessed directly.
         /// </summary>
+        /// <remarks>
+        /// When overriding, just bind it with a private member with the same return type, initialized with an empty container.
+        /// </remarks>
         protected Dictionary<string, List<string>> RawErrors { get; }
 
         /// <summary>
@@ -90,16 +96,16 @@ namespace LearningManagementSystem.ViewModels
         /// <param name="propertyName">The name of the property.</param>
         protected void OnErrorsChanged(string propertyName);
 
+        // ----------------------------------------------------------------------------------------
+        // Useful properties and methods
+
         /// <summary>
         /// The name of the property indicating no error.
         /// </summary>
         public static readonly string NoErrorPropertyName = "Ehe no error found my lord";
 
-        // ----------------------------------------------------------------------------------------
-        // Useful properties and methods
-
         /// <summary>
-        /// Gets the properties of a specified type.
+        /// Gets all public properties of a specified type.
         /// </summary>
         /// <typeparam name="T">The type to get properties of.</typeparam>
         /// <returns>A list of property names.</returns>
@@ -128,7 +134,7 @@ namespace LearningManagementSystem.ViewModels
         }
 
         /// <summary>
-        /// Revalidates all properties, ignoring all external errors.
+        /// Revalidates all properties, ignoring all external errors (introduced by <see cref="ChangeErrors(string, IEnumerable{string})"/>).
         /// </summary>
         public void RevalidateAllProperties()
         {
@@ -148,10 +154,13 @@ namespace LearningManagementSystem.ViewModels
         }
 
         /// <summary>
-        /// Changes the errors of a property, allowing adding external errors not related to any property in PropertyNames.
+        /// Changes the errors of a property.
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="errors">The errors to set.</param>
+        /// <remarks>
+        /// This method allows adding external errors not related to any property in PropertyNames
+        /// </remarks>
         public void ChangeErrors(string propertyName, IEnumerable<string> errors)
         {
             RawErrors[propertyName] = errors.ToList();
@@ -162,7 +171,7 @@ namespace LearningManagementSystem.ViewModels
         }
 
         // ----------------------------------------------------------------------------------------
-        // Internal-used properties and methods
+        // Internally-used properties and methods
 
         /// <summary>
         /// Gets a value indicating whether there are any errors.
@@ -222,14 +231,14 @@ namespace LearningManagementSystem.ViewModels
         //    IList<object> modifiedItems,
         //    int modifiedCount,
         //    IList<(object rejectedItem, IEnumerable<string> errors)> rejectedItemsInfo
-        //    ) ItemDaoModifier(IEnumerable<object> items);
+        //    ) ItemDaoUpdater(IEnumerable<object> items);
 
         // ----------------------------------------------------------------------------------------
         // Functional overrides
         // (Those overrides should be given so that the ViewModel can work as expected)
 
         /// <summary>
-        /// Gets the filter for transferring items.
+        /// Decide whether the item should be transfered to the managing items or not, base on the current managing items
         /// </summary>
         /// <returns>The filter for transferring items.</returns>
         virtual public GroupValidator? TransferingItemFilter => null;
@@ -238,25 +247,39 @@ namespace LearningManagementSystem.ViewModels
         /// Gets the validation for old items when editing.
         /// </summary>
         /// <returns>The validation for old items when editing.</returns>
+        /// <remarks>
+        /// This should check if the editted item is in the managing items
+        /// </remarks>
         virtual public GroupSelector? OldItemValidationOnEditing => null;
 
         /// <summary>
         /// Gets the transformer for items when editing.
         /// </summary>
         /// <returns>The transformer for items when editing.</returns>
+        /// <remarks>
+        /// This should transform the editted item before updating the managing items
+        /// </remarks>
         virtual public ItemTransformer? ItemTransformerOnEditting => null;
 
         /// <summary>
         /// Gets the transformer for existing items when editing.
         /// </summary>
         /// <returns>The transformer for existing items when editing.</returns>
+        /// <remarks>
+        /// This should update the existing item with the new item
+        /// </remarks>
         virtual public ItemTransformer? ExistingItemTransformerOnEditting => null;
 
         /// <summary>
-        /// Gets the empty item for adding.
+        /// Return the empty item for adding.
+        /// 
         /// </summary>
-        /// <param name="identitySeed">The identity seed for the item.</param>
-        /// <returns>The empty item for adding.</returns>
+        /// <param name="identitySeed">
+        /// In each function call, the previous value of this parameter will be injected to this function (`null` will be injected in the first call).
+        /// The function overrider may use and update this value so that each item generated by this function can be identified and distinguished
+        /// (by <see cref="OldItemValidationOnEditing"/> when editing the item)
+        /// </param>
+        /// <returns></returns>
         virtual public object? EmptyItem(ref object? identitySeed) => null;
 
         /// <summary>
@@ -272,22 +295,19 @@ namespace LearningManagementSystem.ViewModels
         virtual public ItemChecker? ItemCheckForAdd => null;
 
         /// <summary>
-        /// Gets the modifier for inserting items in the DAO.
+        /// Gets the ItemDaoUpdater instance for inserting items.
         /// </summary>
-        /// <returns>The modifier for inserting items in the DAO.</returns>
-        virtual public ItemDaoModifier? ItemDaoInserter => null;
+        virtual public ItemDaoUpdater? ItemDaoInserter => null;
 
         /// <summary>
-        /// Gets the modifier for updating items in the DAO.
+        /// Gets the ItemDaoUpdater instance for updating items.
         /// </summary>
-        /// <returns>The modifier for updating items in the DAO.</returns>
-        virtual public ItemDaoModifier? ItemDaoUpdater => null;
+        virtual public ItemDaoUpdater? ItemDaoUpdater => null;
 
         /// <summary>
-        /// Gets the modifier for deleting items in the DAO.
+        /// Gets the ItemDaoUpdater instance for deleting items.
         /// </summary>
-        /// <returns>The modifier for deleting items in the DAO.</returns>
-        virtual public ItemDaoModifier? ItemDaoDeleter => null;
+        virtual public ItemDaoUpdater? ItemDaoDeleter => null;
 
         // ----------------------------------------------------------------------------------------
         // Public Events
@@ -492,6 +512,7 @@ namespace LearningManagementSystem.ViewModels
             SortCriteria = e;
             RefreshManagingItems();
         }
+
         /// <summary>
         /// Handles the transfer of a single item.
         /// </summary>
@@ -501,6 +522,7 @@ namespace LearningManagementSystem.ViewModels
         {
             HandleItemsTransfer(sender, [e]);
         }
+
         /// <summary>
         /// Handles the transfer of multiple items.
         /// </summary>
@@ -540,6 +562,7 @@ namespace LearningManagementSystem.ViewModels
                 OnInvalidItemsTranferred?.Invoke(this, invalidItems);
             }
         }
+
         /// <summary>
         /// Handles the editing of an item.
         /// </summary>
@@ -567,6 +590,7 @@ namespace LearningManagementSystem.ViewModels
             ExistingItemTransformerOnEditting?.Invoke(e.newItem, ref existingItem);
             RefreshManagingItems();
         }
+
         /// <summary>
         /// Handles the removal of multiple items.
         /// </summary>
@@ -589,6 +613,7 @@ namespace LearningManagementSystem.ViewModels
             RefreshItemCount();
             RefreshManagingItems();
         }
+
         /// <summary>
         /// Handles the creation of a new item.
         /// </summary>
@@ -701,6 +726,7 @@ namespace LearningManagementSystem.ViewModels
             var modifiedItems = e.Where(x => !invalidItems.Contains(x)).ToList() ?? [];
             OnItemsUpdated?.Invoke(this, (modifiedItems, invalidItemsInfo));
         }
+
         /// <summary>
         /// Handles the deletion of multiple items.
         /// </summary>

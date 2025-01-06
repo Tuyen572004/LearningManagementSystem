@@ -16,6 +16,18 @@ namespace LearningManagementSystem.DataAccess
 {
     public partial class SqlDao
     {
+        /// <summary>
+        /// Adds a collection of students to the database.
+        /// </summary>
+        /// <param name="students">The collection of students to be added.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// <list type="bullet">
+        /// <item><description>A list of successfully added students.</description></item>
+        /// <item><description>The count of successfully added students.</description></item>
+        /// <item><description>A list of invalid students with associated error messages.</description></item>
+        /// </list>
+        /// </returns>
         public (
             IList<StudentVer2> addStudents,
             int addCount,

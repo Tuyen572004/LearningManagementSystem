@@ -11,24 +11,68 @@ using System.Threading.Tasks;
 
 namespace LearningManagementSystem.Models
 {
+    /// <summary>
+    /// Represents a teacher in the learning management system.
+    /// </summary>
     public partial class Teacher : ICloneable, INotifyDataErrorInfoExtended, INotifyPropertyChanged, ITemporaryUserHolder
     {
+        /// <summary>
+        /// Maximum length for the teacher code.
+        /// </summary>
         public static readonly int MAX_TEACHER_CODE_LENGTH = 10;
+
+        /// <summary>
+        /// Maximum length for the teacher name.
+        /// </summary>
         public static readonly int MAX_TEACHER_NAME_LENGTH = 100;
+
+        /// <summary>
+        /// Maximum length for the email address.
+        /// </summary>
         public static readonly int MAX_EMAIL_LENGTH = 100;
+
+        /// <summary>
+        /// Maximum length for the phone number.
+        /// </summary>
         public static readonly int MAX_PHONE_NO_LENGTH = 100;
 
+        /// <summary>
+        /// List of property names that need error checking.
+        /// </summary>
         private readonly List<string> _needErrorChecked =
             INotifyDataErrorInfoExtended.GetPropertiesOf<Teacher>()
             .Except(["Id", "UserId", "IsValid"])
             .ToList();
+
+        /// <summary>
+        /// Gets the list of property names that need error checking.
+        /// </summary>
         List<string> INotifyDataErrorInfoExtended.PropertyNames => _needErrorChecked;
 
+        /// <summary>
+        /// Dictionary to store validation errors for each property.
+        /// </summary>
         private readonly Dictionary<string, List<string>> _errors = [];
+
+        /// <summary>
+        /// Gets the dictionary of raw validation errors.
+        /// </summary>
         Dictionary<string, List<string>> INotifyDataErrorInfoExtended.RawErrors => _errors;
+
+        /// <summary>
+        /// Gets a value indicating whether the teacher instance is valid.
+        /// </summary>
         public bool IsValid => !(this as INotifyDataErrorInfoExtended).HasErrors;
 
+        /// <summary>
+        /// Event that is triggered when validation errors change.
+        /// </summary>
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+        /// <summary>
+        /// Triggers the ErrorsChanged event for a specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property for which errors have changed.</param>
         void INotifyDataErrorInfoExtended.OnErrorsChanged(string propertyName)
         {
             //if (propertyName == INotifyDataErrorInfoExtended.NoErrorPropertyName)
@@ -38,6 +82,11 @@ namespace LearningManagementSystem.Models
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Gets the validation errors for a specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property to retrieve errors for.</param>
+        /// <returns>A collection of error messages for the specified property.</returns>
         public IEnumerable<string> GetErrorsOfSingleProperty(string propertyName)
         {
             List<string> currentErrors = [];
@@ -98,6 +147,10 @@ namespace LearningManagementSystem.Models
             return currentErrors;
         }
 
+        /// <summary>
+        /// Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>A new object that is a copy of this instance.</returns>
         public object Clone()
         {
             return new Teacher
@@ -111,6 +164,11 @@ namespace LearningManagementSystem.Models
             };
         }
 
+        /// <summary>
+        /// Copies the properties of another teacher instance to this instance.
+        /// </summary>
+        /// <param name="other">The other teacher instance to copy properties from.</param>
+        /// <returns>This instance with copied properties.</returns>
         public Teacher Copy(Teacher? other)
         {
             if (other == null)
@@ -125,6 +183,10 @@ namespace LearningManagementSystem.Models
             return this;
         }
 
+        /// <summary>
+        /// Creates an empty teacher instance with default values.
+        /// </summary>
+        /// <returns>An empty teacher instance.</returns>
         public static Teacher Empty()
         {
             return new()
@@ -138,9 +200,18 @@ namespace LearningManagementSystem.Models
             };
         }
 
+        /// <summary>
+        /// Holds the user temporarily.
+        /// </summary>
         private User? _holdingUser = null;
-        User? ITemporaryUserHolder.HoldingUser { get => _holdingUser; set => _holdingUser = value; }
-
+        /// <summary>
+        /// Gets or sets the user that is being held temporarily.
+        /// </summary>
+        User? ITemporaryUserHolder.HoldingUser
+        {
+            get => _holdingUser;
+            set => _holdingUser = value;
+        }
 
         [GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
         private static partial Regex EmailRegex();
