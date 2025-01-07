@@ -42,7 +42,8 @@ namespace LearningManagementSystem.Views
         {
             this.InitializeComponent();
             ViewModel = new ClassViewModel();
-            CrsViewModel = new CourseViewModel();
+            CrsViewModel = new CourseViewModel { PageSize = 100 };
+            CrsViewModel.GetAllCourse();
             coursesComboBox.ItemsSource = CrsViewModel.Courses;
         }
 

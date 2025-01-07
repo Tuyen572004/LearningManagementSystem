@@ -40,7 +40,7 @@
 
             <TextBlock FontWeight="ExtraBold" FontSize="25">Course ID</TextBlock>
 
-            <ComboBox Name="coursesComboBox" Width="Auto" Height="35" ItemsSource="{x:Bind CrsViewModel.Courses}" SelectedValuePath="Id">
+            <ComboBox Name="coursesComboBox" Width="Auto" Height="35" MaxDropDownHeight="320" ItemsSource="{x:Bind CrsViewModel.Courses}" SelectedValuePath="Id">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
